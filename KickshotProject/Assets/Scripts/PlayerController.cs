@@ -8,9 +8,9 @@ public class PlayerController : MonoBehaviour {
     public float KickSpeed;
     public float StartGravity;
     public float ChargeSpeed;
-    public int ForceStyle;
 
     Transform _view_camera;
+    Rigidbody _rigid_body;
 
     float m_charge;
 
@@ -19,6 +19,8 @@ public class PlayerController : MonoBehaviour {
         m_charge = 0;
 
         _view_camera = transform.GetChild(0);
+        _rigid_body = GetComponent<Rigidbody>();
+
         Physics.gravity = new Vector3(0.0f, -StartGravity, 0.0f);
 	}
 	
@@ -39,8 +41,9 @@ public class PlayerController : MonoBehaviour {
             ApplyKick(m_charge);
             m_charge = 0;
         }
-            if (Input.GetButtonUp("Jump"))
+        if (Input.GetButtonUp("Jump"))
             GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
+        
     }
 
     private void ChargeWeapon()
@@ -60,23 +63,14 @@ public class PlayerController : MonoBehaviour {
     void FireProjectile()
     {
         RaycastHit bulletHit = new RaycastHit();
-        if (Physics.Raycast(_view_camera.position, _view_camera.forward, out bulletHit))
-            Debug.Log("Bullet Hit at:" + bulletHit.point);
+        if (Physics.Raycast(_view_camera.position, _view_camera.forward, out bulletHit)) ;
+            // Debug.Log("Bullet Hit at:" + bulletHit.point);
     }
 
     // Applies the recoil to this GameObject's Rigidbody
     void ApplyKick()
     {
-        Vector3 kickVel = -1 * _view_camera.forward * KickSpeed;
-        Vector3 currentVel = GetComponent<Rigidbody>().velocity;
-
-        if (Vector3.Dot(kickVel, currentVel) < 0)
-            currentVel = Vector3.zero;
-
-        if(ForceStyle == 0)
-            GetComponent<Rigidbody>().velocity = currentVel + kickVel;
-        else
-            GetComponent<Rigidbody>().AddForce(kickVel, ForceMode.Impulse);
+        ApplyKick(KickSpeed);
     }
 
     // Overloads ApplyKick with a custom 'Speed'
@@ -85,12 +79,9 @@ public class PlayerController : MonoBehaviour {
         Vector3 kickVel = -1 * _view_camera.forward * Speed;
         Vector3 currentVel = GetComponent<Rigidbody>().velocity;
 
-        if (Vector3.Dot(kickVel, currentVel) < 0)
-            currentVel = Vector3.zero;
-
-        if (ForceStyle == 0)
-            GetComponent<Rigidbody>().velocity = currentVel + kickVel;
-        else
-            GetComponent<Rigidbody>().AddForce(kickVel, ForceMode.Impulse);
+        // if (Vector3.Dot(kickVel, currentVel) < 0)
+        //    currentVel = Vector3.zero;
+        
+        GetComponent<Rigidbody>().velocity = currentVel + kickVel;
     }
 }
