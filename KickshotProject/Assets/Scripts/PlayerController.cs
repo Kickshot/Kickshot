@@ -10,6 +10,8 @@ public class PlayerController : MonoBehaviour {
     public float StartGravity = 50;
     public float ChargeSpeed = 10;
 
+    public bool freeze;
+
     Transform _view_camera;
     Rigidbody _rigid_body;
 
@@ -19,7 +21,7 @@ public class PlayerController : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         m_charge = 0;
-
+        freeze = false;
         _view_camera = transform.GetChild(0);
         _rigid_body = GetComponent<Rigidbody>();
 
@@ -47,7 +49,10 @@ public class PlayerController : MonoBehaviour {
             m_charge = 0;
         }
         if (Input.GetButtonUp("Jump"))
+        {
             GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
+            freeze = false;
+        }
         
     }
 
@@ -61,6 +66,7 @@ public class PlayerController : MonoBehaviour {
         if(Input.GetButton("Jump") && collision.collider.tag != "Ground")
         {
             GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePosition;
+            freeze = true;
         }
     }
 
