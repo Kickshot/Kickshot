@@ -15,6 +15,10 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
 
         DontDestroyOnLoad(gameObject);
+    }
 
+    void Start()
+    {
+        GetComponent<LevelTimer>().StartCountdown();
     }
 }

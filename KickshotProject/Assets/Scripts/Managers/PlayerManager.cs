@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerManager : MonoBehaviour {
+public class PlayerManager : MonoBehaviour
+{
+    [HideInInspector]
+    public GameObject Player;
     public GameObject PlayerPrefab;
-    GameObject Player;
 
     public GameObject StartPoint;
     public GameObject FinishPoint;
@@ -19,12 +21,22 @@ public class PlayerManager : MonoBehaviour {
         StartPoint = GameObject.FindGameObjectWithTag("Start");
         FinishPoint = GameObject.FindGameObjectWithTag("Finish");
 
-        Respawn();
+        Died();
     }
 
-    public void Respawn()
+    // Call this in a fail state to reset the player.
+    // Eventually this needs to involve some sort of timed delay, 
+    // so the you don't just restart immediately
+    public void Died()
     {
+        LevelTimer timer = GetComponent<LevelTimer>();
+
+        timer.Reset();
+        // Player.GetComponent<PlayerController>().Reset()      // put something like this here when it is written
         Player.transform.position = StartPoint.transform.position;
+
+        timer.Reset();
+        timer.StartCountdown();
     }
 
     public void LevelFinished()

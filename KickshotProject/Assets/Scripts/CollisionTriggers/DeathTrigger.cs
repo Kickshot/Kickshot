@@ -7,6 +7,6 @@ public class DeathTrigger : MonoBehaviour
     void OnTriggerEnter(Collider other)
     {
         if (other.tag == "Player")
-            GameManager.instance.GetComponent<PlayerManager>().Respawn();
+            GameManager.instance.GetComponent<PlayerManager>().Died();
     }
 }
