@@ -9,7 +9,8 @@ public class PlayerController : MonoBehaviour {
     public float FireDelay = 0.5f;
     public float StartGravity = 50;
     public float ChargeSpeed = 10;
-
+    public bool WallKick = true;
+    public float WallKickMultiplier = 1;
     public bool freeze;
 
     Transform _view_camera;
@@ -59,6 +60,17 @@ public class PlayerController : MonoBehaviour {
     private void ChargeWeapon()
     {
         m_charge += ChargeSpeed * Time.deltaTime;
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (!Input.GetButton("Jump") && collision.collider.tag != "Ground")
+        {
+            if(WallKick)
+            {
+                GetComponent<Rigidbody>().velocity += (collision.contacts[0].normal + _view_camera.forward +_view_camera.up) * collision.relativeVelocity.magnitude * WallKickMultiplier;
+            }
+        }
     }
 
     private void OnCollisionStay(Collision collision)
