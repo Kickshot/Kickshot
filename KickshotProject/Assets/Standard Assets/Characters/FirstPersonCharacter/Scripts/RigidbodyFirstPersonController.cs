@@ -74,6 +74,8 @@ namespace UnityStandardAssets.Characters.FirstPerson
             public bool airControl; // can the user control the direction that is being moved in the air
             [Tooltip("set it to 0.1 or more if you get stuck in wall")]
             public float shellOffset; //reduce the radius by that ratio to avoid getting stuck in wall (a value of 0.1f is nice)
+            public bool JumpDrag = true;
+            public float JumpDragAmount = 1f;
         }
 
 
@@ -165,7 +167,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
                 if (m_IsGrounded)
                 {
-                    m_RigidBody.drag = 5f;
+                    m_RigidBody.drag = 3f;
 
                     if (m_Jump)
                     {
@@ -182,7 +184,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
                 }
                 else
                 {
-                    m_RigidBody.drag = 0f;
+                    m_RigidBody.drag = advancedSettings.JumpDrag ? advancedSettings.JumpDragAmount : 0;
                     if (m_PreviouslyGrounded && !m_Jumping)
                     {
                         StickToGroundHelper();

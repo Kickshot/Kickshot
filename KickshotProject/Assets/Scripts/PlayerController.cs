@@ -76,7 +76,7 @@ public class PlayerController : MonoBehaviour {
         int dirFactor = forward ? 1 : -1;
 
         RaycastHit bulletHit = new RaycastHit();
-        if (Physics.Raycast(_view_camera.position, dirFactor * _view_camera.forward, out bulletHit)) ;
+        if (Physics.Raycast(_view_camera.position, dirFactor * _view_camera.forward, out bulletHit));
             // Debug.Log("Bullet Hit at:" + bulletHit.point);
     }
 
