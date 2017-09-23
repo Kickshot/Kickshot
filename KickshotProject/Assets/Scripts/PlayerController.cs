@@ -86,6 +86,10 @@ public class PlayerController : MonoBehaviour {
             GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePosition;
             freeze = true;
         }
+        if(Input.GetButtonDown("Sprint") && collision.collider.tag == "Ground")
+        {
+            ApplyKick(KickSpeed, forward: true);
+        }
     }
 
     // Launches the projectile
