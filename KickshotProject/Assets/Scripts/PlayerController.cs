@@ -12,15 +12,18 @@ public class PlayerController : MonoBehaviour {
     public bool WallKick = true;
     public float WallKickMultiplier = 1;
     public bool freeze;
+    public GameObject BulletPoof;
 
     Transform _view_camera;
     Rigidbody _rigid_body;
+    
 
     float m_charge;
     bool _can_fire = true;
 
 	// Use this for initialization
-	void Start () {
+	void Start ()
+    {
         m_charge = 0;
         freeze = false;
         _view_camera = transform.GetChild(0);
@@ -88,7 +91,10 @@ public class PlayerController : MonoBehaviour {
         int dirFactor = forward ? 1 : -1;
 
         RaycastHit bulletHit = new RaycastHit();
-        if (Physics.Raycast(_view_camera.position, dirFactor * _view_camera.forward, out bulletHit));
+        if (Physics.Raycast(_view_camera.position, dirFactor * _view_camera.forward, out bulletHit) && forward)
+        {
+            GameObject poof = (GameObject)Instantiate(BulletPoof,bulletHit.point,Quaternion.LookRotation(bulletHit.normal));
+        }
             // Debug.Log("Bullet Hit at:" + bulletHit.point);
     }
 
