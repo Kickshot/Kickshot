@@ -13,9 +13,11 @@ public class PlayerController : MonoBehaviour {
     public float WallKickMultiplier = 1;
     public bool freeze;
     public GameObject BulletPoof;
+    public AudioClip BulletSound;
 
     Transform _view_camera;
     Rigidbody _rigid_body;
+    AudioSource _audio;
     
 
     float m_charge;
@@ -28,6 +30,7 @@ public class PlayerController : MonoBehaviour {
         freeze = false;
         _view_camera = transform.GetChild(0);
         _rigid_body = GetComponent<Rigidbody>();
+        _audio = GetComponent<AudioSource>();
 
         Physics.gravity = new Vector3(0.0f, -StartGravity, 0.0f);
 	}
@@ -94,6 +97,7 @@ public class PlayerController : MonoBehaviour {
         if (Physics.Raycast(_view_camera.position, dirFactor * _view_camera.forward, out bulletHit) && forward)
         {
             GameObject poof = (GameObject)Instantiate(BulletPoof,bulletHit.point,Quaternion.LookRotation(bulletHit.normal));
+            _audio.PlayOneShot(BulletSound);
         }
             // Debug.Log("Bullet Hit at:" + bulletHit.point);
     }
