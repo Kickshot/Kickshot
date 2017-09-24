@@ -9,12 +9,13 @@ public class PlayerController : MonoBehaviour {
     public float FireDelay = 0.5f;
     public float StartGravity = 50;
     public float ChargeSpeed = 10;
-    public bool WallKick;
     public float WallKickMultiplier = 1;
     public bool freeze;
+    public bool WallRun;
+    public bool WallKick;
     public GameObject BulletPoof;
     public AudioClip BulletSound;
-    public bool WallRun;
+    
 
     Transform _view_camera;
     Rigidbody _rigid_body;
@@ -95,7 +96,7 @@ public class PlayerController : MonoBehaviour {
         }
         if(Input.GetButtonDown("Sprint") && collision.collider.tag == "Ground")
         {
-            ApplyKick(KickSpeed, forward: true);
+            ApplyKick(new Vector3(_view_camera.forward.normalized.x, 0.4f, _view_camera.forward.normalized.z) );
         }
     }
 
@@ -113,13 +114,13 @@ public class PlayerController : MonoBehaviour {
             // Debug.Log("Bullet Hit at:" + bulletHit.point);
     }
 
-    // Applies the recoil to this GameObject's Rigidbody
+    /// Applies the recoil to this GameObject's Rigidbody
     void ApplyKick(bool forward)
     {
         ApplyKick(KickSpeed, forward);
     }
 
-    // Overloads ApplyKick with a custom 'Speed'
+    /// Overloads ApplyKick with a custom 'Speed'
     void ApplyKick(float Speed, bool forward)
     {
         int dirFactor = forward ? 1 : -1;
@@ -129,6 +130,18 @@ public class PlayerController : MonoBehaviour {
         // if (Vector3.Dot(kickVel, currentVel) < 0)
         //    currentVel = Vector3.zero;
         
+        GetComponent<Rigidbody>().velocity = currentVel + kickVel;
+    }
+
+    /// Overloads ApplyKick with a unit vector direction
+    void ApplyKick(Vector3 kickDir)
+    {
+        Vector3 kickVel = kickDir * KickSpeed;
+        Vector3 currentVel = GetComponent<Rigidbody>().velocity;
+
+        // if (Vector3.Dot(kickVel, currentVel) < 0)
+        //    currentVel = Vector3.zero;
+
         GetComponent<Rigidbody>().velocity = currentVel + kickVel;
     }
 
