@@ -9,11 +9,12 @@ public class PlayerController : MonoBehaviour {
     public float FireDelay = 0.5f;
     public float StartGravity = 50;
     public float ChargeSpeed = 10;
-    public bool WallKick = true;
+    public bool WallKick;
     public float WallKickMultiplier = 1;
     public bool freeze;
     public GameObject BulletPoof;
     public AudioClip BulletSound;
+    public bool WallRun;
 
     Transform _view_camera;
     Rigidbody _rigid_body;
@@ -26,6 +27,7 @@ public class PlayerController : MonoBehaviour {
 	// Use this for initialization
 	void Start ()
     {
+        WallRun = false;
         m_charge = 0;
         freeze = false;
         _view_camera = transform.GetChild(0);
@@ -46,19 +48,24 @@ public class PlayerController : MonoBehaviour {
         }
         if (_can_fire && Input.GetButtonDown("Fire2"))
         {
-            FireProjectile(false);
-            ApplyKick(true);
-            StartCoroutine("ShootCooldown");
+            //FireProjectile(false);
+            //ApplyKick(true);
+            //StartCoroutine("ShootCooldown");
         }
         else
         {
             //ApplyKick(m_charge);
             m_charge = 0;
         }
-        if (Input.GetButtonUp("Jump"))
+        if (Input.GetButtonUp("Stick"))
         {
             GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
             freeze = false;
+        }
+        else if(Input.GetButtonDown("Stick") && WallRun == true)
+        {
+            GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePosition;
+            freeze = true;
         }
         
     }
@@ -70,7 +77,7 @@ public class PlayerController : MonoBehaviour {
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (!Input.GetButton("Jump") && collision.collider.tag != "Ground")
+        if (!Input.GetButton("Stick") && collision.collider.tag != "Ground")
         {
             if(WallKick)
             {
@@ -81,7 +88,7 @@ public class PlayerController : MonoBehaviour {
 
     private void OnCollisionStay(Collision collision)
     {
-        if(Input.GetButton("Jump") && collision.collider.tag != "Ground")
+        if(Input.GetButton("Stick") && collision.collider.tag != "Ground" )
         {
             GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePosition;
             freeze = true;
