@@ -71,25 +71,26 @@ public class WallRun : MonoBehaviour
         {
             Vector3 playerVel = m_FPC.m_RigidBody.velocity;
             m_Speed = playerVel.magnitude;
-
         }
 
 
-        if (!m_PlayerController.freeze)
+        if (!m_PlayerController.Freeze)
         {
             if (!m_FPC.Grounded)
             {
-
+                
 
                 if (Physics.Raycast(m_RotationObject.transform.position, m_RotationObject.transform.right, out rightRayHitInfo, m_RayDistance))
                 {
                     if (!Physics.Raycast(m_RotationObject.transform.position, m_RotationObject.transform.forward, out frontRayHitInfo, m_RayDistance))
                     {
                         SnapToWall(true, rightRayHitInfo);
+                        SendMessageUpwards("Reload");
                     }
                     else
                     {
                         SnapToWall(true, frontRayHitInfo);
+                        SendMessageUpwards("Reload");
                     }
 
                 }
@@ -98,10 +99,12 @@ public class WallRun : MonoBehaviour
                     if (!Physics.Raycast(m_RotationObject.transform.position, m_RotationObject.transform.forward, out frontRayHitInfo, m_RayDistance))
                     {
                         SnapToWall(false, leftRayHitInfo);
+                        SendMessageUpwards("Reload");
                     }
                     else
                     {
                         SnapToWall(false, frontRayHitInfo);
+                        SendMessageUpwards("Reload");
                     }
                 }
                 else

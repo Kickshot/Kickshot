@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour {
 
@@ -10,17 +11,22 @@ public class PlayerController : MonoBehaviour {
     public float StartGravity = 50;
     public float ChargeSpeed = 10;
     public float WallKickMultiplier = 1;
-    public bool freeze;
+    public int MaxAmmo = 3;
+    public bool Freeze;
     public bool WallRun;
     public bool WallKick;
     public GameObject BulletPoof;
     public AudioClip BulletSound;
-    
+    public AudioClip EmptyMag;
+
 
     Transform _view_camera;
     Rigidbody _rigid_body;
     AudioSource _audio;
-    
+
+    Text _ammo_text;
+
+    int _ammo;
 
     float m_charge;
     bool _can_fire = true;
@@ -28,12 +34,15 @@ public class PlayerController : MonoBehaviour {
 	// Use this for initialization
 	void Start ()
     {
+        _ammo = MaxAmmo;
+
         WallRun = false;
         m_charge = 0;
-        freeze = false;
+        Freeze = false;
         _view_camera = transform.GetChild(0);
         _rigid_body = GetComponent<Rigidbody>();
         _audio = GetComponent<AudioSource>();
+        _ammo_text = GameObject.FindGameObjectWithTag("AmmoText").GetComponent<Text>();
 
         Physics.gravity = new Vector3(0.0f, -StartGravity, 0.0f);
 	}
@@ -41,12 +50,21 @@ public class PlayerController : MonoBehaviour {
 	// Update is called once per frame
 	void Update ()
     {
-        if(_can_fire && Input.GetButtonDown("Fire1"))
+        _ammo_text.text = _ammo.ToString();
+
+        if(_can_fire && Input.GetButtonDown("Fire1") && _ammo > 0)
         {
             FireProjectile(true);
             ApplyKick(false);
+            _ammo--;
             StartCoroutine("ShootCooldown");
         }
+        else if(_can_fire && Input.GetButtonDown("Fire1") && _ammo <= 0)
+        {
+            _audio.PlayOneShot(EmptyMag);
+            StartCoroutine("ShootCooldown");
+        }
+
         if (_can_fire && Input.GetButtonDown("Fire2"))
         {
             //FireProjectile(false);
@@ -61,12 +79,12 @@ public class PlayerController : MonoBehaviour {
         if (Input.GetButtonUp("Stick"))
         {
             GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
-            freeze = false;
+            Freeze = false;
         }
         else if(Input.GetButtonDown("Stick") && WallRun == true)
         {
             GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePosition;
-            freeze = true;
+            Freeze = true;
         }
         
     }
@@ -78,6 +96,11 @@ public class PlayerController : MonoBehaviour {
 
     private void OnCollisionEnter(Collision collision)
     {
+        if(collision.collider.tag == "Ground" || collision.collider.tag == "Wall" || Freeze)
+        {
+            _ammo = MaxAmmo;
+        }
+
         if (!Input.GetButton("Stick") && collision.collider.tag != "Ground")
         {
             if(WallKick)
@@ -92,7 +115,7 @@ public class PlayerController : MonoBehaviour {
         if(Input.GetButton("Stick") && collision.collider.tag != "Ground" )
         {
             GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePosition;
-            freeze = true;
+            Freeze = true;
         }
         if(Input.GetButtonDown("Sprint") && collision.collider.tag == "Ground")
         {
@@ -143,6 +166,11 @@ public class PlayerController : MonoBehaviour {
         //    currentVel = Vector3.zero;
 
         GetComponent<Rigidbody>().velocity = currentVel + kickVel;
+    }
+
+    void Reload()
+    {
+        _ammo = MaxAmmo;
     }
 
     IEnumerator ShootCooldown()
