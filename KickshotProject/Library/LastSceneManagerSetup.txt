@@ -1,4 +1,4 @@
 sceneSetups:
-- path: Assets/TestingScene.unity
+- path: Assets/JoeysLevel.unity
   isLoaded: 1
   isActive: 1
