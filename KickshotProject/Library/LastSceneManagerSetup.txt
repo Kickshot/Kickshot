@@ -1,4 +1,4 @@
 sceneSetups:
-- path: Assets/Prototype_Map_002.unity
+- path: Assets/JoeysLevel.unity
   isLoaded: 1
   isActive: 1

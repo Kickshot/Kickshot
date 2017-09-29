@@ -32,9 +32,23 @@ public class PlayerManager : MonoBehaviour
         LevelTimer timer = GetComponent<LevelTimer>();
 
         timer.Reset();
-        // Player.GetComponent<PlayerController>().Reset()      // put something like this here when it is written
-        Player.transform.position = StartPoint.transform.position;
+        Player.GetComponent<PlayerController>().ResetPlayerVars();
 
+        Vector3 startLoc;
+        RaycastHit groundHit = new RaycastHit();
+        if(Physics.Raycast(StartPoint.transform.position, Vector3.down, out groundHit))
+        {
+            float yOffset = Player.GetComponent<CapsuleCollider>().height * Player.transform.lossyScale.y / 2;
+            startLoc = new Vector3(groundHit.point.x, groundHit.point.y, groundHit.point.z);
+            Player.transform.position = startLoc;
+        }
+
+        else
+        {
+            startLoc = StartPoint.transform.position;
+        }
+        Player.transform.position = startLoc;
+        
         timer.Reset();
         timer.StartCountdown();
     }

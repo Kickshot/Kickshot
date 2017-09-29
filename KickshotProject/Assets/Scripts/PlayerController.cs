@@ -110,6 +110,15 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
+    public void ResetPlayerVars()
+    {
+        GetComponent<Rigidbody>().velocity = Vector3.zero;
+
+        StopCoroutine("ShootCooldown");
+        Reload();
+
+    }
+
     private void OnCollisionStay(Collision collision)
     {
         if(Input.GetButton("Stick") && collision.collider.tag != "Ground" )
