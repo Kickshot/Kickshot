@@ -16,6 +16,8 @@ public class WallRun : MonoBehaviour
     private Vector3 m_Direction;
     private float m_CurrentWallJumpTime;
     private float m_Speed;
+    private bool bDirectionOfWallRunRight;
+    private bool bDirectionOfWallRunLeft;
 
     private UnityStandardAssets.Characters.FirstPerson.RigidbodyFirstPersonController m_FPC;
     private PlayerController m_PlayerController;
@@ -26,30 +28,41 @@ public class WallRun : MonoBehaviour
     {
         m_WallJumping = false;
         m_WallRunning = false;
+        bDirectionOfWallRunRight = false;
+        bDirectionOfWallRunLeft = false;
         m_FPC = GetComponent<UnityStandardAssets.Characters.FirstPerson.RigidbodyFirstPersonController>();
         m_PlayerController = GetComponent<PlayerController>();
     }
 
-    void SnapToWall(bool right, RaycastHit hitInfo)
+    void SnapToWall(bool right,bool rightDirection, RaycastHit hitInfo)
     {
+        SendMessageUpwards("Reload");
 
         float angle = 90;
+        float rotationAngle = 90;
+
         m_Right = right;
 
         if (!right)
             angle = -90;
 
-        //m_FPS.m_GravityMultiplier = m_Gravity;
-        // m_FPS.m_wallRunning = true;
+        if (!rightDirection)
+            rotationAngle = -90;
+
         m_FPC.m_RigidBody.useGravity = false;
         m_FPC.m_RigidBody.velocity = new Vector3(0, 0, 0);
         m_FPC.m_WallRunning = true;
+
         Vector3 wallNormal = hitInfo.normal;
         m_WallNormal = wallNormal;
         Vector3 rotatedVector = Quaternion.Euler(0, angle, 0) * wallNormal;
         Quaternion newRotaton = Quaternion.LookRotation(rotatedVector);
         m_Direction = rotatedVector;
-        m_RotationObject.transform.rotation = newRotaton;
+
+        Vector3 rotatedVectorDirection = Quaternion.Euler(0, rotationAngle, 0) * wallNormal;
+        Quaternion newRotatonDirection = Quaternion.LookRotation(rotatedVectorDirection);
+        m_RotationObject.transform.rotation = newRotatonDirection;
+
         this.transform.position = rotatedVector * (Time.deltaTime * m_Speed) + this.transform.position;
   
         m_WallRunning = true;
@@ -67,45 +80,43 @@ public class WallRun : MonoBehaviour
         RaycastHit leftRayHitInfo;
         RaycastHit frontRayHitInfo;
 
+       
+
         if(!m_WallRunning)
         {
             Vector3 playerVel = m_FPC.m_RigidBody.velocity;
             m_Speed = playerVel.magnitude;
-        }
 
+            Vector3 velocity = m_FPC.m_RigidBody.velocity.normalized;
+            float momentumAngleRight = Vector3.SignedAngle(this.transform.right, velocity, Vector3.up);
+            float momentumAngleLeft = Vector3.SignedAngle(-this.transform.right, velocity, Vector3.up);
+            Debug.Log(momentumAngleLeft);
+
+            bDirectionOfWallRunRight = (momentumAngleRight < 0);
+            bDirectionOfWallRunLeft = (momentumAngleLeft < 0);
+
+        }
 
         if (!m_PlayerController.Freeze)
         {
             if (!m_FPC.Grounded)
             {
-                
 
                 if (Physics.Raycast(m_RotationObject.transform.position, m_RotationObject.transform.right, out rightRayHitInfo, m_RayDistance))
                 {
+
                     if (!Physics.Raycast(m_RotationObject.transform.position, m_RotationObject.transform.forward, out frontRayHitInfo, m_RayDistance))
-                    {
-                        SnapToWall(true, rightRayHitInfo);
-                        SendMessageUpwards("Reload");
-                    }
+                        SnapToWall(bDirectionOfWallRunRight,true, rightRayHitInfo);
                     else
-                    {
-                        SnapToWall(true, frontRayHitInfo);
-                        SendMessageUpwards("Reload");
-                    }
+                        SnapToWall(bDirectionOfWallRunRight,true, frontRayHitInfo);
 
                 }
                 else if (Physics.Raycast(m_RotationObject.transform.position, -m_RotationObject.transform.right, out leftRayHitInfo, m_RayDistance))
                 {
                     if (!Physics.Raycast(m_RotationObject.transform.position, m_RotationObject.transform.forward, out frontRayHitInfo, m_RayDistance))
-                    {
-                        SnapToWall(false, leftRayHitInfo);
-                        SendMessageUpwards("Reload");
-                    }
+                        SnapToWall(bDirectionOfWallRunLeft,false, leftRayHitInfo);
                     else
-                    {
-                        SnapToWall(false, frontRayHitInfo);
-                        SendMessageUpwards("Reload");
-                    }
+                        SnapToWall(bDirectionOfWallRunLeft,false, frontRayHitInfo);
                 }
                 else
                 {
@@ -126,8 +137,6 @@ public class WallRun : MonoBehaviour
         }
         
 
-        /******************************* TEAM NEEDS TO TALK ABOUT WHAT KEYS ARE WHAT ****************************/
-        // TODO CHANGE INPUT KEY
         if (Input.GetButtonDown("Jump") && m_WallRunning == true && m_WallJumping == false)
         {
             Vector3 direction = m_WallNormal + m_Direction;
