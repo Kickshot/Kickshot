@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerManager : MonoBehaviour
 {
@@ -10,6 +11,8 @@ public class PlayerManager : MonoBehaviour
 
     public GameObject StartPoint;
     public GameObject FinishPoint;
+
+    private GameObject _finish_text;
     
 
     void Start()
@@ -20,6 +23,8 @@ public class PlayerManager : MonoBehaviour
         
         StartPoint = GameObject.FindGameObjectWithTag("Start");
         FinishPoint = GameObject.FindGameObjectWithTag("Finish");
+
+        _finish_text = GameObject.Find("FinishText");
 
         Died();
     }
@@ -56,6 +61,7 @@ public class PlayerManager : MonoBehaviour
 
     public void LevelFinished()
     {
-        print("Beat the Level");
+        Text t = _finish_text.GetComponent<Text>();
+        t.color = new Color(0, 0, 0, 1);
     }
 }

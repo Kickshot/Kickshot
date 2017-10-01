@@ -90,7 +90,7 @@ public class WallRun : MonoBehaviour
             Vector3 velocity = m_FPC.m_RigidBody.velocity.normalized;
             float momentumAngleRight = Vector3.SignedAngle(this.transform.right, velocity, Vector3.up);
             float momentumAngleLeft = Vector3.SignedAngle(-this.transform.right, velocity, Vector3.up);
-            Debug.Log(momentumAngleLeft);
+            //Debug.Log(momentumAngleLeft);
 
             bDirectionOfWallRunRight = (momentumAngleRight < 0);
             bDirectionOfWallRunLeft = (momentumAngleLeft < 0);
