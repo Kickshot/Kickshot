@@ -55,7 +55,7 @@ public class PlayerManager : MonoBehaviour
         Player.transform.position = startLoc;
         
         timer.Reset();
-        timer.StartCountdown();
+        //timer.StartCountdown();
     }
 
 

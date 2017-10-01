@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 using UnityStandardAssets.CrossPlatformInput;
 
+
 namespace UnityStandardAssets.Characters.FirstPerson
 {
     [RequireComponent(typeof (Rigidbody))]
@@ -63,7 +64,6 @@ namespace UnityStandardAssets.Characters.FirstPerson
             }
 #endif
         }
-
 
         [Serializable]
         public class AdvancedSettings
@@ -220,13 +220,16 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
         private Vector2 GetInput()
         {
-            
             Vector2 input = new Vector2
                 {
                     x = CrossPlatformInputManager.GetAxis("Horizontal"),
                     y = CrossPlatformInputManager.GetAxis("Vertical")
                 };
-			movementSettings.UpdateDesiredTargetSpeed(input);
+
+            if (input != Vector2.zero)
+                GameObject.FindGameObjectWithTag("GameController").SendMessage("Countdown");
+
+            movementSettings.UpdateDesiredTargetSpeed(input);
             return input;
         }
 

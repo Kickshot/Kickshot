@@ -86,6 +86,11 @@ public class PlayerController : MonoBehaviour {
             GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePosition;
             Freeze = true;
         }
+
+        //if(Input.GetKey(KeyCode.R))
+        //{
+        //    GameObject.FindGameObjectWithTag("GameController").GetComponent<PlayerManager>().Died();
+        //}
         
     }
 
