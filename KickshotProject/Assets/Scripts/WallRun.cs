@@ -34,7 +34,7 @@ public class WallRun : MonoBehaviour
         m_PlayerController = GetComponent<PlayerController>();
     }
 
-    void SnapToWall(bool right,bool rightDirection, RaycastHit hitInfo)
+    void SnapToWall(bool right, bool rightDirection, RaycastHit hitInfo)
     {
         SendMessageUpwards("Reload");
 
@@ -64,7 +64,7 @@ public class WallRun : MonoBehaviour
         m_RotationObject.transform.rotation = newRotatonDirection;
 
         this.transform.position = rotatedVector * (Time.deltaTime * m_Speed) + this.transform.position;
-  
+
         m_WallRunning = true;
         m_PlayerController.WallRun = true;
     }
@@ -75,14 +75,14 @@ public class WallRun : MonoBehaviour
 
         m_RotationObject.transform.position = this.transform.position;
 
-        
+
         RaycastHit rightRayHitInfo;
         RaycastHit leftRayHitInfo;
         RaycastHit frontRayHitInfo;
 
-       
 
-        if(!m_WallRunning)
+
+        if (!m_WallRunning)
         {
             Vector3 playerVel = m_FPC.m_RigidBody.velocity;
             m_Speed = playerVel.magnitude;
@@ -104,19 +104,24 @@ public class WallRun : MonoBehaviour
 
                 if (Physics.Raycast(m_RotationObject.transform.position, m_RotationObject.transform.right, out rightRayHitInfo, m_RayDistance))
                 {
+                    //TODO Get rid of this quick fix.
+
 
                     if (!Physics.Raycast(m_RotationObject.transform.position, m_RotationObject.transform.forward, out frontRayHitInfo, m_RayDistance))
-                        SnapToWall(bDirectionOfWallRunRight,true, rightRayHitInfo);
+                        SnapToWall(bDirectionOfWallRunRight, true, rightRayHitInfo);
                     else
-                        SnapToWall(bDirectionOfWallRunRight,true, frontRayHitInfo);
+                        SnapToWall(bDirectionOfWallRunRight, true, frontRayHitInfo);
+
 
                 }
                 else if (Physics.Raycast(m_RotationObject.transform.position, -m_RotationObject.transform.right, out leftRayHitInfo, m_RayDistance))
                 {
+
                     if (!Physics.Raycast(m_RotationObject.transform.position, m_RotationObject.transform.forward, out frontRayHitInfo, m_RayDistance))
-                        SnapToWall(bDirectionOfWallRunLeft,false, leftRayHitInfo);
+                        SnapToWall(bDirectionOfWallRunLeft, false, leftRayHitInfo);
                     else
-                        SnapToWall(bDirectionOfWallRunLeft,false, frontRayHitInfo);
+                        SnapToWall(bDirectionOfWallRunLeft, false, frontRayHitInfo);
+
                 }
                 else
                 {
@@ -135,7 +140,7 @@ public class WallRun : MonoBehaviour
                 m_PlayerController.WallRun = false;
             }
         }
-        
+
 
         if (Input.GetButtonDown("Jump") && m_WallRunning == true && m_WallJumping == false)
         {
