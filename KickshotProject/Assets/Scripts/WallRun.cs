@@ -104,19 +104,27 @@ public class WallRun : MonoBehaviour
 
                 if (Physics.Raycast(m_RotationObject.transform.position, m_RotationObject.transform.right, out rightRayHitInfo, m_RayDistance))
                 {
+                    //TODO Get rid of this quick fix.
+                    if (rightRayHitInfo.collider.gameObject.tag != "finish")
+                    {
 
-                    if (!Physics.Raycast(m_RotationObject.transform.position, m_RotationObject.transform.forward, out frontRayHitInfo, m_RayDistance))
-                        SnapToWall(bDirectionOfWallRunRight,true, rightRayHitInfo);
-                    else
-                        SnapToWall(bDirectionOfWallRunRight,true, frontRayHitInfo);
+                        if (!Physics.Raycast(m_RotationObject.transform.position, m_RotationObject.transform.forward, out frontRayHitInfo, m_RayDistance))
+                            SnapToWall(bDirectionOfWallRunRight, true, rightRayHitInfo);
+                        else
+                            SnapToWall(bDirectionOfWallRunRight, true, frontRayHitInfo);
+                    }
 
                 }
                 else if (Physics.Raycast(m_RotationObject.transform.position, -m_RotationObject.transform.right, out leftRayHitInfo, m_RayDistance))
                 {
-                    if (!Physics.Raycast(m_RotationObject.transform.position, m_RotationObject.transform.forward, out frontRayHitInfo, m_RayDistance))
-                        SnapToWall(bDirectionOfWallRunLeft,false, leftRayHitInfo);
-                    else
-                        SnapToWall(bDirectionOfWallRunLeft,false, frontRayHitInfo);
+                    //TODO Get rid of this quick fix.
+                    if (rightRayHitInfo.collider.gameObject.tag != "finish")
+                    {
+                        if (!Physics.Raycast(m_RotationObject.transform.position, m_RotationObject.transform.forward, out frontRayHitInfo, m_RayDistance))
+                            SnapToWall(bDirectionOfWallRunLeft, false, leftRayHitInfo);
+                        else
+                            SnapToWall(bDirectionOfWallRunLeft, false, frontRayHitInfo);
+                    }
                 }
                 else
                 {
