@@ -94,7 +94,6 @@ public class WallRun : MonoBehaviour
 
             bDirectionOfWallRunRight = (momentumAngleRight < 0);
             bDirectionOfWallRunLeft = (momentumAngleLeft < 0);
-
         }
 
         if (!m_PlayerController.Freeze)
@@ -120,7 +119,6 @@ public class WallRun : MonoBehaviour
                 {
                     if (leftRayHitInfo.collider.gameObject.name != "Finish")
                     {
-
                         if (!Physics.Raycast(m_RotationObject.transform.position, m_RotationObject.transform.forward, out frontRayHitInfo, m_RayDistance))
                             SnapToWall(bDirectionOfWallRunLeft, false, leftRayHitInfo);
                         else
