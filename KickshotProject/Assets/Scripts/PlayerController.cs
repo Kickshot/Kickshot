@@ -133,7 +133,10 @@ public class PlayerController : MonoBehaviour {
         }
         if(Input.GetButtonDown("Sprint") && collision.collider.tag == "Ground")
         {
-            ApplyKick(new Vector3(_view_camera.forward.normalized.x, 0.4f, _view_camera.forward.normalized.z) );
+            //ApplyKick(new Vector3(_view_camera.forward.normalized.x, 0.4f, _view_camera.forward.normalized.z) );
+            Vector3 norm = transform.forward * 0.8f;
+            ApplyKick(new Vector3(norm.x, 0.4f, norm.z));
+
         }
     }
 
