@@ -11,11 +11,16 @@ public class CPMPlayer : MonoBehaviour {
 	public float yMouseSensitivity = 30.0f;
 	public float gravity  = 20.0f;
 	public float friction  = 6f;
-	public float moveSpeed = 7f;
-	public float GroundAcceleration = 14f;
+	public float moveSpeed = 10f;
+	public float GroundAcceleration = 10f;
 	public float GroundDeacceleration = 10f;
-	public float AirAcceleration = 10f;
+	public float AirAcceleration = 0f;
+	public float airControl = 0.3f;
+	public float AirDecceleration = 10f;
+	public float AirStrafeAcceleration = 2f;
 	public float jumpSpeed = 8.0f;
+	public float maxAirSpeed = 25f;
+	public bool autoBunnyHop = true;
 
 	private float distToGround;
 	private float Overclip = 1.001f;
@@ -82,7 +87,7 @@ public class CPMPlayer : MonoBehaviour {
 
 		float drop = 0;
 		// apply ground friction
-		if (controller.isGrounded) {
+		if (controller.isGrounded && !Input.GetButton("Jump")) {
 			control = speed < GroundDeacceleration ? GroundDeacceleration : speed;
 			drop += control * friction * Time.deltaTime;
 		}
@@ -103,7 +108,10 @@ public class CPMPlayer : MonoBehaviour {
 	// Handles user intended acceleration
 	private void Accelerate( Vector3 wishdir, float wishspeed, float accel ) {
 		float addspeed, accelspeed, currentspeed;
-
+		// Make sure we don't go over our speed limit...
+		if (wishspeed > maxAirSpeed) {
+			wishspeed = maxAirSpeed;
+		}
 		currentspeed = Vector3.Dot (velocity, wishdir);
 		addspeed = wishspeed - currentspeed;
 		if (addspeed <= 0) {
@@ -113,7 +121,7 @@ public class CPMPlayer : MonoBehaviour {
 		if (accelspeed > addspeed) {
 			accelspeed = addspeed;
 		}
-
+			
 		velocity.x += accelspeed * wishdir.x;
 		velocity.z += accelspeed * wishdir.z;
 	}
@@ -144,6 +152,7 @@ public class CPMPlayer : MonoBehaviour {
 		Vector3		wishdir;
 		float		wishspeed;
 		float		scale;
+		float 		accel;
 
 		Friction();
 
@@ -166,8 +175,21 @@ public class CPMPlayer : MonoBehaviour {
 		wishspeed = wishdir.magnitude;
 		wishspeed *= scale;
 
+		float wishspeed2 = wishspeed;
+		if (Vector3.Dot (velocity, wishdir) < 0) {
+			accel = AirDecceleration;
+		} else {
+			accel = AirAcceleration;
+		}
+		// If the player is ONLY strafing left or right
+		if(Mathf.Abs(command.z) < 0.01 && Mathf.Abs(command.x) > 0.01) {
+			accel = AirStrafeAcceleration;
+		}
 		// not on ground, so little effect on velocity
-		Accelerate (wishdir, wishspeed, AirAcceleration);
+		Accelerate (wishdir, wishspeed, accel);
+		if (airControl > 0) {
+			AirControl (wishdir, wishspeed2);
+		}
 
 		// we may have a ground plane that is very steep, even
 		// though we don't have a groundentity
@@ -181,7 +203,7 @@ public class CPMPlayer : MonoBehaviour {
 
 	// Handles jumping.
 	private bool CheckJump() {
-		if (controller.isGrounded && Input.GetButtonDown ("Jump")) {
+		if (controller.isGrounded && ( autoBunnyHop && Input.GetButton ("Jump") || !autoBunnyHop && Input.GetButtonDown ("Jump") ) ) {
 			velocity.y = jumpSpeed;
 			return true;
 		}
@@ -238,5 +260,39 @@ public class CPMPlayer : MonoBehaviour {
 
 		// don't decrease velocity when going up or down a slope
 		velocity = Vector3.Normalize(velocity)*vel;
+	}
+
+	private void AirControl(Vector3 wishdir, float wishspeed)
+	{
+		float zspeed;
+		float speed;
+		float dot;
+		float k;
+		int i;
+
+		// Can't control movement if not moving forward or backward
+		if (Mathf.Abs (wishdir.z) < 0.001 || Mathf.Abs (wishspeed) < 0.001) {
+			return;
+		}
+		zspeed = velocity.y;
+		velocity.y = 0;
+		/* Next two lines are equivalent to idTech's VectorNormalize() */
+		speed = velocity.magnitude;
+		velocity.Normalize();
+
+		dot = Vector3.Dot(velocity, wishdir);
+		k = 32;
+		k *= airControl * dot * dot * Time.deltaTime;
+
+		// Change direction while slowing down
+		if (dot > 0)
+		{
+			velocity = velocity * speed + wishdir * k;
+			velocity.Normalize();
+		}
+
+		velocity.x *= speed;
+		velocity.y = zspeed; // Note this line
+		velocity.z *= speed;
 	}
 }
