@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class SourcePlayer : MonoBehaviour {
+	public AudioClip jumpGrunt;
+	public AudioClip painGrunt;
 	public Vector3 velocity;
 	public Transform  view;
 	public Vector3 viewOffset = new Vector3(0f,0.6f,0f);
@@ -19,10 +21,11 @@ public class SourcePlayer : MonoBehaviour {
 	public float airDeccelerate = 10f;
 	public float walkSpeed = 10f;
 	public float jumpSpeed = 8f;
-	public float fallPunchThreshold = 2f;
-	public float maxSafeFallSpeed = 10f;
-	public float stepSize = 0.8f;
+	public float fallPunchThreshold = 8f;
+	public float maxSafeFallSpeed = 15f;
 
+	private float lastGrunt;
+	private float stepSize = 0.5f;
 	private float rotX;
 	private float rotY;
 	private float fallVelocity;
@@ -36,7 +39,8 @@ public class SourcePlayer : MonoBehaviour {
 	void Start() {
 		controller = GetComponent<CharacterController> ();
 		distToGround = GetComponent<Collider>().bounds.extents.y/2f;
-		radius = GetComponent<CapsuleCollider> ().radius;
+		radius = controller.radius;
+		stepSize = controller.stepOffset;
 	}
 	void Update() {
 		if (Cursor.lockState == CursorLockMode.None) {
@@ -69,6 +73,8 @@ public class SourcePlayer : MonoBehaviour {
 			}
 		} else {
 			groundEntity = null;
+			groundFriction = 1f;
+			groundNormal = new Vector3 (0f, 1f, 0f);
 			//groundVelocity = new Vector3 (0f, 0f, 0f);
 		}
 
@@ -113,14 +119,19 @@ public class SourcePlayer : MonoBehaviour {
 	}
 	private void CheckJumpButton() {
 		if (groundEntity && Vector3.Angle(groundNormal,new Vector3(0f,1f,0f)) < controller.slopeLimit ) {
+			if (Time.time - lastGrunt > 0.3) {
+				AudioSource.PlayClipAtPoint (jumpGrunt, transform.position);
+				lastGrunt = Time.time;
+			}
 			velocity.y = jumpSpeed;
 			groundEntity = null;
 		}
 		//TODO: Gotta implement forward speed bonuses: https://github.com/ValveSoftware/source-sdk-2013/blob/56accfdb9c4abd32ae1dc26b2e4cc87898cf4dc1/sp/src/game/shared/gamemovement.cpp#L2468
 	}
 	private void CheckFalling() {
+		//Debug.Log (fallVelocity);
 		// this function really deals with landing, not falling, so early out otherwise
-		if ( groundEntity == null || fallVelocity <= 0f )
+		if ( !controller.isGrounded || fallVelocity <= 0f )
 			return;
 
 		if ( fallVelocity >= fallPunchThreshold ) {
@@ -147,7 +158,8 @@ public class SourcePlayer : MonoBehaviour {
 				// If they hit the ground going this fast they may take damage (and die).
 				//
 				//bAlive = MoveHelper( )->PlayerFallingDamage();
-				Debug.Log("Ouch! Fall damage!");
+				AudioSource.PlayClipAtPoint (painGrunt, transform.position);
+				GetComponent<Damagable>().Damage( (fallVelocity - maxSafeFallSpeed)*5f );
 				fvol = 1.0f;
 			} else if ( fallVelocity > maxSafeFallSpeed / 2 ) {
 				fvol = 0.85f;
@@ -299,7 +311,6 @@ public class SourcePlayer : MonoBehaviour {
 		velocity += accelspeed * wishdir;
 	}
 	private void StayOnGround() {
-		Vector3 start = transform.position;
 		RaycastHit hit;
 		if (Physics.SphereCast (transform.position+controller.center, radius, -transform.up, out hit, distToGround + stepSize + 0.1f)) {
 			// Snap the player to where the spherecast hit.
@@ -481,7 +492,7 @@ public class SourcePlayer : MonoBehaviour {
 		//AngleVectors (mv->m_vecViewAngles, &m_vecForward, &m_vecRight, &m_vecUp );  // Determine movement angles
 
 		// If we are not on ground, store off how fast we are moving down
-		if ( groundEntity == null ) {
+		if ( groundEntity == null && velocity.y < 0 ) {
 			fallVelocity = -velocity.y;
 		}
 
@@ -490,10 +501,21 @@ public class SourcePlayer : MonoBehaviour {
 	}
 
 	void OnControllerColliderHit(ControllerColliderHit hit ) {
-		// slide along the surface, but only if we can't walk on it.
-		// It should work properly if we clipped the velocity even when we can walk on the surface,
-		// but it was coming up with the wrong speeds for some slopes.
-		// FIXME?
+		// Works with stairs, because it ignores the capsule's round bottom. But then little cracks act like you've slammed into them sideways.
+		// Feels really bad on everything except stairs.
+		/* RaycastHit check;
+		if (Physics.Raycast (transform.position, Vector3.Normalize (hit.point - transform.position), out check, controller.height*2f)) {
+			// If the hit is something that seems like it might be a stair in a staircase, ignore it.
+			Debug.Log( Mathf.Abs(Vector3.Angle(check.normal, new Vector3 (0f, 1f, 0f))-90f) );
+			if ((hit.point - transform.position).y < stepSize && Mathf.Abs(Vector3.Angle(check.normal, new Vector3 (0f, 1f, 0f))-90f) < 0.01) {
+				return;
+			}
+			// If it's something that we don't consider solid ground, clip our velocity on it.
+			if (Vector3.Angle (check.normal, new Vector3 (0f, 1f, 0f)) > controller.slopeLimit) {
+				velocity = ClipVelocity (velocity, check.normal);
+			}
+		} */
+
 		if (Vector3.Angle (hit.normal, new Vector3 (0f, 1f, 0f)) > controller.slopeLimit) {
 			velocity = ClipVelocity (velocity, hit.normal);
 		}
