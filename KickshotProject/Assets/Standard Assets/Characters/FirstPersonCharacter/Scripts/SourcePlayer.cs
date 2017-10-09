@@ -11,7 +11,7 @@ public class SourcePlayer : MonoBehaviour {
 	public float xMouseSensitivity = 30.0f;
 	public float yMouseSensitivity = 30.0f;
 	public Vector3 gravity = new Vector3(0,-20f,0);
-	public float groundFriction = 6f;
+	public float baseFriction = 6f;
 	public float maxSpeed = 30f;
 	public float groundAccelerate = 10f;
 	public float groundDecellerate = 10f;
@@ -30,6 +30,7 @@ public class SourcePlayer : MonoBehaviour {
 	private GameObject groundEntity = null;
 	private Vector3 groundNormal = new Vector3(0f,1f,0f);
 	private Vector3 groundVelocity;
+	private float groundFriction;
 	private float distToGround;
 	private float radius;
 	void Start() {
@@ -61,7 +62,9 @@ public class SourcePlayer : MonoBehaviour {
 			GroundEntity check = groundEntity.GetComponent<GroundEntity> ();
 			if (check != null) {
 				groundVelocity = check.velocity;
+				groundFriction = check.frictionMultiplier;
 			} else {
+				groundFriction = 1f;
 				groundVelocity = new Vector3 (0f, 0f, 0f);
 			}
 		} else {
@@ -183,7 +186,7 @@ public class SourcePlayer : MonoBehaviour {
 		drop = 0;
 		// apply ground friction
 		if (groundEntity != null && !Input.GetButton("Jump")) { // On an entity that is the ground
-			friction = groundFriction * 1.25f; // * player->m_surfaceFriction; Not sure what m_surfaceFriction is, but it's set to 1.25f in source.
+			friction = baseFriction * groundFriction;
 
 			// Bleed off some speed, but if we have less than the bleed
 			//  threshold, bleed the threshold amount.
@@ -226,6 +229,10 @@ public class SourcePlayer : MonoBehaviour {
 		// Was jump button pressed?
 		if (Input.GetButton("Jump")) {
 			CheckJumpButton();
+		}
+		// Make sure we're standing on solid ground
+		if (Vector3.Angle (groundNormal, new Vector3 (0f, 1f, 0f)) > controller.slopeLimit) {
+			groundEntity = null;
 		}
 		// Friction is handled before we add in any base velocity. That way, if we are on a conveyor, 
 		//  we don't slow when standing still, relative to the conveyor.
@@ -282,7 +289,7 @@ public class SourcePlayer : MonoBehaviour {
 		}
 
 		// Determine acceleration speed after acceleration
-		accelspeed = accel * wishspeed * Time.deltaTime * 1.25f; //* player->m_surfaceFriction; == 1.25f in source
+		accelspeed = accel * wishspeed * Time.deltaTime * groundFriction;
 
 		// Cap it
 		if (accelspeed > addspeed) {
@@ -321,7 +328,7 @@ public class SourcePlayer : MonoBehaviour {
 		}
 
 		// Determine amount of accleration.
-		accelspeed = accel * Time.deltaTime * wishspeed * 1.25f; // * player->m_surfaceFriction;
+		accelspeed = accel * Time.deltaTime * wishspeed * groundFriction;
 
 		// Cap at addspeed
 		if (accelspeed > addspeed) {
