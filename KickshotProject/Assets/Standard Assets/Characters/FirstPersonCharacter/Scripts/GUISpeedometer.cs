@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class GUISpeedometer : MonoBehaviour {
-	private CPMPlayer body;
+	private SourcePlayer body;
 	void Start () {
-		body = GetComponent<CPMPlayer> ();
+		body = GetComponent<SourcePlayer> ();
 	}
 	void OnGUI () {
 		Vector3 speed = body.velocity;
