@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿// Mostly this is built directly from [source-sdk-2013](https://github.com/ValveSoftware/source-sdk-2013/blob/56accfdb9c4abd32ae1dc26b2e4cc87898cf4dc1/sp/src/game/shared/gamemovement.cpp)
+// Though there's quite a few edits or adjustments to make it work with unity's character controller.
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -19,7 +21,7 @@ public class SourcePlayer : MonoBehaviour {
 	public float jumpSpeed = 8f;
 	public float fallPunchThreshold = 2f;
 	public float maxSafeFallSpeed = 10f;
-	public float stepSize = 0.5f;
+	public float stepSize = 0.8f;
 
 	private float rotX;
 	private float rotY;
@@ -27,6 +29,7 @@ public class SourcePlayer : MonoBehaviour {
 	private CharacterController controller;
 	private GameObject groundEntity = null;
 	private Vector3 groundNormal = new Vector3(0f,1f,0f);
+	private Vector3 groundVelocity;
 	private float distToGround;
 	private float radius;
 	void Start() {
@@ -51,15 +54,52 @@ public class SourcePlayer : MonoBehaviour {
 		view.rotation = Quaternion.Euler(rotX, rotY, 0); // Rotates the camera
 
 		RaycastHit hit;
-		if (Physics.SphereCast (transform.position+controller.center, radius, -transform.up, out hit, distToGround + stepSize + 0.1f)) {
+		if (Physics.SphereCast (transform.position+controller.center, radius, -transform.up, out hit, distToGround + 0.1f)) {
 			// Snap the player to where the spherecast hit.
 			groundEntity = hit.collider.gameObject;
 			groundNormal = hit.normal;
+			GroundEntity check = groundEntity.GetComponent<GroundEntity> ();
+			if (check != null) {
+				groundVelocity = check.velocity;
+			} else {
+				groundVelocity = new Vector3 (0f, 0f, 0f);
+			}
 		} else {
 			groundEntity = null;
+			//groundVelocity = new Vector3 (0f, 0f, 0f);
 		}
 
 		PlayerMove();
+	}
+	// Slide off of impacting surface
+	private Vector3 ClipVelocity( Vector3 vel, Vector3 impactNormal) {
+		float backoff;
+		backoff = Vector3.Dot (vel, impactNormal);
+
+		if ( backoff < 0 ) {
+			backoff *= 1.001f;
+		} else {
+			backoff /= 1.001f;
+		}
+		return vel - (impactNormal*backoff);
+	}
+	// This command, in a nutshell, scales player input in order to take into account sqrt(2) distortions
+	// from walking diagonally. It also multiplies the answer by the walkspeed for convenience.
+	private Vector3 GetCommandVelocity() {
+		float max;
+		float total;
+		float scale;
+		Vector3 command = new Vector3 (Input.GetAxisRaw ("Horizontal"), 0, Input.GetAxisRaw ("Vertical"));
+
+		max = Mathf.Max (Mathf.Abs(command.z), Mathf.Abs(command.x));
+		if (max <= 0) {
+			return new Vector3 (0f, 0f, 0f);
+		}
+
+		total = Mathf.Sqrt(command.z * command.z + command.x * command.x);
+		scale = max / total;
+
+		return command*scale*walkSpeed;
 	}
 	// Ask valve why they split up the gravity calls like this
 	private void StartGravity() {
@@ -104,6 +144,7 @@ public class SourcePlayer : MonoBehaviour {
 				// If they hit the ground going this fast they may take damage (and die).
 				//
 				//bAlive = MoveHelper( )->PlayerFallingDamage();
+				Debug.Log("Ouch! Fall damage!");
 				fvol = 1.0f;
 			} else if ( fallVelocity > maxSafeFallSpeed / 2 ) {
 				fvol = 0.85f;
@@ -225,9 +266,9 @@ public class SourcePlayer : MonoBehaviour {
 		wishspd = wishspeed;
 
 		// Cap speed
-		//if (wishspd > GetAirSpeedCap ()) {
-		//	wishspd = GetAirSpeedCap ();
-		//}
+		if (wishspd > maxSpeed) {
+			wishspd = maxSpeed;
+		}
 
 		// Determine veer amount
 		currentspeed = Vector3.Dot(velocity, wishdir);
@@ -309,8 +350,9 @@ public class SourcePlayer : MonoBehaviour {
 		oldground = groundEntity;
 
 		// Copy movement amounts
-		fmove = Input.GetAxisRaw("Vertical") * walkSpeed;
-		smove = Input.GetAxisRaw("Horizontal") * walkSpeed;
+		Vector3 command = GetCommandVelocity();
+		fmove = command.z; // Forward/backward
+		smove = command.x; // Left/right
 
 		// Zero out z components of movement vectors
 		forward.y = 0;
@@ -343,6 +385,7 @@ public class SourcePlayer : MonoBehaviour {
 
 		// Add in any base velocity to the current velocity.
 		//VectorAdd (mv->m_vecVelocity, player->GetBaseVelocity(), mv->m_vecVelocity );
+		velocity += groundVelocity;
 
 		spd = velocity.magnitude;
 
@@ -356,6 +399,7 @@ public class SourcePlayer : MonoBehaviour {
 		controller.Move (velocity * Time.deltaTime);
 		// Now pull the base velocity back out.   Base velocity is set if you are on a moving object, like a conveyor (or maybe another monster?)
 		// VectorSubtract( mv->m_vecVelocity, player->GetBaseVelocity(), mv->m_vecVelocity );
+		velocity -= groundVelocity;
 
 		StayOnGround();
 	}
@@ -373,8 +417,9 @@ public class SourcePlayer : MonoBehaviour {
 		up = transform.up;
 
 		// Copy movement amounts
-		fmove = Input.GetAxisRaw("Vertical") * walkSpeed;
-		smove = Input.GetAxisRaw("Horizontal") * walkSpeed;
+		Vector3 command = GetCommandVelocity();
+		fmove = command.z; // Forward/backward
+		smove = command.x; // Left/right
 
 		// Zero out up/down components of movement vectors
 		forward.y = 0;
@@ -405,9 +450,12 @@ public class SourcePlayer : MonoBehaviour {
 
 		// Add in any base velocity to the current velocity.
 		//VectorAdd(mv->m_vecVelocity, player->GetBaseVelocity(), mv->m_vecVelocity );
+		velocity += groundVelocity;
 
 		//TryPlayerMove();
 		controller.Move(velocity * Time.deltaTime);
+
+		velocity -= groundVelocity;
 
 		// Now pull the base velocity back out.   Base velocity is set if you are on a moving object, like a conveyor (or maybe another monster?)
 		//VectorSubtract( mv->m_vecVelocity, player->GetBaseVelocity(), mv->m_vecVelocity );
@@ -432,5 +480,15 @@ public class SourcePlayer : MonoBehaviour {
 
 		// Handle movement modes.
 		FullWalkMove();
+	}
+
+	void OnControllerColliderHit(ControllerColliderHit hit ) {
+		// slide along the surface, but only if we can't walk on it.
+		// It should work properly if we clipped the velocity even when we can walk on the surface,
+		// but it was coming up with the wrong speeds for some slopes.
+		// FIXME?
+		if (Vector3.Angle (hit.normal, new Vector3 (0f, 1f, 0f)) > controller.slopeLimit) {
+			velocity = ClipVelocity (velocity, hit.normal);
+		}
 	}
 }

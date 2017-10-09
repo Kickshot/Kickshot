@@ -1,4 +1,4 @@
-﻿/**/﻿
+﻿/* Don't use this, it's actually inaccurate and kinda garbage */﻿
 
 using UnityEngine;
 using System.Collections;
