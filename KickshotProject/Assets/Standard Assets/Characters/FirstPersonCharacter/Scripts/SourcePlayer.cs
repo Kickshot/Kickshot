@@ -59,7 +59,7 @@ public class SourcePlayer : MonoBehaviour {
 		view.rotation = Quaternion.Euler(rotX, rotY, 0); // Rotates the camera
 
 		RaycastHit hit;
-		if (Physics.SphereCast (transform.position+controller.center, radius, -transform.up, out hit, distToGround + 0.1f)) {
+		if (velocity.y <= 0 && Physics.SphereCast (transform.position+controller.center, radius, -transform.up, out hit, distToGround + 0.1f)) {
 			// Snap the player to where the spherecast hit.
 			groundEntity = hit.collider.gameObject;
 			groundNormal = hit.normal;
@@ -71,7 +71,12 @@ public class SourcePlayer : MonoBehaviour {
 			}
 			Movable check = groundEntity.GetComponent<Movable> ();
 			if (check != null) {
-				groundVelocity = check.velocity;
+				Rigidbody cccheck = groundEntity.GetComponent<Rigidbody> ();
+				if (cccheck != null) {
+					groundVelocity = cccheck.GetPointVelocity (hit.point) + check.velocity;
+				} else {
+					groundVelocity = check.velocity;
+				}
 			} else {
 				groundVelocity = Vector3.zero;
 			}
@@ -115,20 +120,23 @@ public class SourcePlayer : MonoBehaviour {
 		return command*scale*walkSpeed;
 	}
 	// Ask valve why they split up the gravity calls like this
-	private void StartGravity() {
-		velocity += gravity * Time.deltaTime * 0.5f;
+	private void Gravity() {
+		velocity += gravity * Time.deltaTime;
 	}
-	private void FinishGravity() {
-		velocity += gravity * Time.deltaTime * 0.5f;
-	}
-	private void CheckJumpButton() {
+	private void CheckJump() {
 		// Check to make sure we have a ground under us, and that it's stable ground.
-		if (groundEntity && Vector3.Angle(groundNormal,new Vector3(0f,1f,0f)) < controller.slopeLimit ) {
+		if ( Input.GetButton("Jump") && groundEntity && Vector3.Angle(groundNormal,new Vector3(0f,1f,0f)) < controller.slopeLimit ) {
 			if (Time.time - lastGrunt > 0.3) {
 				AudioSource.PlayClipAtPoint (jumpGrunt, transform.position);
 				lastGrunt = Time.time;
 			}
 			velocity.y = jumpSpeed;
+			groundEntity = null;
+			velocity += groundVelocity;
+			groundVelocity = Vector3.zero;
+		}
+		// We were standing on the ground, then suddenly are not.
+		if (velocity.y >= jumpSpeed/2f) {
 			groundEntity = null;
 		}
 		//TODO: Gotta implement forward speed bonuses: https://github.com/ValveSoftware/source-sdk-2013/blob/56accfdb9c4abd32ae1dc26b2e4cc87898cf4dc1/sp/src/game/shared/gamemovement.cpp#L2468
@@ -241,11 +249,8 @@ public class SourcePlayer : MonoBehaviour {
 		if ( groundEntity == null ) {
 			fallVelocity = -velocity.y;
 		}
-		StartGravity();
 		// Was jump button pressed?
-		if (Input.GetButton("Jump")) {
-			CheckJumpButton();
-		}
+		CheckJump();
 		// Make sure we're standing on solid ground
 		if (Vector3.Angle (groundNormal, new Vector3 (0f, 1f, 0f)) > controller.slopeLimit) {
 			groundEntity = null;
@@ -272,8 +277,7 @@ public class SourcePlayer : MonoBehaviour {
 		// Make sure velocity is valid.
 		CheckVelocity();
 
-		// Add any remaining gravitational component.
-		FinishGravity();
+		Gravity();
 
 		// If we are on ground, no downward velocity.
 		if ( groundEntity != null ) {
@@ -455,23 +459,9 @@ public class SourcePlayer : MonoBehaviour {
 		//VectorSubtract( mv->m_vecVelocity, player->GetBaseVelocity(), mv->m_vecVelocity );
 	}
 	void OnControllerColliderHit(ControllerColliderHit hit ) {
-		// Works with stairs, because it ignores the capsule's round bottom. But then little cracks act like you've slammed into them sideways.
-		// Feels really bad on everything except stairs.
-		/* RaycastHit check;
-		if (Physics.Raycast (transform.position, Vector3.Normalize (hit.point - transform.position), out check, controller.height*2f)) {
-			// If the hit is something that seems like it might be a stair in a staircase, ignore it.
-			Debug.Log( Mathf.Abs(Vector3.Angle(check.normal, new Vector3 (0f, 1f, 0f))-90f) );
-			if ((hit.point - transform.position).y < stepSize && Mathf.Abs(Vector3.Angle(check.normal, new Vector3 (0f, 1f, 0f))-90f) < 0.01) {
-				return;
-			}
-			// If it's something that we don't consider solid ground, clip our velocity on it.
-			if (Vector3.Angle (check.normal, new Vector3 (0f, 1f, 0f)) > controller.slopeLimit) {
-				velocity = ClipVelocity (velocity, check.normal);
-			}
-		} */
-
-		if (Vector3.Angle (hit.normal, new Vector3 (0f, 1f, 0f)) > controller.slopeLimit) {
-			velocity = ClipVelocity (velocity, hit.normal);
+		if (Vector3.Angle (hit.normal, Vector3.up) < controller.slopeLimit) {
+			return;
 		}
+		velocity = ClipVelocity (velocity, hit.normal);
 	}
 }
