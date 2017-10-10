@@ -23,7 +23,14 @@ public class SourcePlayer : MonoBehaviour {
 	public float jumpSpeed = 8f;
 	public float fallPunchThreshold = 8f;
 	public float maxSafeFallSpeed = 15f;
+	public CollisionSphere[] spheres =
+		new CollisionSphere[3] {
+		new CollisionSphere(0.5f),
+		new CollisionSphere(1.0f),
+		new CollisionSphere(1.5f),
+	};
 
+	private const float TinyTolerance = 0.01f;
 	private float lastGrunt;
 	private float stepSize = 0.5f;
 	private float rotX;
@@ -36,11 +43,15 @@ public class SourcePlayer : MonoBehaviour {
 	private float groundFriction;
 	private float distToGround;
 	private float radius;
+	private const string TemporaryLayer = "TempCast";
+	private const int MaxPushbackIterations = 2;
+	private int TemporaryLayerIndex;
 	void Start() {
 		controller = GetComponent<CharacterController> ();
 		distToGround = GetComponent<Collider>().bounds.extents.y/2f;
 		radius = controller.radius;
 		stepSize = controller.stepOffset;
+		TemporaryLayerIndex = LayerMask.NameToLayer(TemporaryLayer);
 	}
 	void Update() {
 		if (Cursor.lockState == CursorLockMode.None) {
@@ -88,6 +99,8 @@ public class SourcePlayer : MonoBehaviour {
 		}
 
 		PlayerMove();
+		// Push ourselves out of nearby objects.
+		RecursivePushback(0, MaxPushbackIterations);
 	}
 	// Slide off of impacting surface
 	private Vector3 ClipVelocity( Vector3 vel, Vector3 impactNormal) {
@@ -463,5 +476,63 @@ public class SourcePlayer : MonoBehaviour {
 			return;
 		}
 		velocity = ClipVelocity (velocity, hit.normal);
+	}
+	private void RecursivePushback(int depth, int maxDepth) {
+		bool contact = false;
+		foreach (var sphere in spheres) {
+			foreach (Collider col in Physics.OverlapSphere(SpherePosition(sphere), controller.radius )) {
+				if (col.gameObject == gameObject) {
+					continue;
+				}
+				Vector3 position = SpherePosition(sphere);
+				Vector3 contactPoint;
+				bool contactPointSuccess = SuperCollider.ClosestPointOnSurface(col, position, radius, out contactPoint);
+
+				if (!contactPointSuccess) {
+					return;
+				}
+
+				Vector3 v = contactPoint - position;
+				if (v != Vector3.zero) {
+					// Cache the collider's layer so that we can cast against it
+					int layer = col.gameObject.layer;
+					col.gameObject.layer = TemporaryLayerIndex;
+					// Check which side of the normal we are on
+					bool facingNormal = Physics.SphereCast(new Ray(position, v.normalized), TinyTolerance, v.magnitude + TinyTolerance, 1 << TemporaryLayerIndex);
+					col.gameObject.layer = layer;
+
+					// Orient and scale our vector based on which side of the normal we are situated
+					if (facingNormal) {
+						if (Vector3.Distance(position, contactPoint) < radius) {
+							v = v.normalized * (radius - v.magnitude) * -1;
+						} else {
+							// A previously resolved collision has had a side effect that moved us outside this collider
+							continue;
+						}
+					} else {
+						v = v.normalized * (radius + v.magnitude);
+					}
+
+					contact = true;
+					transform.position += v;
+				}
+			}            
+		}
+		if (depth < maxDepth && contact) {
+			RecursivePushback(depth + 1, maxDepth);
+		}
+	}
+	public Vector3 SpherePosition(CollisionSphere sphere) {
+		return transform.position + sphere.offset * transform.up;
+	}
+}
+
+public class CollisionSphere
+{
+	public float offset;
+
+	public CollisionSphere(float offset)
+	{
+		this.offset = offset;
 	}
 }
