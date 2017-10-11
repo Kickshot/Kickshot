@@ -84,7 +84,10 @@ public class SourcePlayer : MonoBehaviour {
 			if (check != null) {
 				Rigidbody cccheck = groundEntity.GetComponent<Rigidbody> ();
 				if (cccheck != null) {
-					groundVelocity = cccheck.GetPointVelocity (hit.point) + check.velocity;
+					// FIXME: I'm using a magic number 1.415 to convert between rigidbody and character controller velocities.
+					// There should be no required conversion, but there's a difference of ABOUT 1.415 on my machine.
+					// it might differ on others!
+					groundVelocity = cccheck.GetPointVelocity(hit.point)*(Time.fixedDeltaTime/Time.deltaTime);
 				} else {
 					groundVelocity = check.velocity;
 				}
@@ -477,6 +480,10 @@ public class SourcePlayer : MonoBehaviour {
 		}
 		velocity = ClipVelocity (velocity, hit.normal);
 	}
+	// This function makes sure we don't phase through other colliders. (Since character controller doesn't provide this functionality lmao).
+	// I copied it from https://github.com/IronWarrior/SuperCharacterController
+	// I changed it a bit, but SuperCharacterController is under the MIT license, meaning we can't use it without making our game also under the MIT license.
+	// so TODO: Change this enough that we don't have to use the MIT license if we don't want to.
 	private void RecursivePushback(int depth, int maxDepth) {
 		bool contact = false;
 		foreach (var sphere in spheres) {
