@@ -5,8 +5,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class SourcePlayer : MonoBehaviour {
+	public GameObject deathSpawn;
 	public AudioClip jumpGrunt;
 	public AudioClip painGrunt;
+	public AudioClip hardLand;
 	public Vector3 velocity;
 	public Transform  view;
 	public Vector3 viewOffset = new Vector3(0f,0.6f,0f);
@@ -153,9 +155,11 @@ public class SourcePlayer : MonoBehaviour {
 		}
 		// We were standing on the ground, then suddenly are not.
 		if (velocity.y >= jumpSpeed/2f) {
+			// We don't inherit the groundVelocity here, because if we just were bumped slightly off of a moving ground
+			// that would allow us to accelerate crazily by just being on unstable ground (like a rigidbody).
 			groundEntity = null;
 		}
-		//TODO: Gotta implement forward speed bonuses: https://github.com/ValveSoftware/source-sdk-2013/blob/56accfdb9c4abd32ae1dc26b2e4cc87898cf4dc1/sp/src/game/shared/gamemovement.cpp#L2468
+		//TODO?: Gotta implement forward speed bonuses: https://github.com/ValveSoftware/source-sdk-2013/blob/56accfdb9c4abd32ae1dc26b2e4cc87898cf4dc1/sp/src/game/shared/gamemovement.cpp#L2468
 	}
 	private void CheckFalling() {
 		//Debug.Log (fallVelocity);
@@ -188,6 +192,7 @@ public class SourcePlayer : MonoBehaviour {
 				//
 				// If they hit the ground going this fast they may take damage (and die).
 				//
+				AudioSource.PlayClipAtPoint (hardLand, transform.position);
 				AudioSource.PlayClipAtPoint (painGrunt, transform.position);
 				GetComponent<Damagable>().Damage( (fallVelocity - maxSafeFallSpeed)*5f );
 				fvol = 1.0f;
@@ -478,6 +483,12 @@ public class SourcePlayer : MonoBehaviour {
 		if (Vector3.Angle (hit.normal, Vector3.up) < controller.slopeLimit) {
 			return;
 		}
+		// If we walk off an edge, we won't inherit the ground velocity. So if we walk off an edge while moving fast
+		// then hit a wall, this prevents us from infinitely being pushed into that wall from our inherited velocity.
+		if (groundVelocity.magnitude > 0f) {
+			velocity += groundVelocity;
+			groundVelocity = Vector3.zero;
+		}
 		velocity = ClipVelocity (velocity, hit.normal);
 	}
 	// This function makes sure we don't phase through other colliders. (Since character controller doesn't provide this functionality lmao).
@@ -531,6 +542,11 @@ public class SourcePlayer : MonoBehaviour {
 	}
 	public Vector3 SpherePosition(CollisionSphere sphere) {
 		return transform.position + sphere.offset * transform.up;
+	}
+	// We died, or despawned!
+	void OnDisable() {
+		GameObject g = Instantiate (deathSpawn, transform.position, Quaternion.identity);
+		g.GetComponent<GUIYouDied> ().DeadPlayer = this.gameObject;
 	}
 }
 
