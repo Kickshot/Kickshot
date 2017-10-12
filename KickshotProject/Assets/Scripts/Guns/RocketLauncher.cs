@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class RocketLauncher : GunBase {
 	public Rocket rocket;
+	public Transform gunBarrelFront;
+	public Transform gunBarrelBack;
 	private SourcePlayer player;
 	void Start() {
 		gunName = "Rocket Launcher";
@@ -25,7 +27,7 @@ public class RocketLauncher : GunBase {
 		if (Physics.Raycast (player.view.position, player.view.forward, out hit, 1000f, ~(1 << LayerMask.NameToLayer ("Player")))) {
 			hitpos = hit.point;
 		}
-		Rocket r = Instantiate (rocket, gunBarrel.position, Quaternion.LookRotation (hitpos-gunBarrel.position));
+		Rocket r = Instantiate (rocket, gunBarrelFront.position, Quaternion.LookRotation (hitpos-gunBarrelFront.position));
 		r.inheritedVel = player.velocity+player.groundVelocity;
 	}
 	public override void OnSecondaryFire() {
@@ -35,7 +37,7 @@ public class RocketLauncher : GunBase {
 		if (Physics.Raycast (player.view.position, -player.view.forward, out hit, 1000f, ~(1 << LayerMask.NameToLayer ("Player")))) {
 			hitpos = hit.point;
 		}
-		Rocket r = Instantiate (rocket, gunBarrel.position, Quaternion.LookRotation (hitpos-gunBarrel.position));
+		Rocket r = Instantiate (rocket, gunBarrelBack.position, Quaternion.LookRotation (hitpos-gunBarrelBack.position));
 		r.inheritedVel = player.velocity+player.groundVelocity;
 	}
 	public override void OnEquip (GameObject Player) {

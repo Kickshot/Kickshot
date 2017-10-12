@@ -16,7 +16,7 @@ public class GUIYouDied : MonoBehaviour {
 	void Update() {
 		Camera.position = transform.position + new Vector3 (Mathf.Sin (Time.time), 1f, Mathf.Cos (Time.time))*10f;
 		Camera.LookAt (transform.position);
-		if (Input.GetButton ("Fire1")) {
+		if (Input.GetButtonDown ("Fire1")) {
 			Destroy (gameObject);
 			gameObject.SetActive (false);
 			Instantiate (Player, transform.position, Quaternion.identity);

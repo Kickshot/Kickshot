@@ -88,7 +88,7 @@ public class SourcePlayer : MonoBehaviour {
 		view.rotation = Quaternion.Euler(rotX, rotY, 0); // Rotates the camera
 
 		RaycastHit hit;
-		if (velocity.y <= 0 && Physics.SphereCast (transform.position+controller.center, radius, -transform.up, out hit, distToGround + 0.1f, layerMask)) {
+		if (velocity.y <= 0 && Physics.SphereCast (transform.position+controller.center, radius, -transform.up, out hit, distToGround + 0.1f, layerMask, QueryTriggerInteraction.Ignore)) {
 			// Snap the player to where the spherecast hit.
 			groundEntity = hit.collider.gameObject;
 			groundNormal = hit.normal;
@@ -356,7 +356,7 @@ public class SourcePlayer : MonoBehaviour {
 	}
 	private void StayOnGround() {
 		RaycastHit hit;
-		if (Physics.SphereCast (transform.position+controller.center, radius, -transform.up, out hit, distToGround + stepSize + 0.1f, layerMask)) {
+		if (Physics.SphereCast (transform.position+controller.center, radius, -transform.up, out hit, distToGround + stepSize + 0.1f, layerMask, QueryTriggerInteraction.Ignore)) {
 			// Snap the player to where the spherecast hit.
 			controller.Move (new Vector3 (0, -hit.distance, 0));
 		}
@@ -510,7 +510,7 @@ public class SourcePlayer : MonoBehaviour {
 	private void RecursivePushback(int depth, int maxDepth) {
 		bool contact = false;
 		foreach (var sphere in spheres) {
-			foreach (Collider col in Physics.OverlapSphere(SpherePosition(sphere), controller.radius, layerMask)) {
+			foreach (Collider col in Physics.OverlapSphere(SpherePosition(sphere), controller.radius, layerMask, QueryTriggerInteraction.Ignore)) {
 				if (col.isTrigger) {
 					continue;
 				}
@@ -531,7 +531,7 @@ public class SourcePlayer : MonoBehaviour {
 					int layer = col.gameObject.layer;
 					col.gameObject.layer = TemporaryLayerIndex;
 					// Check which side of the normal we are on
-					bool facingNormal = Physics.SphereCast(new Ray(position, v.normalized), TinyTolerance, v.magnitude + TinyTolerance, 1 << TemporaryLayerIndex);
+					bool facingNormal = Physics.SphereCast(new Ray(position, v.normalized), TinyTolerance, v.magnitude + TinyTolerance, 1 << TemporaryLayerIndex, QueryTriggerInteraction.Ignore);
 					col.gameObject.layer = layer;
 
 					// Orient and scale our vector based on which side of the normal we are situated

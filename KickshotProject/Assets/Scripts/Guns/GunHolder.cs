@@ -37,10 +37,12 @@ public class GunHolder : MonoBehaviour {
 		GunBase gun = other.gameObject.GetComponent<GunBase> ();
 		if (gun != null && !Guns.Contains(gun)) {
 			Guns.Add (gun);
-			if ( EquippedGun == null ) {
+			if (EquippedGun == null) {
 				EquippedGun = gun;
 				EquippedGun.OnEquip (gameObject);
 				EquippedGun.equipped = true;
+			} else {
+				other.gameObject.SetActive (false);
 			}
 		}
 	}

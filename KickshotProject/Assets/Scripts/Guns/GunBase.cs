@@ -17,7 +17,6 @@ public class GunBase : MonoBehaviour {
 	public bool reloading = false; // Reload doesn't complete until we're no longer busy, this tells the clip to fill up after we're no longer busy.
 	public bool autoReload = true; // Checks if the gun is out of ammo and not busy, then reloads it automatically. Otherwise the player has to press the reload key.
 	public bool autoFire = true; // Determines if the player can just hold down the mouse to fire, rather than spam clicks.
-	public Transform gunBarrel; // This is where bullets will spawn, hopefully.
 
 	public bool equipped = false; // This is used internally to turn on/off the actual gun stuff. If we're unequipped we're either on the floor in in someone's pockets.
 	private bool pfiring = false; // These dumb booleans just keep track to make sure that OnPrimaryRelease doesn't get called before OnPrimaryFire.
@@ -55,6 +54,15 @@ public class GunBase : MonoBehaviour {
 			reloading = true;
 			OnReload ();
 		}
+		// We've released the fire button, run our hook.
+		if (Input.GetButtonUp("Fire1") && pfiring) {
+			pfiring = false;
+			OnPrimaryFireRelease ();
+		}
+		if (Input.GetButtonUp ("Fire2") && sfiring) {
+			sfiring = false;
+			OnSecondaryFireRelease ();
+		}
 		// If we're busy, reduce the timer and exit.
 		if (busy > 0f) {
 			busy -= Time.deltaTime;
@@ -74,20 +82,11 @@ public class GunBase : MonoBehaviour {
 			pfiring = true;
 			OnPrimaryFire ();
 		}
-		// We've released the fire button, run our hook.
-		if (Input.GetButtonUp ("Fire1") && pfiring) {
-			pfiring = false;
-			OnPrimaryFireRelease ();
-		}
 		if (((Input.GetButtonDown ("Fire2") && !autoFire) || (Input.GetButton("Fire2") && autoFire)) && ammo >= secondaryFireAmmoCost) {
 			ammo -= secondaryFireAmmoCost;
 			busy = secondaryFireCooldown;
 			sfiring = true;
 			OnSecondaryFire ();
-		}
-		if (Input.GetButtonUp ("Fire2") && sfiring) {
-			sfiring = false;
-			OnSecondaryFireRelease ();
 		}
 	}
 }
