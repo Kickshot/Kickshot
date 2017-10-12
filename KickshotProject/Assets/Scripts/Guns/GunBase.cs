@@ -13,11 +13,13 @@ public class GunBase : MonoBehaviour {
 	public float ammo = 5f; // The current amount of ammo in our magazine.
 	public float primaryFireAmmoCost = 1f; // How much ammo does it take to primary fire?
 	public float secondaryFireAmmoCost = 1f;
+	public float switchBusyTime = 0.3f; // How long in seconds is the gun busy for during switch.
 	public float busy = 0f; // Time in seconds we're stunned for.
 	public bool reloading = false; // Reload doesn't complete until we're no longer busy, this tells the clip to fill up after we're no longer busy.
 	public bool autoReload = true; // Checks if the gun is out of ammo and not busy, then reloads it automatically. Otherwise the player has to press the reload key.
 	public bool autoFire = true; // Determines if the player can just hold down the mouse to fire, rather than spam clicks.
 
+	public SourcePlayer player;
 	public bool equipped = false; // This is used internally to turn on/off the actual gun stuff. If we're unequipped we're either on the floor in in someone's pockets.
 	private bool pfiring = false; // These dumb booleans just keep track to make sure that OnPrimaryRelease doesn't get called before OnPrimaryFire.
 	private bool sfiring = false;
@@ -36,13 +38,26 @@ public class GunBase : MonoBehaviour {
 		GUI.Label (new Rect (Screen.width-300f, Screen.height-100f, 250, 50), ammo + "/" + curAmmo, style);
 	}
 
-	virtual public void OnEquip (GameObject Player) {}
+	virtual public void OnEquip (GameObject Player) {
+		// It's now part of the player, make sure we don't collide with rockets and the like.
+		gameObject.layer = LayerMask.NameToLayer ("Player");
+		// Switch time
+		busy = switchBusyTime;
+		player = Player.GetComponent<SourcePlayer> ();
+		gameObject.SetActive (true);
+		transform.SetParent (Player.transform);
+		transform.position = Player.transform.position + Player.transform.right * .5f - Player.transform.up * .3f;
+		transform.rotation = Quaternion.identity;
+	}
 	virtual public void OnPrimaryFire() {}
 	virtual public void OnPrimaryFireRelease() {}
 	virtual public void OnSecondaryFire () {}
 	virtual public void OnSecondaryFireRelease () {}
 	virtual public void OnReload () {}
-	virtual public void OnUnequip (GameObject Player) {}
+	virtual public void OnUnequip (GameObject Player) {
+		gameObject.layer = LayerMask.NameToLayer ("Default");
+		gameObject.SetActive (false);
+	}
 
 	virtual public void Update() {
 		if (!equipped) {

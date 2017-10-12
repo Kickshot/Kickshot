@@ -15,4 +15,8 @@ public static class Helper {
 		lr.SetPosition(1, end);
 		GameObject.Destroy(myLine, duration);
 	}
+	// Modulo implementation since C# doesn't have it.
+	public static float fmod(float a, float b) {
+		return a - b * Mathf.Floor (a / b);
+	}
 }

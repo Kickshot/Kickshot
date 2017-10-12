@@ -6,10 +6,6 @@ public class RocketLauncher : GunBase {
 	public Rocket rocket;
 	public Transform gunBarrelFront;
 	public Transform gunBarrelBack;
-	private SourcePlayer player;
-	void Start() {
-		gunName = "Rocket Launcher";
-	}
 	override public void Update() {
 		base.Update ();
 		if (!equipped) {
@@ -39,24 +35,5 @@ public class RocketLauncher : GunBase {
 		}
 		Rocket r = Instantiate (rocket, gunBarrelBack.position, Quaternion.LookRotation (hitpos-gunBarrelBack.position));
 		r.inheritedVel = player.velocity+player.groundVelocity;
-	}
-	public override void OnEquip (GameObject Player) {
-		// It's now part of the player, make sure we don't collide with rockets and the like.
-		gameObject.layer = LayerMask.NameToLayer ("Player");
-
-		player = Player.GetComponent<SourcePlayer> ();
-		// Switch time;
-		busy = 0.5f;
-		gameObject.SetActive (true);
-		transform.SetParent (Player.transform);
-		transform.position = Player.transform.position-new Vector3(0f,.3f,0f);
-		transform.rotation = Quaternion.identity;
-		// You'd play some animations here probably.
-	}
-	// We were either dropped or put into a pocket.
-	public override void OnUnequip (GameObject Player) {
-		gameObject.layer = LayerMask.NameToLayer ("Default");
-		gameObject.GetComponent<Collider> ().enabled = true;
-		gameObject.SetActive (false);
 	}
 }

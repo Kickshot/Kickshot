@@ -18,7 +18,7 @@ public class GunHolder : MonoBehaviour {
 		if (direction == 0) {
 			return;
 		}
-		if (Guns.Count <= 0) {
+		if (Guns.Count <= 1) {
 			return;
 		}
 		if (EquippedGun == null) {
@@ -29,7 +29,9 @@ public class GunHolder : MonoBehaviour {
 		}
 		EquippedGun.equipped = false;
 		EquippedGun.OnUnequip (gameObject);
-		EquippedGun = Guns [(Guns.IndexOf(EquippedGun)+direction)%Guns.Count];
+		// Oh my god % is not actually modulo. Why would you do this C#???
+		//EquippedGun = Guns [(Guns.IndexOf(EquippedGun)+direction)%Guns.Count];
+		EquippedGun = Guns [(int)Helper.fmod(Guns.IndexOf(EquippedGun)+direction,Guns.Count)];
 		EquippedGun.OnEquip (gameObject);
 		EquippedGun.equipped = true;
 	}
