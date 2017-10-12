@@ -7,7 +7,7 @@ public class Damagable : MonoBehaviour {
 	public void Damage( float amount ) {
 		health -= amount;
 		if (health < 0) {
-			gameObject.SetActive (false);
+			Destroy (gameObject);
 		}
 	}
 }

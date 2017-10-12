@@ -32,6 +32,7 @@ public class SourcePlayer : MonoBehaviour {
 		new CollisionSphere(1.5f),
 	};
 
+	private bool quitting = false;
 	private const float TinyTolerance = 0.01f;
 	private float lastGrunt;
 	private float stepSize = 0.5f;
@@ -86,10 +87,7 @@ public class SourcePlayer : MonoBehaviour {
 			if (check != null) {
 				Rigidbody cccheck = groundEntity.GetComponent<Rigidbody> ();
 				if (cccheck != null) {
-					// FIXME: I'm using a magic number 1.415 to convert between rigidbody and character controller velocities.
-					// There should be no required conversion, but there's a difference of ABOUT 1.415 on my machine.
-					// it might differ on others!
-					groundVelocity = cccheck.GetPointVelocity(hit.point)*(Time.fixedDeltaTime/Time.deltaTime);
+					groundVelocity = cccheck.GetPointVelocity(hit.point);
 				} else {
 					groundVelocity = check.velocity;
 				}
@@ -170,8 +168,8 @@ public class SourcePlayer : MonoBehaviour {
 
 		if ( fallVelocity >= fallPunchThreshold ) {
 				
-			bool bAlive = true;
-			float fvol = 0.5f;
+			//bool bAlive = true;
+			//float fvol = 0.5f;
 
 			// Scale it down if we landed on something that's floating...
 			//if ( player->GetGroundEntity()->IsFloating() ) {
@@ -195,11 +193,11 @@ public class SourcePlayer : MonoBehaviour {
 				AudioSource.PlayClipAtPoint (hardLand, transform.position);
 				AudioSource.PlayClipAtPoint (painGrunt, transform.position);
 				GetComponent<Damagable>().Damage( (fallVelocity - maxSafeFallSpeed)*5f );
-				fvol = 1.0f;
+				//fvol = 1.0f;
 			} else if ( fallVelocity > maxSafeFallSpeed / 2 ) {
-				fvol = 0.85f;
+				//fvol = 0.85f;
 			} else {
-				fvol = 0f;
+				//fvol = 0f;
 			}
 
 			// PlayerRoughLandingEffects( fvol );
@@ -307,7 +305,7 @@ public class SourcePlayer : MonoBehaviour {
 	}
 	private void Accelerate( Vector3 wishdir, float wishspeed, float accel )
 	{
-		int i;
+		//int i;
 		float addspeed, accelspeed, currentspeed;
 
 		// This gets overridden because some games (CSPort) want to allow dead (observer) players
@@ -349,23 +347,20 @@ public class SourcePlayer : MonoBehaviour {
 		}
 	}
 	private void WalkMove() {
-		int i;
+		//int i;
 		Vector3 wishvel;
 		float spd;
 		float fmove, smove;
 		Vector3 wishdir;
 		float wishspeed;
 
-		Vector3 dest;
+		//Vector3 dest;
 		Vector3 forward, right, up;
 
 		//AngleVectors (mv->m_vecViewAngles, &forward, &right, &up);  // Determine movement angles
 		forward = transform.forward;
 		right = transform.right;
 		up = transform.up;
-
-		GameObject oldground;
-		oldground = groundEntity;
 
 		// Copy movement amounts
 		Vector3 command = GetCommandVelocity();
@@ -422,7 +417,7 @@ public class SourcePlayer : MonoBehaviour {
 		StayOnGround();
 	}
 	private void AirMove() {
-		int			i;
+		//int			i;
 		Vector3		wishvel;
 		float		fmove, smove;
 		Vector3		wishdir;
@@ -499,6 +494,9 @@ public class SourcePlayer : MonoBehaviour {
 		bool contact = false;
 		foreach (var sphere in spheres) {
 			foreach (Collider col in Physics.OverlapSphere(SpherePosition(sphere), controller.radius )) {
+				if (col.isTrigger) {
+					continue;
+				}
 				if (col.gameObject == gameObject) {
 					continue;
 				}
@@ -544,9 +542,14 @@ public class SourcePlayer : MonoBehaviour {
 		return transform.position + sphere.offset * transform.up;
 	}
 	// We died, or despawned!
-	void OnDisable() {
-		GameObject g = Instantiate (deathSpawn, transform.position, Quaternion.identity);
-		g.GetComponent<GUIYouDied> ().DeadPlayer = this.gameObject;
+	void OnDestroy() {
+		if (quitting) {
+			return;
+		}
+		Instantiate (deathSpawn, transform.position, Quaternion.identity);
+	}
+	void OnApplicationQuit() {
+		quitting = true;
 	}
 }
 

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class GUIYouDied : MonoBehaviour {
 	public Transform Camera;
-	public GameObject DeadPlayer;
+	public GameObject Player;
 	void OnGUI () {
 		GUIStyle style = GUIStyle.none;
 		style.normal.textColor = Color.black;
@@ -19,9 +19,7 @@ public class GUIYouDied : MonoBehaviour {
 		if (Input.GetButton ("Fire1")) {
 			Destroy (gameObject);
 			gameObject.SetActive (false);
-			DeadPlayer.GetComponent<Damagable> ().health = 100f;
-			DeadPlayer.GetComponent<SourcePlayer> ().velocity = Vector3.zero;
-			DeadPlayer.SetActive (true);
+			Instantiate (Player, transform.position, Quaternion.identity);
 		}
 	}
 }
