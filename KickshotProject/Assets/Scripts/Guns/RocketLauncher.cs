@@ -14,6 +14,9 @@ public class RocketLauncher : GunBase {
 			return;
 		}
 		transform.rotation = player.view.rotation;
+		if ( reloading ) {
+			transform.rotation = Quaternion.Lerp(Quaternion.LookRotation(-player.view.forward),Quaternion.LookRotation(player.view.forward),busy/reloadDelay);
+		}
 	}
 	public override void OnPrimaryFire() {
 		RaycastHit hit;
@@ -22,7 +25,7 @@ public class RocketLauncher : GunBase {
 			hitpos = hit.point;
 		}
 		Rocket r = Instantiate (rocket, gunBarrel.position, Quaternion.LookRotation (hitpos-gunBarrel.position));
-		r.inheritedVel = player.velocity;
+		r.inheritedVel = player.velocity+player.groundVelocity;
 	}
 	public override void OnEquip (GameObject Player)
 	{
@@ -32,7 +35,7 @@ public class RocketLauncher : GunBase {
 		busy = 0.5f;
 		gameObject.SetActive (true);
 		transform.SetParent (Player.transform);
-		transform.position = Player.transform.position-new Vector3(0f,.5f,0f);
+		transform.position = Player.transform.position-new Vector3(0f,.3f,0f);
 		transform.rotation = Quaternion.identity;
 		// You'd play some animations here probably.
 	}

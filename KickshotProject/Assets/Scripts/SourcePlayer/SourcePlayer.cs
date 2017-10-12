@@ -32,6 +32,8 @@ public class SourcePlayer : MonoBehaviour {
 		new CollisionSphere(1.5f),
 	};
 
+	// We only collide with these layers.
+	private int layerMask;
 	private bool quitting = false;
 	private const float TinyTolerance = 0.01f;
 	private float lastGrunt;
@@ -42,7 +44,7 @@ public class SourcePlayer : MonoBehaviour {
 	private CharacterController controller;
 	private GameObject groundEntity = null;
 	private Vector3 groundNormal = new Vector3(0f,1f,0f);
-	private Vector3 groundVelocity;
+	public Vector3 groundVelocity;
 	private float groundFriction;
 	private float distToGround;
 	private float radius;
@@ -50,6 +52,15 @@ public class SourcePlayer : MonoBehaviour {
 	private const int MaxPushbackIterations = 2;
 	private int TemporaryLayerIndex;
 	void Start() {
+		// This generates our layermask, making sure we only collide with stuff that's specified by the physics engine.
+		int myLayer = gameObject.layer;
+		layerMask = 0;
+		for(int i = 0; i < 32; i++) {
+			if(!Physics.GetIgnoreLayerCollision(myLayer, i))  {
+				layerMask = layerMask | 1 << i;
+			}
+		}
+
 		controller = GetComponent<CharacterController> ();
 		distToGround = GetComponent<Collider>().bounds.extents.y/2f;
 		radius = controller.radius;
@@ -73,7 +84,7 @@ public class SourcePlayer : MonoBehaviour {
 		view.rotation = Quaternion.Euler(rotX, rotY, 0); // Rotates the camera
 
 		RaycastHit hit;
-		if (velocity.y <= 0 && Physics.SphereCast (transform.position+controller.center, radius, -transform.up, out hit, distToGround + 0.1f)) {
+		if (velocity.y <= 0 && Physics.SphereCast (transform.position+controller.center, radius, -transform.up, out hit, distToGround + 0.1f, layerMask)) {
 			// Snap the player to where the spherecast hit.
 			groundEntity = hit.collider.gameObject;
 			groundNormal = hit.normal;
@@ -341,7 +352,7 @@ public class SourcePlayer : MonoBehaviour {
 	}
 	private void StayOnGround() {
 		RaycastHit hit;
-		if (Physics.SphereCast (transform.position+controller.center, radius, -transform.up, out hit, distToGround + stepSize + 0.1f)) {
+		if (Physics.SphereCast (transform.position+controller.center, radius, -transform.up, out hit, distToGround + stepSize + 0.1f, layerMask)) {
 			// Snap the player to where the spherecast hit.
 			controller.Move (new Vector3 (0, -hit.distance, 0));
 		}
@@ -465,7 +476,6 @@ public class SourcePlayer : MonoBehaviour {
 		// Add in any base velocity to the current velocity.
 		//VectorAdd(mv->m_vecVelocity, player->GetBaseVelocity(), mv->m_vecVelocity );
 		velocity += groundVelocity;
-
 		//TryPlayerMove();
 		controller.Move(velocity * Time.deltaTime);
 
@@ -475,6 +485,9 @@ public class SourcePlayer : MonoBehaviour {
 		//VectorSubtract( mv->m_vecVelocity, player->GetBaseVelocity(), mv->m_vecVelocity );
 	}
 	void OnControllerColliderHit(ControllerColliderHit hit ) {
+		if ((layerMask & (1<<hit.gameObject.layer)) == 0) {
+			return;
+		}
 		if (Vector3.Angle (hit.normal, Vector3.up) < controller.slopeLimit) {
 			return;
 		}
@@ -493,7 +506,7 @@ public class SourcePlayer : MonoBehaviour {
 	private void RecursivePushback(int depth, int maxDepth) {
 		bool contact = false;
 		foreach (var sphere in spheres) {
-			foreach (Collider col in Physics.OverlapSphere(SpherePosition(sphere), controller.radius )) {
+			foreach (Collider col in Physics.OverlapSphere(SpherePosition(sphere), controller.radius, layerMask)) {
 				if (col.isTrigger) {
 					continue;
 				}
