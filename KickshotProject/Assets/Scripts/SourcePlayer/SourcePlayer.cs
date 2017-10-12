@@ -6,9 +6,6 @@ using UnityEngine;
 
 public class SourcePlayer : MonoBehaviour {
 	public GameObject deathSpawn;
-	public AudioClip jumpGrunt;
-	public AudioClip painGrunt;
-	public AudioClip hardLand;
 	public Vector3 velocity;
 	public Transform  view;
 	public Vector3 viewOffset = new Vector3(0f,0.6f,0f);
@@ -51,7 +48,14 @@ public class SourcePlayer : MonoBehaviour {
 	private const string TemporaryLayer = "TempCast";
 	private const int MaxPushbackIterations = 2;
 	private int TemporaryLayerIndex;
+	private AudioSource jumpGrunt;
+	private AudioSource painGrunt;
+	private AudioSource hardLand;
 	void Start() {
+		var aSources = GetComponents<AudioSource> ();
+		jumpGrunt = aSources [0];
+		painGrunt = aSources [1];
+		hardLand = aSources [2];
 		// This generates our layermask, making sure we only collide with stuff that's specified by the physics engine.
 		int myLayer = gameObject.layer;
 		layerMask = 0;
@@ -154,7 +158,7 @@ public class SourcePlayer : MonoBehaviour {
 		// Check to make sure we have a ground under us, and that it's stable ground.
 		if ( Input.GetButton("Jump") && groundEntity && Vector3.Angle(groundNormal,new Vector3(0f,1f,0f)) < controller.slopeLimit ) {
 			if (Time.time - lastGrunt > 0.3) {
-				AudioSource.PlayClipAtPoint (jumpGrunt, transform.position);
+				jumpGrunt.Play ();
 				lastGrunt = Time.time;
 			}
 			velocity.y = jumpSpeed;
@@ -201,8 +205,8 @@ public class SourcePlayer : MonoBehaviour {
 				//
 				// If they hit the ground going this fast they may take damage (and die).
 				//
-				AudioSource.PlayClipAtPoint (hardLand, transform.position);
-				AudioSource.PlayClipAtPoint (painGrunt, transform.position);
+				painGrunt.Play();
+				hardLand.Play ();
 				GetComponent<Damagable>().Damage( (fallVelocity - maxSafeFallSpeed)*5f );
 				//fvol = 1.0f;
 			} else if ( fallVelocity > maxSafeFallSpeed / 2 ) {
