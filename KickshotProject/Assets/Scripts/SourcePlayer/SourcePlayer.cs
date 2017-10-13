@@ -22,14 +22,14 @@ public class SourcePlayer : MonoBehaviour {
 	public float health = 100f;
 	public CollisionSphere[] spheres =
 		new CollisionSphere[3] {
-		new CollisionSphere(0.5f),
-		new CollisionSphere(1.0f),
-		new CollisionSphere(1.5f),
+		new CollisionSphere(-.5f),
+		new CollisionSphere(0f),
+		new CollisionSphere(.5f),
 	};
 
 	// We only collide with these layers.
 	private int layerMask;
-	private const float TinyTolerance = 0.01f;
+	private const float TinyTolerance = 0.05f;
 	private float lastGrunt;
 	private float stepSize = 0.5f;
 	private float fallVelocity;
@@ -79,16 +79,14 @@ public class SourcePlayer : MonoBehaviour {
 			} else {
 				groundFriction = 1f;
 			}
+			groundVelocity = Vector3.zero;
 			Movable check = groundEntity.GetComponent<Movable> ();
 			if (check != null) {
-				Rigidbody cccheck = groundEntity.GetComponent<Rigidbody> ();
-				if (cccheck != null) {
-					groundVelocity = cccheck.GetPointVelocity(hit.point);
-				} else {
-					groundVelocity = check.velocity;
-				}
-			} else {
-				groundVelocity = Vector3.zero;
+				groundVelocity = check.velocity;
+			}
+			Rigidbody cccheck = groundEntity.GetComponent<Rigidbody> ();
+			if (cccheck != null) {
+				groundVelocity = cccheck.GetPointVelocity(hit.point);
 			}
 		} else {
 			groundEntity = null;
@@ -504,6 +502,14 @@ public class SourcePlayer : MonoBehaviour {
 			groundVelocity = Vector3.zero;
 		}
 		velocity = ClipVelocity (velocity, hit.normal);
+		Movable check = hit.gameObject.GetComponent<Movable> ();
+		if (check != null) {
+			velocity += check.velocity * (Vector3.Dot (Vector3.Normalize(check.velocity), hit.normal));
+		}
+		Rigidbody rigidcheck = hit.gameObject.GetComponent<Rigidbody> ();
+		if (rigidcheck != null) {
+			velocity += rigidcheck.GetPointVelocity (hit.point) * (Vector3.Dot (rigidcheck.GetPointVelocity (hit.point), hit.normal));
+		}
 	}
 	// This function makes sure we don't phase through other colliders. (Since character controller doesn't provide this functionality lmao).
 	// I copied it from https://github.com/IronWarrior/SuperCharacterController
@@ -512,7 +518,7 @@ public class SourcePlayer : MonoBehaviour {
 	private void RecursivePushback(int depth, int maxDepth) {
 		bool contact = false;
 		foreach (var sphere in spheres) {
-			foreach (Collider col in Physics.OverlapSphere(SpherePosition(sphere), controller.radius, layerMask, QueryTriggerInteraction.Ignore)) {
+			foreach (Collider col in Physics.OverlapSphere(SpherePosition(sphere), radius, layerMask, QueryTriggerInteraction.Ignore)) {
 				if (col.isTrigger) {
 					continue;
 				}
@@ -550,6 +556,20 @@ public class SourcePlayer : MonoBehaviour {
 
 					contact = true;
 					transform.position += v;
+					col.gameObject.layer = TemporaryLayerIndex;
+					// Retrieve the surface normal of the collided point
+					RaycastHit normalHit;
+					Physics.SphereCast(new Ray(position + v, contactPoint - (position + v)), TinyTolerance, out normalHit, 1 << TemporaryLayerIndex);
+					col.gameObject.layer = layer;
+					velocity = ClipVelocity (velocity, normalHit.normal);
+					Movable check = col.gameObject.GetComponent<Movable> ();
+					if (check != null) {
+						velocity += check.velocity * (Vector3.Dot (Vector3.Normalize(check.velocity), normalHit.normal));
+					}
+					Rigidbody rigidcheck = col.gameObject.GetComponent<Rigidbody> ();
+					if (rigidcheck != null) {
+						velocity += rigidcheck.GetPointVelocity (normalHit.point) * (Vector3.Dot (Vector3.Normalize(rigidcheck.GetPointVelocity(normalHit.point)), normalHit.normal));
+					}
 				}
 			}            
 		}
