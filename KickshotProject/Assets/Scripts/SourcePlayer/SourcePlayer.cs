@@ -178,6 +178,12 @@ public class SourcePlayer : MonoBehaviour {
 			return;
 		}
 
+		// We landed on something solidly, if it has some velocity we need to subtract it from our own.
+		// This makes our velocities match up again.
+		if (groundVelocity.magnitude > 0) {
+			velocity -= groundVelocity;
+		}
+
 		if ( fallVelocity >= fallPunchThreshold ) {
 				
 			//bool bAlive = true;
