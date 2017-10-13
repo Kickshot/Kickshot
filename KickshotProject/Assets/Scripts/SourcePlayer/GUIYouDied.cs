@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GUIYouDied : MonoBehaviour {
 	public Transform Camera;
@@ -17,7 +18,7 @@ public class GUIYouDied : MonoBehaviour {
 		Camera.position = transform.position + new Vector3 (Mathf.Sin (Time.time), 1f, Mathf.Cos (Time.time))*10f;
 		Camera.LookAt (transform.position);
 		if (Input.GetButtonDown ("Fire1")) {
-			Application.LoadLevel(Application.loadedLevel);
+			SceneManager.LoadScene (SceneManager.GetActiveScene ().name);
 		}
 	}
 }

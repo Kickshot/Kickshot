@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class GUIHealthIndicator : MonoBehaviour {
-	private Damagable body;
+	private SourcePlayer body;
 	void Start () {
-		body = GetComponent<Damagable> ();
+		body = GetComponent<SourcePlayer> ();
 	}
 	void OnGUI () {
 		float health = body.health;

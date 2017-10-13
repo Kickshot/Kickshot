@@ -13,10 +13,10 @@ public class RecoilGun : GunBase {
 		if (!equipped) {
 			return;
 		}
-		transform.rotation = player.view.rotation;
+		transform.rotation = view.rotation;
 	}
 	public override void OnPrimaryFire() {
 		blam.Play ();
-		player.velocity -= player.view.forward * strength;
+		player.velocity -= view.forward * strength;
 	}
 }

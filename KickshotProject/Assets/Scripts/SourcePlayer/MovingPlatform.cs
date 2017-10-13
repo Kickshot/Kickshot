@@ -4,6 +4,10 @@ using UnityEngine;
 
 public class MovingPlatform : MonoBehaviour {
 	private Movable body;
+	public Vector3 direction = Vector3.right;
+	public int seed = 0;
+	public float speed = 5f;
+	public float interval = 0.5f; // revolutions per second.
 	// Use this for initialization
 	void Start () {
 		body = GetComponent<Movable> ();
@@ -11,6 +15,6 @@ public class MovingPlatform : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		body.velocity = new Vector3 ( Mathf.Sin (Time.time)*5f, 0f, 0f);
+		body.velocity = direction * Mathf.Cos ((seed * Mathf.PI) + 2f * Mathf.PI * Time.timeSinceLevelLoad * interval) * speed;
 	}
 }

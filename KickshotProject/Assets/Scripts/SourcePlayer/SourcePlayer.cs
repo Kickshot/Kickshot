@@ -7,21 +7,19 @@ using UnityEngine;
 public class SourcePlayer : MonoBehaviour {
 	public GameObject deathSpawn;
 	public Vector3 velocity;
-	public Transform  view;
-	public Vector3 viewOffset = new Vector3(0f,0.6f,0f);
-	public float xMouseSensitivity = 30.0f;
-	public float yMouseSensitivity = 30.0f;
-	public Vector3 gravity = new Vector3(0,-20f,0);
-	public float baseFriction = 6f;
-	public float maxSpeed = 30f;
-	public float groundAccelerate = 10f;
-	public float groundDecellerate = 10f;
-	public float airAccelerate = 1f;
-	public float airDeccelerate = 10f;
-	public float walkSpeed = 10f;
-	public float jumpSpeed = 8f;
-	public float fallPunchThreshold = 8f;
-	public float maxSafeFallSpeed = 15f;
+	public Vector3 gravity = new Vector3(0,-20f,0); // gravity in meters per second per second.
+	public float baseFriction = 6f; // A friction multiplier, higher means more friction.
+	public float maxSpeed = 35f; // The maximum speed the player can move at.
+	public float groundAccelerate = 10f; // How fast we accelerate while on solid ground.
+	public float groundDecellerate = 10f; // How fast we deaccelerate on solid ground.
+	public float airAccelerate = 1f; // How much air control the player has.
+	public float airDeccelerate = 10f; // How fast the player can stop in mid-air or slow down.
+	public float walkSpeed = 10f; // How fast the player runs.
+	public float jumpSpeed = 8f; // The y velocity to set our character at when they jump.
+	public float fallPunchThreshold = 8f; // How fast we must be falling before we shake the screen and make a thud.
+	public float maxSafeFallSpeed = 15f; // How fast we must be falling before we take damage.
+	public float jumpSpeedBonus = 0.1f; // Speed boost from just jumping forward as a percentage.
+	public float health = 100f;
 	public CollisionSphere[] spheres =
 		new CollisionSphere[3] {
 		new CollisionSphere(0.5f),
@@ -31,12 +29,9 @@ public class SourcePlayer : MonoBehaviour {
 
 	// We only collide with these layers.
 	private int layerMask;
-	private bool quitting = false;
 	private const float TinyTolerance = 0.01f;
 	private float lastGrunt;
 	private float stepSize = 0.5f;
-	private float rotX;
-	private float rotY;
 	private float fallVelocity;
 	private CharacterController controller;
 	private GameObject groundEntity = null;
@@ -72,20 +67,6 @@ public class SourcePlayer : MonoBehaviour {
 		TemporaryLayerIndex = LayerMask.NameToLayer(TemporaryLayer);
 	}
 	void Update() {
-		if (Cursor.lockState == CursorLockMode.None) {
-			if (Input.GetMouseButtonDown (0)) {
-				Cursor.lockState = CursorLockMode.Locked;
-			}
-		}
-		rotX -= Input.GetAxis("Mouse Y") * xMouseSensitivity * 0.02f;
-		rotY += Input.GetAxis("Mouse X") * yMouseSensitivity * 0.02f;
-		if (rotX < -90f) {
-			rotX = -90f;
-		} else if (rotX > 90f) {
-			rotX = 90f;
-		}
-		this.transform.rotation = Quaternion.Euler(0, rotY, 0); // Rotates the collider
-		view.rotation = Quaternion.Euler(rotX, rotY, 0); // Rotates the camera
 
 		RaycastHit hit;
 		if (velocity.y <= 0 && Physics.SphereCast (transform.position+controller.center, radius, -transform.up, out hit, distToGround + 0.1f, layerMask, QueryTriggerInteraction.Ignore)) {
@@ -150,13 +131,15 @@ public class SourcePlayer : MonoBehaviour {
 
 		return command*scale*walkSpeed;
 	}
-	// Ask valve why they split up the gravity calls like this
 	private void Gravity() {
 		velocity += gravity * Time.deltaTime;
 	}
 	private void CheckJump() {
 		// Check to make sure we have a ground under us, and that it's stable ground.
 		if ( Input.GetButton("Jump") && groundEntity && Vector3.Angle(groundNormal,new Vector3(0f,1f,0f)) < controller.slopeLimit ) {
+			// Right before we jump, lets clip our velocity real quick. That way if we're jumping down a sloped surface, we go faster!
+			velocity = ClipVelocity(velocity, groundNormal);
+			// Play a grunt sound, but only so often.
 			if (Time.time - lastGrunt > 0.3) {
 				jumpGrunt.Play ();
 				lastGrunt = Time.time;
@@ -165,6 +148,21 @@ public class SourcePlayer : MonoBehaviour {
 			groundEntity = null;
 			velocity += groundVelocity;
 			groundVelocity = Vector3.zero;
+			// We give a certain percentage of the current forward movement as a bonus to the jump speed.  That bonus is clipped
+			// to not accumulate over time
+			Vector3 commandVel = GetCommandVelocity ();
+			float flSpeedAddition = Mathf.Abs( commandVel.z * jumpSpeedBonus );
+			float flMaxSpeed = maxSpeed + ( maxSpeed * jumpSpeedBonus );
+			Vector3 flatvel = new Vector3( velocity.x, 0, velocity.z );
+			float flNewSpeed = ( flSpeedAddition + flatvel.magnitude );
+			// If we're over the maximum, we want to only boost as much as will get us to the goal speed
+			if ( flNewSpeed > flMaxSpeed ) {
+				flSpeedAddition -= flNewSpeed - flMaxSpeed;
+			}
+			if (commandVel.z < 0.0f) {
+				flSpeedAddition *= -1.0f;
+			}
+			velocity += transform.forward * flSpeedAddition;
 		}
 		// We were standing on the ground, then suddenly are not.
 		if (velocity.y >= jumpSpeed/2f) {
@@ -172,7 +170,6 @@ public class SourcePlayer : MonoBehaviour {
 			// that would allow us to accelerate crazily by just being on unstable ground (like a rigidbody).
 			groundEntity = null;
 		}
-		//TODO?: Gotta implement forward speed bonuses: https://github.com/ValveSoftware/source-sdk-2013/blob/56accfdb9c4abd32ae1dc26b2e4cc87898cf4dc1/sp/src/game/shared/gamemovement.cpp#L2468
 	}
 	private void CheckFalling() {
 		//Debug.Log (fallVelocity);
@@ -205,9 +202,8 @@ public class SourcePlayer : MonoBehaviour {
 				//
 				// If they hit the ground going this fast they may take damage (and die).
 				//
-				painGrunt.Play();
 				hardLand.Play ();
-				GetComponent<Damagable>().Damage( (fallVelocity - maxSafeFallSpeed)*5f );
+				//gameObject.SendMessage("Damage", (fallVelocity - maxSafeFallSpeed)*5f );
 				//fvol = 1.0f;
 			} else if ( fallVelocity > maxSafeFallSpeed / 2 ) {
 				//fvol = 0.85f;
@@ -558,15 +554,12 @@ public class SourcePlayer : MonoBehaviour {
 	public Vector3 SpherePosition(CollisionSphere sphere) {
 		return transform.position + sphere.offset * transform.up;
 	}
-	// We died, or despawned!
-	void OnDestroy() {
-		if (quitting) {
-			return;
+	void Damage( float damage ) {
+		health -= damage;
+		painGrunt.Play ();
+		if (health <= 0f) {
+			Instantiate (deathSpawn, transform.position, Quaternion.identity);
 		}
-		Instantiate (deathSpawn, transform.position, Quaternion.identity);
-	}
-	void OnApplicationQuit() {
-		quitting = true;
 	}
 }
 

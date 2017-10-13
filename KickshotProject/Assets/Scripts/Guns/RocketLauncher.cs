@@ -11,16 +11,16 @@ public class RocketLauncher : GunBase {
 		if (!equipped) {
 			return;
 		}
-		transform.rotation = player.view.rotation;
+		transform.rotation = view.rotation;
 		if ( reloading ) {
-			transform.rotation = Quaternion.Lerp(Quaternion.LookRotation(-player.view.forward),Quaternion.LookRotation(player.view.forward),busy/reloadDelay);
+			transform.rotation = Quaternion.Lerp(Quaternion.LookRotation(-view.forward),Quaternion.LookRotation(view.forward),busy/reloadDelay);
 		}
 	}
 	public override void OnPrimaryFire() {
 		RaycastHit hit;
-		Vector3 hitpos = player.view.forward * 1000f;
+		Vector3 hitpos = view.forward * 1000f;
 		// We ignore player collisions.
-		if (Physics.Raycast (player.view.position, player.view.forward, out hit, 1000f, ~(1 << LayerMask.NameToLayer ("Player")))) {
+		if (Physics.Raycast (view.position, view.forward, out hit, 1000f, ~(1 << LayerMask.NameToLayer ("Player")))) {
 			hitpos = hit.point;
 		}
 		Rocket r = Instantiate (rocket, gunBarrelFront.position, Quaternion.LookRotation (hitpos-gunBarrelFront.position));
@@ -28,9 +28,9 @@ public class RocketLauncher : GunBase {
 	}
 	public override void OnSecondaryFire() {
 		RaycastHit hit;
-		Vector3 hitpos = -player.view.forward * 1000f;
+		Vector3 hitpos = -view.forward * 1000f;
 		// We ignore player collisions.
-		if (Physics.Raycast (player.view.position, -player.view.forward, out hit, 1000f, ~(1 << LayerMask.NameToLayer ("Player")))) {
+		if (Physics.Raycast (view.position, -view.forward, out hit, 1000f, ~(1 << LayerMask.NameToLayer ("Player")))) {
 			hitpos = hit.point;
 		}
 		Rocket r = Instantiate (rocket, gunBarrelBack.position, Quaternion.LookRotation (hitpos-gunBarrelBack.position));
