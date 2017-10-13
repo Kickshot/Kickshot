@@ -558,6 +558,7 @@ public class SourcePlayer : MonoBehaviour {
 		health -= damage;
 		painGrunt.Play ();
 		if (health <= 0f) {
+			gameObject.SetActive (false);
 			Instantiate (deathSpawn, transform.position, Quaternion.identity);
 		}
 	}
