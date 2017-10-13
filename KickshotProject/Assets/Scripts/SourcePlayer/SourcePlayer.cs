@@ -27,9 +27,13 @@ public class SourcePlayer : MonoBehaviour {
 		new CollisionSphere(.5f),
 	};
 
+	private float frictionStun = 0f; // Timer to keep track of how long to disable friction.
+	private float frictionStunPercentage = 0.5f; // How much we actually disable friction by.
+	private const float overbounce = 2f; // How much to multiply incoming collision velocities, to keep us from getting stuck in moving objects.
 	// We only collide with these layers.
 	private int layerMask;
-	private const float TinyTolerance = 0.05f;
+	private const float TinyTolerance = 0.05f; // How much to allow penetration.
+	private const float buffer = 0.5f; // Distance to try and keep the character controller from touching anything. Because the character controller acts like it has infinite mass, and also because it acts funny with moving colliders.
 	private float lastGrunt;
 	private float stepSize = 0.5f;
 	private float fallVelocity;
@@ -62,7 +66,7 @@ public class SourcePlayer : MonoBehaviour {
 
 		controller = GetComponent<CharacterController> ();
 		distToGround = GetComponent<Collider>().bounds.extents.y/2f;
-		radius = controller.radius;
+		radius = controller.radius+buffer;
 		stepSize = controller.stepOffset;
 		TemporaryLayerIndex = LayerMask.NameToLayer(TemporaryLayer);
 	}
@@ -239,7 +243,12 @@ public class SourcePlayer : MonoBehaviour {
 		drop = 0;
 		// apply ground friction
 		if (groundEntity != null && !Input.GetButton("Jump")) { // On an entity that is the ground
-			friction = baseFriction * groundFriction;
+			if (frictionStun > 0f) {
+				friction = baseFriction * groundFriction * frictionStunPercentage;
+				frictionStun -= Time.deltaTime;
+			} else {
+				friction = baseFriction * groundFriction;
+			}
 
 			// Bleed off some speed, but if we have less than the bleed
 			//  threshold, bleed the threshold amount.
@@ -489,10 +498,13 @@ public class SourcePlayer : MonoBehaviour {
 		//VectorSubtract( mv->m_vecVelocity, player->GetBaseVelocity(), mv->m_vecVelocity );
 	}
 	private void HandleCollision( GameObject obj, Vector3 hitNormal, Vector3 hitPos ) {
+		//Debug.Log ("Hello " + Time.time);
 		if ((layerMask & (1<<obj.layer)) == 0) {
+			//Debug.Log ("Ignoring collsion of object with " + obj.layer);
 			return;
 		}
 		if (Vector3.Angle (hitNormal, Vector3.up) < controller.slopeLimit) {
+			//Debug.Log ("Ignoring collsion because it's valid ground.");
 			return;
 		}
 		// If we walk off an edge, we won't inherit the ground velocity. So if we walk off an edge while moving fast
@@ -502,13 +514,25 @@ public class SourcePlayer : MonoBehaviour {
 			groundVelocity = Vector3.zero;
 		}
 		velocity = ClipVelocity (velocity, hitNormal);
-		Movable check = gameObject.GetComponent<Movable> ();
+		Movable check = obj.GetComponent<Movable> ();
 		if (check != null) {
-			velocity += check.velocity * (Vector3.Dot (Vector3.Normalize(check.velocity), hitNormal));
+			frictionStun = 0.3f; // Stun our friction
+			Vector3 vel = check.velocity;
+			float d = Vector3.Dot (Vector3.Normalize (vel), hitNormal); // How similar is our velocity to our hitnormal (perp = 0, backwards = -1, same = 1)
+			if ( d > 0 ) { // If the velocity should be applied
+				velocity += vel * d * overbounce; // We apply it with some overbounce, to keep us from getting stuck.
+			}
+			return;
 		}
-		Rigidbody rigidcheck = gameObject.GetComponent<Rigidbody> ();
+		Rigidbody rigidcheck = obj.GetComponent<Rigidbody> ();
 		if (rigidcheck != null) {
-			velocity += rigidcheck.GetPointVelocity (hitPos) * (Vector3.Dot (Vector3.Normalize(rigidcheck.GetPointVelocity (hitPos)), hitNormal));
+			frictionStun = 0.3f;
+			Vector3 vel = rigidcheck.GetPointVelocity (hitPos);
+			float d = Vector3.Dot (Vector3.Normalize (vel), hitNormal);
+			if ( d > 0 ) {
+				velocity += vel * d * overbounce;
+			}
+			return;
 		}
 	}
 	void OnControllerColliderHit(ControllerColliderHit hit ) {
