@@ -488,11 +488,11 @@ public class SourcePlayer : MonoBehaviour {
 		// Now pull the base velocity back out.   Base velocity is set if you are on a moving object, like a conveyor (or maybe another monster?)
 		//VectorSubtract( mv->m_vecVelocity, player->GetBaseVelocity(), mv->m_vecVelocity );
 	}
-	void OnControllerColliderHit(ControllerColliderHit hit ) {
-		if ((layerMask & (1<<hit.gameObject.layer)) == 0) {
+	private void HandleCollision( GameObject obj, Vector3 hitNormal, Vector3 hitPos ) {
+		if ((layerMask & (1<<obj.layer)) == 0) {
 			return;
 		}
-		if (Vector3.Angle (hit.normal, Vector3.up) < controller.slopeLimit) {
+		if (Vector3.Angle (hitNormal, Vector3.up) < controller.slopeLimit) {
 			return;
 		}
 		// If we walk off an edge, we won't inherit the ground velocity. So if we walk off an edge while moving fast
@@ -501,15 +501,18 @@ public class SourcePlayer : MonoBehaviour {
 			velocity += groundVelocity;
 			groundVelocity = Vector3.zero;
 		}
-		velocity = ClipVelocity (velocity, hit.normal);
-		Movable check = hit.gameObject.GetComponent<Movable> ();
+		velocity = ClipVelocity (velocity, hitNormal);
+		Movable check = gameObject.GetComponent<Movable> ();
 		if (check != null) {
-			velocity += check.velocity * (Vector3.Dot (Vector3.Normalize(check.velocity), hit.normal));
+			velocity += check.velocity * (Vector3.Dot (Vector3.Normalize(check.velocity), hitNormal));
 		}
-		Rigidbody rigidcheck = hit.gameObject.GetComponent<Rigidbody> ();
+		Rigidbody rigidcheck = gameObject.GetComponent<Rigidbody> ();
 		if (rigidcheck != null) {
-			velocity += rigidcheck.GetPointVelocity (hit.point) * (Vector3.Dot (rigidcheck.GetPointVelocity (hit.point), hit.normal));
+			velocity += rigidcheck.GetPointVelocity (hitPos) * (Vector3.Dot (Vector3.Normalize(rigidcheck.GetPointVelocity (hitPos)), hitNormal));
 		}
+	}
+	void OnControllerColliderHit(ControllerColliderHit hit ) {
+		HandleCollision (hit.gameObject, hit.normal, hit.point);
 	}
 	// This function makes sure we don't phase through other colliders. (Since character controller doesn't provide this functionality lmao).
 	// I copied it from https://github.com/IronWarrior/SuperCharacterController
@@ -561,15 +564,7 @@ public class SourcePlayer : MonoBehaviour {
 					RaycastHit normalHit;
 					Physics.SphereCast(new Ray(position + v, contactPoint - (position + v)), TinyTolerance, out normalHit, 1 << TemporaryLayerIndex);
 					col.gameObject.layer = layer;
-					velocity = ClipVelocity (velocity, normalHit.normal);
-					Movable check = col.gameObject.GetComponent<Movable> ();
-					if (check != null) {
-						velocity += check.velocity * (Vector3.Dot (Vector3.Normalize(check.velocity), normalHit.normal));
-					}
-					Rigidbody rigidcheck = col.gameObject.GetComponent<Rigidbody> ();
-					if (rigidcheck != null) {
-						velocity += rigidcheck.GetPointVelocity (normalHit.point) * (Vector3.Dot (Vector3.Normalize(rigidcheck.GetPointVelocity(normalHit.point)), normalHit.normal));
-					}
+					HandleCollision (col.gameObject, normalHit.normal, normalHit.point);
 				}
 			}            
 		}
