@@ -21,8 +21,8 @@ public class SourcePlayer : MonoBehaviour {
 	public float jumpSpeedBonus = 0.1f; // Speed boost from just jumping forward as a percentage.
 	public float health = 100f;
 	public CollisionSphere[] spheres =
-		new CollisionSphere[3] {
-		new CollisionSphere(-.5f),
+		new CollisionSphere[2] {
+		//new CollisionSphere(-.5f),
 		new CollisionSphere(0f),
 		new CollisionSphere(.5f),
 	};
@@ -33,7 +33,7 @@ public class SourcePlayer : MonoBehaviour {
 	// We only collide with these layers.
 	private int layerMask;
 	private const float TinyTolerance = 0.05f; // How much to allow penetration.
-	private const float buffer = 0.5f; // Distance to try and keep the character controller from touching anything. Because the character controller acts like it has infinite mass, and also because it acts funny with moving colliders.
+	private const float buffer = 0.25f; // Distance to try and keep the character controller from touching anything. Because the character controller acts like it has infinite mass, and also because it acts funny with moving colliders.
 	private float lastGrunt;
 	private float stepSize = 0.5f;
 	private float fallVelocity;
@@ -65,34 +65,64 @@ public class SourcePlayer : MonoBehaviour {
 		}
 
 		controller = GetComponent<CharacterController> ();
-		distToGround = GetComponent<Collider>().bounds.extents.y/2f;
+		distToGround = controller.height / 2f;//GetComponent<Collider>().bounds.extents.y/2f;
 		radius = controller.radius+buffer;
 		stepSize = controller.stepOffset;
 		TemporaryLayerIndex = LayerMask.NameToLayer(TemporaryLayer);
 	}
-	void Update() {
-
-		RaycastHit hit;
-		if (velocity.y <= 0 && Physics.SphereCast (transform.position+controller.center, radius, -transform.up, out hit, distToGround + 0.1f, layerMask, QueryTriggerInteraction.Ignore)) {
-			// Snap the player to where the spherecast hit.
-			groundEntity = hit.collider.gameObject;
-			groundNormal = hit.normal;
-			Collider ccheck = groundEntity.GetComponent<Collider> ();
-			if (ccheck != null) {
-				groundFriction = ccheck.material.dynamicFriction;
-			} else {
-				groundFriction = 1f;
-			}
-			groundVelocity = Vector3.zero;
-			Movable check = groundEntity.GetComponent<Movable> ();
-			if (check != null) {
-				groundVelocity = check.velocity;
-			}
-			Rigidbody cccheck = groundEntity.GetComponent<Rigidbody> ();
-			if (cccheck != null) {
-				groundVelocity = cccheck.GetPointVelocity(hit.point);
-			}
+	private bool CalculateGround( RaycastHit hit ) {
+		// Check to see if it's valid solid ground.
+		if ( Vector3.Angle(hit.normal, Vector3.up) > controller.slopeLimit ) {
+			return false;
+		}
+		// Snap the player to where the spherecast hit.
+		groundEntity = hit.collider.gameObject;
+		groundNormal = hit.normal;
+		Collider ccheck = groundEntity.GetComponent<Collider> ();
+		if (ccheck != null) {
+			groundFriction = ccheck.material.dynamicFriction;
 		} else {
+			groundFriction = 1f;
+		}
+		groundVelocity = Vector3.zero;
+		Movable check = groundEntity.GetComponent<Movable> ();
+		if (check != null) {
+			groundVelocity = check.velocity;
+		}
+		Rigidbody cccheck = groundEntity.GetComponent<Rigidbody> ();
+		if (cccheck != null) {
+			groundVelocity = cccheck.GetPointVelocity(hit.point);
+		}
+		return true;
+	}
+
+	void Update() {
+		bool hitGround = false;
+		if (velocity.y <= 0) {
+			foreach( RaycastHit hit in Physics.SphereCastAll (transform.position, radius, -transform.up, distToGround-radius+0.1f, layerMask, QueryTriggerInteraction.Ignore) ) {
+				// This means that our initial sphere is already colliding with something
+				// if our initial sphere is colliding with something, we don't get any useful information...
+				if (hit.distance == 0) {
+					// We have to do another separate raycast, this takes care of a corner case (literally).
+					RaycastHit newHit;
+					//Debug.Assert ("AAA");
+					if (Physics.Raycast (transform.position, -transform.up, out newHit, distToGround+0.1f, layerMask, QueryTriggerInteraction.Ignore)) {
+						Debug.Log (newHit.distance);
+						hitGround = hitGround || CalculateGround (newHit);
+						if (hitGround) { 
+							break;
+						}
+					}
+					continue;
+				}
+				hitGround = hitGround || CalculateGround (hit);
+				if (hitGround) { 
+					break;
+				}
+			}
+		}
+
+		if ( !hitGround ) {
 			groundEntity = null;
 			groundFriction = 1f;
 			groundNormal = Vector3.up;
@@ -364,10 +394,18 @@ public class SourcePlayer : MonoBehaviour {
 		velocity += accelspeed * wishdir;
 	}
 	private void StayOnGround() {
-		RaycastHit hit;
-		if (Physics.SphereCast (transform.position+controller.center, radius, -transform.up, out hit, distToGround + stepSize + 0.1f, layerMask, QueryTriggerInteraction.Ignore)) {
+		foreach( RaycastHit hit in Physics.SphereCastAll (transform.position+controller.center, radius, -transform.up, distToGround + stepSize - radius + 0.1f, layerMask, QueryTriggerInteraction.Ignore)) {
 			// Snap the player to where the spherecast hit.
+			// This means that our initial sphere is already colliding with something
+			// if our initial sphere is colliding with something, we don't get any useful information...
+			if (hit.distance == 0) {
+				continue;
+			}
+			if ( Vector3.Angle(hit.normal, Vector3.up) > controller.slopeLimit ) {
+				continue;
+			}
 			controller.Move (new Vector3 (0, -hit.distance, 0));
+			break;
 		}
 	}
 	private void WalkMove() {
