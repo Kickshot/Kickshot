@@ -13,7 +13,7 @@ public class SourcePlayer : MonoBehaviour {
 	public float groundAccelerate = 10f; // How fast we accelerate while on solid ground.
 	public float groundDecellerate = 10f; // How fast we deaccelerate on solid ground.
 	public float airAccelerate = 1f; // How much air control the player has.
-	public float airDeccelerate = 10f; // How fast the player can stop in mid-air or slow down.
+	public float airDeccelerateMultiplier = 1f; // How fast the player can stop in mid-air or slow down.
 	public float walkSpeed = 10f; // How fast the player runs.
 	public float jumpSpeed = 8f; // The y velocity to set our character at when they jump.
 	public float fallPunchThreshold = 8f; // How fast we must be falling before we shake the screen and make a thud.
@@ -519,7 +519,7 @@ public class SourcePlayer : MonoBehaviour {
 
 		// If we're trying to stop, use airDeccelerate value (usually much larger value than airAccelerate)
 		if (Vector3.Dot (velocity, wishdir) < 0) {
-			Accelerate (wishdir, wishspeed, airDeccelerate);
+			Accelerate (wishdir, wishspeed, velocity.magnitude*airDeccelerateMultiplier);
 		} else {
 			Accelerate (wishdir, wishspeed, airAccelerate);
 		}
