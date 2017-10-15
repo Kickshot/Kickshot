@@ -312,9 +312,12 @@ public class SourcePlayer : MonoBehaviour {
 				velocity[i] = 0;
 			}
 		}
+		float savedy = velocity.y;
+		velocity.y = 0;
 		if (velocity.magnitude > maxSpeed) {
 			velocity = Vector3.Normalize (velocity) * maxSpeed;
 		}
+		velocity.y = savedy;
 	}
 	private void PlayerMove() {
 		CheckFalling();
