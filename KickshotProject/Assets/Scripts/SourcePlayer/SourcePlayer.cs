@@ -26,8 +26,11 @@ public class SourcePlayer : MonoBehaviour {
 		new CollisionSphere(0f),
 		new CollisionSphere(.5f),
 	};
+    public AudioClip[] materialSounds;
+    public bool DisableMaterialBasedSounds;
 
-	private float frictionStun = 0f; // Timer to keep track of how long to disable friction.
+    private Dictionary<string, AudioClip> soundLookup; // Sound Lookup for playing sounds based on matrial names.
+    private float frictionStun = 0f; // Timer to keep track of how long to disable friction.
 	private float frictionStunPercentage = 0.5f; // How much we actually disable friction by.
 	private const float overbounce = 2f; // How much to multiply incoming collision velocities, to keep us from getting stuck in moving objects.
 	// We only collide with these layers.
@@ -50,11 +53,14 @@ public class SourcePlayer : MonoBehaviour {
 	private AudioSource jumpGrunt;
 	private AudioSource painGrunt;
 	private AudioSource hardLand;
-	void Start() {
+    private AudioSource materialPlay;
+	void Start()
+    {
 		var aSources = GetComponents<AudioSource> ();
 		jumpGrunt = aSources [0];
 		painGrunt = aSources [1];
 		hardLand = aSources [2];
+        materialPlay = aSources[3];
 		// This generates our layermask, making sure we only collide with stuff that's specified by the physics engine.
 		int myLayer = gameObject.layer;
 		layerMask = 0;
@@ -69,7 +75,12 @@ public class SourcePlayer : MonoBehaviour {
 		radius = controller.radius+buffer;
 		stepSize = controller.stepOffset;
 		TemporaryLayerIndex = LayerMask.NameToLayer(TemporaryLayer);
-	}
+
+        soundLookup = new Dictionary<string, AudioClip>();
+
+        for (int i = 0; i < materialSounds.Length; i++)
+            soundLookup.Add(materialSounds[i].name, materialSounds[i]);
+    }
 	private bool CalculateGround( RaycastHit hit ) {
 		// Check to see if it's valid solid ground.
 		if ( Vector3.Angle(hit.normal, Vector3.up) > controller.slopeLimit ) {
@@ -220,16 +231,17 @@ public class SourcePlayer : MonoBehaviour {
 			return;
 		}
 
-		// We landed on something solidly, if it has some velocity we need to subtract it from our own.
-		// This makes our velocities match up again.
-		if (groundVelocity.magnitude > 0) {
-			velocity -= groundVelocity;
-		}
+        // We landed on something solidly, if it has some velocity we need to subtract it from our own.
+        // This makes our velocities match up again.
+        if (groundVelocity.magnitude > 0)
+        {
+            velocity -= groundVelocity;
+        }
 
 		if ( fallVelocity >= fallPunchThreshold ) {
 				
 			//bool bAlive = true;
-			//float fvol = 0.5f;
+			float fvol = 0.5f;
 
 			// Scale it down if we landed on something that's floating...
 			//if ( player->GetGroundEntity()->IsFloating() ) {
@@ -252,13 +264,15 @@ public class SourcePlayer : MonoBehaviour {
 				//
 				hardLand.Play ();
 				//gameObject.SendMessage("Damage", (fallVelocity - maxSafeFallSpeed)*5f );
-				//fvol = 1.0f;
+				fvol = 1.0f;
 			} else if ( fallVelocity > maxSafeFallSpeed / 2 ) {
-				//fvol = 0.85f;
+				fvol = 0.85f;
 			} else {
-				//fvol = 0f;
+				fvol = 0f;
 			}
-			// PlayerRoughLandingEffects( fvol );
+
+            if(!DisableMaterialBasedSounds)
+			    PlayerRoughLandingEffects( fvol );
 		}
 
 		// Clip our velocity, even if we landed on solid ground, we might gain or lose speed depending on the slope...
@@ -271,6 +285,26 @@ public class SourcePlayer : MonoBehaviour {
 		//
 		fallVelocity = 0;
 	}
+
+    private void PlayerRoughLandingEffects(float volume)
+    {
+        print("weee");
+        RaycastHit hit;
+        if (Physics.Raycast(transform.position, Vector3.down, out hit, 3f))
+        {
+            string matName = Helper.getMaterial(hit).name ?? "";
+
+            if (soundLookup.ContainsKey(matName))
+            {
+                materialPlay.PlayOneShot(soundLookup[matName],volume);
+            }
+            else
+            {
+                materialPlay.PlayOneShot(materialSounds[0], volume);
+            }
+        }
+    }
+
 	private void Friction() {
 		float	speed, newspeed, control;
 		float	friction;
@@ -341,7 +375,8 @@ public class SourcePlayer : MonoBehaviour {
 		}
 		// Was jump button pressed?
 		CheckJump();
-		// Make sure we're standing on solid ground
+        // Make sure we're standing on solid ground
+
 		if (Vector3.Angle (groundNormal, new Vector3 (0f, 1f, 0f)) > controller.slopeLimit) {
 			groundEntity = null;
 		}
