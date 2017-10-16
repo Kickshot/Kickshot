@@ -37,7 +37,6 @@ public static class ImpactSounds {
 		List<AudioClip> stone = new List<AudioClip> ();
 		stone.Add (Resources.Load<AudioClip> ("Sounds/stone_impact1"));
 		stone.Add (Resources.Load<AudioClip> ("Sounds/stone_impact2"));
-		stone.Add (Resources.Load<AudioClip> ("Sounds/stone_impact3"));
 
 		// Setup our lookup table
 		soundLookup["default"] = dirt; //Don't delete this,
