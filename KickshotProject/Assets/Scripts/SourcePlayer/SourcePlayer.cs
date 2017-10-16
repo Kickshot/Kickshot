@@ -228,7 +228,10 @@ public class SourcePlayer : MonoBehaviour {
         }
 		if (fallVelocity >= fallSoundThreshold) {
 			float fvol = Mathf.Min ((fallVelocity - fallSoundThreshold) / (maxSafeFallSpeed - fallSoundThreshold), 1f);
-			PlayerRoughLandingEffects (fvol, transform.position - new Vector3 (0f, distToGround, 0f), Vector3.up);
+			RaycastHit hit;
+			if (Physics.SphereCast (transform.position, radius, -transform.up, out hit, distToGround - radius + 0.1f, layerMask, QueryTriggerInteraction.Ignore)) {
+				PlayerRoughLandingEffects (fvol, hit.point, hit.normal);
+			}
 		}
 		if ( fallVelocity >= fallPunchThreshold ) {
 

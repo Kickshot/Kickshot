@@ -16,9 +16,9 @@ public class MouseLook : MonoBehaviour {
 	private Vector3 shakeIntensity;
 
 	public void ShakeImpact (Vector3 intensity) {
-		shakeIntensity += intensity/3f;
-		shakeTimer = intensity.magnitude/3f;
-		shakeTimerMax = intensity.magnitude/3f;
+		shakeIntensity += intensity/3.5f;
+		shakeTimer = shakeIntensity.magnitude;
+		shakeTimerMax = shakeIntensity.magnitude;
 	}
 	public void SetRotation( Quaternion r ) {
 		rotX = 0f;
