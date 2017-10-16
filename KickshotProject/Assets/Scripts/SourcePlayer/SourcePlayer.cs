@@ -134,16 +134,26 @@ public class SourcePlayer : MonoBehaviour {
 		RecursivePushback(0, MaxPushbackIterations);
 	}
 	// Slide off of impacting surface
-	private Vector3 ClipVelocity( Vector3 vel, Vector3 impactNormal) {
-		float backoff;
-		backoff = Vector3.Dot (vel, impactNormal);
+	private Vector3 ClipVelocity( Vector3 vel, Vector3 normal) {
+		float overbounce = 1.0f; // How much to bounce off the surface, 1.0 means we just slide normally. 2.0 would bounce us off.
+		float	backoff;
+		Vector3	change;
+		float   angle;
+		int		i, blocked;
+		Vector3 outvel;
 
-		if ( backoff < 0 ) {
-			backoff *= 1.001f;
-		} else {
-			backoff /= 1.001f;
+		angle = normal.y;
+		// Determine how far along plane to slide based on incoming direction.
+		backoff = Vector3.Dot(vel, normal) * overbounce;
+
+		change = normal*backoff;
+		outvel = vel - change;
+		// iterate once to make sure we aren't still moving through the plane
+		float adjust = Vector3.Dot( outvel, normal );
+		if( adjust < 0.0f ) {
+			outvel -= ( normal * adjust );
 		}
-		return vel - (impactNormal*backoff);
+		return outvel;
 	}
 	// This command, in a nutshell, scales player input in order to take into account sqrt(2) distortions
 	// from walking diagonally. It also multiplies the answer by the walkspeed for convenience.
@@ -248,10 +258,14 @@ public class SourcePlayer : MonoBehaviour {
 			} else {
 				//fvol = 0f;
 			}
-
 			// PlayerRoughLandingEffects( fvol );
 		}
 
+		// Clip our velocity, even if we landed on solid ground, we might gain or lose speed depending on the slope...
+		// Jumping also clips our velocity, we only want to do it once.
+		if (!Input.GetButton ("Jump")) {
+			velocity = ClipVelocity (velocity, groundNormal);
+		}
 		//
 		// Clear the fall velocity so the impact doesn't happen again.
 		//
