@@ -16,8 +16,9 @@ public class SourcePlayer : MonoBehaviour {
 	public float airDeccelerateMultiplier = 1f; // How fast the player can stop in mid-air or slow down.
 	public float walkSpeed = 10f; // How fast the player runs.
 	public float jumpSpeed = 8f; // The y velocity to set our character at when they jump.
-	public float fallPunchThreshold = 8f; // How fast we must be falling before we shake the screen and make a thud.
-	public float maxSafeFallSpeed = 15f; // How fast we must be falling before we take damage.
+	public float fallSoundThreshold = 8f; // How fast we must be falling before we make a thud.
+	public float fallPunchThreshold = 10f; // How fast we must be falling before we shake the screen.
+	public float maxSafeFallSpeed = 25f; // How fast we must be falling before we take damage.
 	public float jumpSpeedBonus = 0.1f; // Speed boost from just jumping forward as a percentage.
 	public float health = 100f;
 	public CollisionSphere[] spheres =
@@ -26,10 +27,7 @@ public class SourcePlayer : MonoBehaviour {
 		new CollisionSphere(0f),
 		new CollisionSphere(.5f),
 	};
-    public AudioClip[] materialSounds;
-    public bool DisableMaterialBasedSounds;
 
-    private Dictionary<string, AudioClip> soundLookup; // Sound Lookup for playing sounds based on matrial names.
     private float frictionStun = 0f; // Timer to keep track of how long to disable friction.
 	private float frictionStunPercentage = 0.5f; // How much we actually disable friction by.
 	private const float overbounce = 2f; // How much to multiply incoming collision velocities, to keep us from getting stuck in moving objects.
@@ -53,14 +51,11 @@ public class SourcePlayer : MonoBehaviour {
 	private AudioSource jumpGrunt;
 	private AudioSource painGrunt;
 	private AudioSource hardLand;
-    private AudioSource materialPlay;
-	void Start()
-    {
+	void Start() {
 		var aSources = GetComponents<AudioSource> ();
 		jumpGrunt = aSources [0];
 		painGrunt = aSources [1];
 		hardLand = aSources [2];
-        materialPlay = aSources[3];
 		// This generates our layermask, making sure we only collide with stuff that's specified by the physics engine.
 		int myLayer = gameObject.layer;
 		layerMask = 0;
@@ -75,11 +70,6 @@ public class SourcePlayer : MonoBehaviour {
 		radius = controller.radius+buffer;
 		stepSize = controller.stepOffset;
 		TemporaryLayerIndex = LayerMask.NameToLayer(TemporaryLayer);
-
-        soundLookup = new Dictionary<string, AudioClip>();
-
-        for (int i = 0; i < materialSounds.Length; i++)
-            soundLookup.Add(materialSounds[i].name, materialSounds[i]);
     }
 	private bool CalculateGround( RaycastHit hit ) {
 		// Check to see if it's valid solid ground.
@@ -118,7 +108,6 @@ public class SourcePlayer : MonoBehaviour {
 					RaycastHit newHit;
 					//Debug.Assert ("AAA");
 					if (Physics.Raycast (transform.position, -transform.up, out newHit, distToGround+0.1f, layerMask, QueryTriggerInteraction.Ignore)) {
-						Debug.Log (newHit.distance);
 						hitGround = hitGround || CalculateGround (newHit);
 						if (hitGround) { 
 							break;
@@ -237,11 +226,11 @@ public class SourcePlayer : MonoBehaviour {
         {
             velocity -= groundVelocity;
         }
-
+		if (fallVelocity >= fallSoundThreshold) {
+			float fvol = Mathf.Min ((fallVelocity - fallSoundThreshold) / (maxSafeFallSpeed - fallSoundThreshold), 1f);
+			PlayerRoughLandingEffects (fvol, transform.position - new Vector3 (0f, distToGround, 0f), Vector3.up);
+		}
 		if ( fallVelocity >= fallPunchThreshold ) {
-				
-			//bool bAlive = true;
-			float fvol = 0.5f;
 
 			// Scale it down if we landed on something that's floating...
 			//if ( player->GetGroundEntity()->IsFloating() ) {
@@ -258,21 +247,17 @@ public class SourcePlayer : MonoBehaviour {
 				fallVelocity = Mathf.Max (0.1f, fallVelocity);
 			}
 
+			float shakeIntensity = Mathf.Min ((fallVelocity - fallPunchThreshold) / (maxSafeFallSpeed - fallPunchThreshold), 1f);
+			gameObject.SendMessage ("ShakeImpact", Vector3.down*shakeIntensity);
+
 			if ( fallVelocity > maxSafeFallSpeed ) {
 				//
 				// If they hit the ground going this fast they may take damage (and die).
 				//
 				hardLand.Play ();
 				//gameObject.SendMessage("Damage", (fallVelocity - maxSafeFallSpeed)*5f );
-				fvol = 1.0f;
-			} else if ( fallVelocity > maxSafeFallSpeed / 2 ) {
-				fvol = 0.85f;
-			} else {
-				fvol = 0f;
 			}
-
-            if(!DisableMaterialBasedSounds)
-			    PlayerRoughLandingEffects( fvol );
+			// Linearly scale the impact volume with how fast we hit.
 		}
 
 		// Clip our velocity, even if we landed on solid ground, we might gain or lose speed depending on the slope...
@@ -286,22 +271,10 @@ public class SourcePlayer : MonoBehaviour {
 		fallVelocity = 0;
 	}
 
-    private void PlayerRoughLandingEffects(float volume)
-    {
-        print("weee");
+	private void PlayerRoughLandingEffects(float volume, Vector3 hitpos, Vector3 hitnormal) {
         RaycastHit hit;
-        if (Physics.Raycast(transform.position, Vector3.down, out hit, 3f))
-        {
-            string matName = Helper.getMaterial(hit).name ?? "";
-
-            if (soundLookup.ContainsKey(matName))
-            {
-                materialPlay.PlayOneShot(soundLookup[matName],volume);
-            }
-            else
-            {
-                materialPlay.PlayOneShot(materialSounds[0], volume);
-            }
+		if (Physics.Raycast(hitpos+hitnormal*0.1f, -hitnormal, out hit, 1f)) {
+			AudioSource.PlayClipAtPoint (ImpactSounds.GetSound(Helper.getMaterial(hit)), hitpos, volume);
         }
     }
 
@@ -597,6 +570,7 @@ public class SourcePlayer : MonoBehaviour {
 			//Debug.Log ("Ignoring collsion because it's valid ground.");
 			return;
 		}
+		float mag = velocity.magnitude;
 		// If we walk off an edge, we won't inherit the ground velocity. So if we walk off an edge while moving fast
 		// then hit a wall, this prevents us from infinitely being pushed into that wall from our inherited velocity.
 		if (groundVelocity.magnitude > 0f) {
@@ -612,7 +586,6 @@ public class SourcePlayer : MonoBehaviour {
 			if ( d > 0 ) { // If the velocity should be applied
 				velocity += vel * d * overbounce; // We apply it with some overbounce, to keep us from getting stuck.
 			}
-			return;
 		}
 		Rigidbody rigidcheck = obj.GetComponent<Rigidbody> ();
 		if (rigidcheck != null) {
@@ -622,7 +595,15 @@ public class SourcePlayer : MonoBehaviour {
 			if ( d > 0 ) {
 				velocity += vel * d * overbounce;
 			}
-			return;
+		}
+		float change = Mathf.Abs (mag - velocity.magnitude);
+		if (change > fallSoundThreshold) {
+			float fvol = Mathf.Min (change / (maxSafeFallSpeed - fallSoundThreshold), 1f);
+			PlayerRoughLandingEffects (fvol, hitPos, hitNormal);
+		}
+		if (change > fallPunchThreshold) {
+			float shakeIntensity = Mathf.Min ((change - fallPunchThreshold) / (maxSafeFallSpeed - fallPunchThreshold), 1f);
+			gameObject.SendMessage ("ShakeImpact", -hitNormal * shakeIntensity);
 		}
 	}
 	void OnControllerColliderHit(ControllerColliderHit hit ) {
