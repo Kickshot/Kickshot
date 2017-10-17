@@ -17,8 +17,11 @@ public class MouseLook : MonoBehaviour {
 
 	public void ShakeImpact (Vector3 intensity) {
 		shakeIntensity += intensity/3.5f;
-		shakeTimer = shakeIntensity.magnitude;
-		shakeTimerMax = shakeIntensity.magnitude;
+		if (shakeIntensity.magnitude > 1f) {
+			shakeIntensity = Vector3.Normalize (shakeIntensity);
+		}
+		shakeTimer = Mathf.Min(shakeIntensity.magnitude,1f);
+		shakeTimerMax = shakeTimer;
 	}
 	public void SetRotation( Quaternion r ) {
 		rotX = 0f;

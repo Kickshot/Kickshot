@@ -21,6 +21,8 @@ public class SourcePlayer : MonoBehaviour {
 	public float maxSafeFallSpeed = 25f; // How fast we must be falling before we take damage.
 	public float jumpSpeedBonus = 0.1f; // Speed boost from just jumping forward as a percentage.
 	public float health = 100f;
+	public bool justJumped = false;
+	public bool justTookFallDamage = false;
 	public CollisionSphere[] spheres =
 		new CollisionSphere[2] {
 		//new CollisionSphere(-.5f),
@@ -39,7 +41,7 @@ public class SourcePlayer : MonoBehaviour {
 	private float stepSize = 0.5f;
 	private float fallVelocity;
 	private CharacterController controller;
-	private GameObject groundEntity = null;
+	public GameObject groundEntity = null;
 	private Vector3 groundNormal = new Vector3(0f,1f,0f);
 	public Vector3 groundVelocity;
 	private float groundFriction;
@@ -98,6 +100,8 @@ public class SourcePlayer : MonoBehaviour {
 	}
 
 	void Update() {
+		justJumped = false;
+		justTookFallDamage = false;
 		bool hitGround = false;
 		if (velocity.y <= 0) {
 			foreach( RaycastHit hit in Physics.SphereCastAll (transform.position, radius, -transform.up, distToGround-radius+0.1f, layerMask, QueryTriggerInteraction.Ignore) ) {
@@ -157,7 +161,7 @@ public class SourcePlayer : MonoBehaviour {
 	}
 	// This command, in a nutshell, scales player input in order to take into account sqrt(2) distortions
 	// from walking diagonally. It also multiplies the answer by the walkspeed for convenience.
-	private Vector3 GetCommandVelocity() {
+	public Vector3 GetCommandVelocity() {
 		float max;
 		float total;
 		float scale;
@@ -205,6 +209,7 @@ public class SourcePlayer : MonoBehaviour {
 				flSpeedAddition *= -1.0f;
 			}
 			velocity += transform.forward * flSpeedAddition;
+			justJumped = true;
 		}
 		// We were standing on the ground, then suddenly are not.
 		if (velocity.y >= jumpSpeed/2f) {
@@ -257,6 +262,7 @@ public class SourcePlayer : MonoBehaviour {
 				//
 				// If they hit the ground going this fast they may take damage (and die).
 				//
+				justTookFallDamage = true;
 				hardLand.Play ();
 				//gameObject.SendMessage("Damage", (fallVelocity - maxSafeFallSpeed)*5f );
 			}
