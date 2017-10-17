@@ -30,6 +30,7 @@ public class SourcePlayer : MonoBehaviour {
 		new CollisionSphere(.5f),
 	};
 
+	private bool ignoreCollisions = false;
     private float frictionStun = 0f; // Timer to keep track of how long to disable friction.
 	private float frictionStunPercentage = 0.5f; // How much we actually disable friction by.
 	private const float overbounce = 2f; // How much to multiply incoming collision velocities, to keep us from getting stuck in moving objects.
@@ -68,9 +69,10 @@ public class SourcePlayer : MonoBehaviour {
 		}
 
 		controller = GetComponent<CharacterController> ();
+		controller.detectCollisions = false;
 		distToGround = controller.height / 2f;//GetComponent<Collider>().bounds.extents.y/2f;
 		radius = controller.radius+buffer;
-		stepSize = controller.stepOffset;
+		//stepSize = controller.stepOffset;
 		TemporaryLayerIndex = LayerMask.NameToLayer(TemporaryLayer);
     }
 	private bool CalculateGround( RaycastHit hit ) {
@@ -428,6 +430,7 @@ public class SourcePlayer : MonoBehaviour {
 		velocity += accelspeed * wishdir;
 	}
 	private void StayOnGround() {
+		ignoreCollisions = true;
 		foreach( RaycastHit hit in Physics.SphereCastAll (transform.position+controller.center, radius, -transform.up, distToGround + stepSize - radius + 0.1f, layerMask, QueryTriggerInteraction.Ignore)) {
 			// Snap the player to where the spherecast hit.
 			// This means that our initial sphere is already colliding with something
@@ -441,6 +444,7 @@ public class SourcePlayer : MonoBehaviour {
 			controller.Move (new Vector3 (0, -hit.distance, 0));
 			break;
 		}
+		ignoreCollisions = false;
 	}
 	private void WalkMove() {
 		//int i;
@@ -505,7 +509,8 @@ public class SourcePlayer : MonoBehaviour {
 			return;
 		}
 
-		controller.Move (velocity * Time.deltaTime);
+		//controller.Move (velocity * Time.deltaTime);
+		StepMove();
 		// Now pull the base velocity back out.   Base velocity is set if you are on a moving object, like a conveyor (or maybe another monster?)
 		// VectorSubtract( mv->m_vecVelocity, player->GetBaseVelocity(), mv->m_vecVelocity );
 		velocity -= groundVelocity;
@@ -570,6 +575,9 @@ public class SourcePlayer : MonoBehaviour {
 		//VectorSubtract( mv->m_vecVelocity, player->GetBaseVelocity(), mv->m_vecVelocity );
 	}
 	private void HandleCollision( GameObject obj, Vector3 hitNormal, Vector3 hitPos ) {
+		if (ignoreCollisions) {
+			return;
+		}
 		//Debug.Log ("Hello " + Time.time);
 		if ((layerMask & (1<<obj.layer)) == 0) {
 			//Debug.Log ("Ignoring collsion of object with " + obj.layer);
@@ -675,6 +683,40 @@ public class SourcePlayer : MonoBehaviour {
 		if (depth < maxDepth && contact) {
 			RecursivePushback(depth + 1, maxDepth);
 		}
+	}
+	private void StepMove() {
+		ignoreCollisions = true;
+		// Try sliding forward both on ground and up 16 pixels
+		//  take the move that goes farthest
+		Vector3 savePos = transform.position;
+		controller.Move (velocity*Time.deltaTime);
+
+		Vector3 groundMove = transform.position;
+		transform.position = savePos;
+		// Move straight up,
+		controller.Move (new Vector3(0f,stepSize,0f));
+		// Then move normally.
+		controller.Move (velocity*Time.deltaTime);
+		// Then try to snap back to the stair
+		controller.Move (new Vector3(0f,-stepSize,0f));
+		Vector3 stepMove = transform.position;
+		// If we're in the air after trying to step move, use the original move attempt
+		RaycastHit hit;
+		if (!Physics.SphereCast (transform.position, radius, -transform.up, out hit, distToGround - radius + 0.1f, layerMask, QueryTriggerInteraction.Ignore)) {
+			transform.position = groundMove;
+			ignoreCollisions = false;
+			return;
+		}
+
+		// Select whichever went furthest
+		float stepMoveDist = (savePos.x-stepMove.x)*(savePos.x-stepMove.x) + (savePos.z-stepMove.z)*(savePos.z-stepMove.z);
+		float groundMoveDist = (savePos.x-groundMove.x)*(savePos.x-groundMove.x) + (savePos.z-groundMove.z)*(savePos.z-groundMove.z);
+		if (stepMoveDist > groundMoveDist) {
+			transform.position = stepMove;
+		} else {
+			transform.position = groundMove;
+		}
+		ignoreCollisions = false;
 	}
 	public Vector3 SpherePosition(CollisionSphere sphere) {
 		return transform.position + sphere.offset * transform.up;
