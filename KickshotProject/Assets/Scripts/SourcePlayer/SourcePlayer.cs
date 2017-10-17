@@ -68,6 +68,7 @@ public class SourcePlayer : MonoBehaviour {
 		}
 
 		controller = GetComponent<CharacterController> ();
+		controller.enableOverlapRecovery = false; // Increases the stability a tad, since I already have overlap recovery.
 		controller.stepOffset = 0f; // We can climb up walls with this set to anything other than 0. Don't ask me why that happens. I have my own step detection anyway.
 		controller.detectCollisions = false; // The default collision resolution for character controller vs rigidbody is analogus to unstoppable infinite mass vs paper. We don't want that.
 		distToGround = controller.height / 2f;//GetComponent<Collider>().bounds.extents.y/2f;
@@ -603,7 +604,7 @@ public class SourcePlayer : MonoBehaviour {
 			Vector3 vel = rigidcheck.GetPointVelocity (hitPos);
 			float d = Vector3.Dot (vel, hitNormal);
 			if ( d > 0 ) {
-				velocity += hitNormal * d * overbounce;
+				velocity += hitNormal * d * overbounce;// * rigidcheck.mass; // yeah don't multiply by the mass...
 			}
 			rigidcheck.AddForceAtPosition (-hitNormal * change * mass, hitPos);
 		}
