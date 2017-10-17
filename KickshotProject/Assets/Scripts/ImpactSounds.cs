@@ -9,7 +9,7 @@ public static class ImpactSounds {
 		if (!generatedList) {
 			GenerateList ();
 		}
-		if (soundLookup.ContainsKey (mat.name)) {
+		if (mat != null && soundLookup.ContainsKey (mat.name)) {
 			List<AudioClip> clips = soundLookup [mat.name];
 			return clips [Random.Range (0, clips.Count-1)];
 		}

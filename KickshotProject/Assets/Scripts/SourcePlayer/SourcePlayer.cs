@@ -23,6 +23,7 @@ public class SourcePlayer : MonoBehaviour {
 	public float health = 100f;
 	public bool justJumped = false;
 	public bool justTookFallDamage = false;
+	public float mass = 1f;
 	public CollisionSphere[] spheres =
 		new CollisionSphere[2] {
 		//new CollisionSphere(-.5f),
@@ -31,9 +32,7 @@ public class SourcePlayer : MonoBehaviour {
 	};
 
 	private bool ignoreCollisions = false;
-    private float frictionStun = 0f; // Timer to keep track of how long to disable friction.
-	private float frictionStunPercentage = 0.5f; // How much we actually disable friction by.
-	private const float overbounce = 2f; // How much to multiply incoming collision velocities, to keep us from getting stuck in moving objects.
+	private const float overbounce = 1f; // How much to multiply incoming collision velocities, to keep us from getting stuck in moving objects.
 	// We only collide with these layers.
 	private int layerMask;
 	private const float TinyTolerance = 0.05f; // How much to allow penetration.
@@ -69,10 +68,10 @@ public class SourcePlayer : MonoBehaviour {
 		}
 
 		controller = GetComponent<CharacterController> ();
-		controller.detectCollisions = false;
+		controller.stepOffset = 0f; // We can climb up walls with this set to anything other than 0. Don't ask me why that happens. I have my own step detection anyway.
+		controller.detectCollisions = false; // The default collision resolution for character controller vs rigidbody is analogus to unstoppable infinite mass vs paper. We don't want that.
 		distToGround = controller.height / 2f;//GetComponent<Collider>().bounds.extents.y/2f;
 		radius = controller.radius+buffer;
-		//stepSize = controller.stepOffset;
 		TemporaryLayerIndex = LayerMask.NameToLayer(TemporaryLayer);
     }
 	private bool CalculateGround( RaycastHit hit ) {
@@ -305,12 +304,7 @@ public class SourcePlayer : MonoBehaviour {
 		drop = 0;
 		// apply ground friction
 		if (groundEntity != null && !Input.GetButton("Jump")) { // On an entity that is the ground
-			if (frictionStun > 0f) {
-				friction = baseFriction * groundFriction * frictionStunPercentage;
-				frictionStun -= Time.deltaTime;
-			} else {
-				friction = baseFriction * groundFriction;
-			}
+			friction = baseFriction * groundFriction;
 
 			// Bleed off some speed, but if we have less than the bleed
 			//  threshold, bleed the threshold amount.
@@ -597,23 +591,22 @@ public class SourcePlayer : MonoBehaviour {
 		velocity = ClipVelocity (velocity, hitNormal);
 		Movable check = obj.GetComponent<Movable> ();
 		if (check != null) {
-			frictionStun = 0.3f; // Stun our friction
 			Vector3 vel = check.velocity;
-			float d = Vector3.Dot (Vector3.Normalize (vel), hitNormal); // How similar is our velocity to our hitnormal (perp = 0, backwards = -1, same = 1)
+			float d = Vector3.Dot (vel, hitNormal); // How similar is our velocity to our hitnormal (perp = 0, backwards = -1, same = 1)
 			if ( d > 0 ) { // If the velocity should be applied
-				velocity += vel * d * overbounce; // We apply it with some overbounce, to keep us from getting stuck.
-			}
-		}
-		Rigidbody rigidcheck = obj.GetComponent<Rigidbody> ();
-		if (rigidcheck != null) {
-			frictionStun = 0.3f;
-			Vector3 vel = rigidcheck.GetPointVelocity (hitPos);
-			float d = Vector3.Dot (Vector3.Normalize (vel), hitNormal);
-			if ( d > 0 ) {
-				velocity += vel * d * overbounce;
+				velocity += hitNormal * d * overbounce; // We apply it with some overbounce, to keep us from getting stuck.
 			}
 		}
 		float change = Mathf.Abs (mag - velocity.magnitude);
+		Rigidbody rigidcheck = obj.GetComponent<Rigidbody> ();
+		if (rigidcheck != null) {
+			Vector3 vel = rigidcheck.GetPointVelocity (hitPos);
+			float d = Vector3.Dot (vel, hitNormal);
+			if ( d > 0 ) {
+				velocity += hitNormal * d * overbounce;
+			}
+			rigidcheck.AddForceAtPosition (-hitNormal * change * mass, hitPos);
+		}
 		if (change > fallSoundThreshold) {
 			float fvol = Mathf.Min (change / (maxSafeFallSpeed - fallSoundThreshold), 1f);
 			PlayerRoughLandingEffects (fvol, hitPos, hitNormal);
