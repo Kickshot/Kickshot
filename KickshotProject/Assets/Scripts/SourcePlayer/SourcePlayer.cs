@@ -4,10 +4,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SourcePlayer : MonoBehaviour {
+public class SourcePlayer : MonoBehaviour
+{
     public GameObject deathSpawn;
     public Vector3 velocity;
-    public Vector3 gravity = new Vector3(0,-20f,0); // gravity in meters per second per second.
+    public Vector3 gravity = new Vector3(0, -20f, 0); // gravity in meters per second per second.
     public float baseFriction = 6f; // A friction multiplier, higher means more friction.
     public float maxSpeed = 35f; // The maximum speed the player can move at.
     public float groundAccelerate = 10f; // How fast we accelerate while on solid ground.
@@ -37,7 +38,7 @@ public class SourcePlayer : MonoBehaviour {
     private float fallVelocity;
     private CharacterController controller;
     public GameObject groundEntity = null;
-    private Vector3 groundNormal = new Vector3(0f,1f,0f);
+    private Vector3 groundNormal = new Vector3(0f, 1f, 0f);
     public Vector3 groundVelocity;
     private float groundFriction;
     private float distToGround;
@@ -48,85 +49,127 @@ public class SourcePlayer : MonoBehaviour {
     private AudioSource jumpGrunt;
     private AudioSource painGrunt;
     private AudioSource hardLand;
-    void Start() {
-        var aSources = GetComponents<AudioSource> ();
-        jumpGrunt = aSources [0];
-        painGrunt = aSources [1];
-        hardLand = aSources [2];
+    void Start()
+    {
+        // Not sure how audio is supposed to work in unity, I just have a list of them on the player to have the jump, pain, and break sounds.
+        var aSources = GetComponents<AudioSource>();
+        jumpGrunt = aSources[0];
+        painGrunt = aSources[1];
+        hardLand = aSources[2];
+
         // This generates our layermask, making sure we only collide with stuff that's specified by the physics engine.
+        // This makes it so that if we specify in-engine layers to not collide with the player, that we actually abide to it.
         int myLayer = gameObject.layer;
         layerMask = 0;
-        for(int i = 0; i < 32; i++) {
-            if(!Physics.GetIgnoreLayerCollision(myLayer, i))  {
+        for (int i = 0; i < 32; i++)
+        {
+            if (!Physics.GetIgnoreLayerCollision(myLayer, i))
+            {
                 layerMask = layerMask | 1 << i;
             }
         }
 
-        controller = GetComponent<CharacterController> ();
+        controller = GetComponent<CharacterController>();
         controller.stepOffset = 0f; // We can climb up walls with this set to anything other than 0. Don't ask me why that happens. I have my own step detection anyway.
         controller.detectCollisions = false; // The default collision resolution for character controller vs rigidbody is analogus to unstoppable infinite mass vs paper. We don't want that.
-        distToGround = controller.height / 2f;//GetComponent<Collider>().bounds.extents.y/2f;
-        radius = controller.radius+buffer;
+
+        // We need this variable in a couple places, so we cache it at the start.
+        distToGround = controller.height / 2f;
+        // Calculate our radius based on the character controller radius and our buffer. It's necessary to have a buffer since
+        // the default unity player controller really doesn't like moving colliders, so we just keep it from colliding with anything...
+        radius = controller.radius + buffer;
+        // We define our collision spheres, we have one at our center, and one at our head. We let the unity controller deal with the feet
+        // collisions.
         spheres = new CollisionSphere[2] {
             new CollisionSphere(0f, radius),
             new CollisionSphere(.5f, radius),
         };
+        // We use this layer to quickly do collision tests with singular objects.
         TemporaryLayerIndex = LayerMask.NameToLayer(TemporaryLayer);
     }
-    private bool CalculateGround( RaycastHit hit ) {
+    // CalculateGround takes a raycast and generates ground information from it.
+    // This is necessary to grab material frictions, moving ground velocities, and normals.
+    // It also returns if the raycast hit valid ground or not.
+    private bool CalculateGround(RaycastHit hit)
+    {
         // Check to see if it's valid solid ground.
-        if ( Vector3.Angle(hit.normal, Vector3.up) > controller.slopeLimit ) {
+        if (hit.normal.y < .7f)
+        {
             return false;
         }
         // Snap the player to where the spherecast hit.
         groundEntity = hit.collider.gameObject;
         groundNormal = hit.normal;
-        Collider ccheck = groundEntity.GetComponent<Collider> ();
-        if (ccheck != null) {
+        // If we have a collider, since the raycast hit it-- we probably do, but i check anyway!
+        Collider ccheck = groundEntity.GetComponent<Collider>();
+        if (ccheck != null)
+        {
             groundFriction = ccheck.material.dynamicFriction;
-        } else {
+        }
+        else
+        {
             groundFriction = 1f;
         }
+
+        // We need to see if we have a velocity now, in order for the player to stay on moving conveyors and stuff.
         groundVelocity = Vector3.zero;
-        Movable check = groundEntity.GetComponent<Movable> ();
-        if (check != null) {
+        // A movable just gives us a velocity. (most basic platforms, or conveyors should be movable)
+        Movable check = groundEntity.GetComponent<Movable>();
+        if (check != null)
+        {
             groundVelocity = check.velocity;
         }
-        Rigidbody cccheck = groundEntity.GetComponent<Rigidbody> ();
-        if (cccheck != null) {
+        // A rigidbody we have to calculate the velocity of the ground immediately below us.
+        Rigidbody cccheck = groundEntity.GetComponent<Rigidbody>();
+        if (cccheck != null)
+        {
             groundVelocity = cccheck.GetPointVelocity(hit.point);
         }
         return true;
     }
 
-    void Update() {
+    void Update()
+    {
+        // assume we haven't jumped and that we haven't taken damage.
+        // assume we also haven't hit the ground.
         justJumped = false;
         justTookFallDamage = false;
         bool hitGround = false;
-        if (velocity.y <= 0) {
-            foreach( RaycastHit hit in Physics.SphereCastAll (transform.position, radius, -transform.up, distToGround-radius+0.1f, layerMask, QueryTriggerInteraction.Ignore) ) {
+        // We only check for ground under us if we're moving downwards.
+        if (velocity.y <= 0)
+        {
+            // Loop through everything in our spherecast, checking for if there's a ground below us.
+            foreach (RaycastHit hit in Physics.SphereCastAll(transform.position, radius, -transform.up, distToGround - radius + 0.1f, layerMask, QueryTriggerInteraction.Ignore))
+            {
                 // This means that our initial sphere is already colliding with something
                 // if our initial sphere is colliding with something, we don't get any useful information...
-                if (hit.distance == 0) {
+                // A corner case this solves is if we're pressed up into the corner of the inside of a mesh box, it wouldn't detect ground
+                // because the box is detected as a wall and promptly added to the ignore list, keeping it from detecting the floor.
+                if (hit.distance == 0)
+                {
                     // We have to do another separate raycast, this takes care of a corner case (literally).
                     RaycastHit newHit;
-                    //Debug.Assert ("AAA");
-                    if (Physics.Raycast (transform.position, -transform.up, out newHit, distToGround+0.1f, layerMask, QueryTriggerInteraction.Ignore)) {
-                        hitGround = hitGround || CalculateGround (newHit);
-                        if (hitGround) { 
+                    if (Physics.Raycast(transform.position, -transform.up, out newHit, distToGround + 0.1f, layerMask, QueryTriggerInteraction.Ignore))
+                    {
+                        hitGround = hitGround || CalculateGround(newHit);
+                        if (hitGround)
+                        {
                             break;
                         }
                     }
                     continue;
                 }
-                hitGround = hitGround || CalculateGround (hit);
-                if (hitGround) { 
+                hitGround = hitGround || CalculateGround(hit);
+                if (hitGround)
+                {
                     break;
                 }
             }
         }
 
-        if ( !hitGround ) {
+        // If we failed to find any ground, we set up some variables that let the rest of the code know.
+        if (!hitGround)
+        {
             groundEntity = null;
             groundFriction = 1f;
             groundNormal = Vector3.up;
@@ -138,56 +181,68 @@ public class SourcePlayer : MonoBehaviour {
         RecursivePushback(0, MaxPushbackIterations);
     }
     // Slide off of impacting surface
-    private Vector3 ClipVelocity( Vector3 vel, Vector3 normal) {
+    // This is just projecting a vector onto a plane (our velocity), check wikipedia or purple math if you want to confirm.
+    private Vector3 ClipVelocity(Vector3 vel, Vector3 normal)
+    {
         float overbounce = 1.0f; // How much to bounce off the surface, 1.0 means we just slide normally. 2.0 would bounce us off.
-        float   backoff;
+        float backoff;
         Vector3 change;
-        float   angle;
-        int             i, blocked;
+        float angle;
+        int i, blocked;
         Vector3 outvel;
 
         angle = normal.y;
         // Determine how far along plane to slide based on incoming direction.
         backoff = Vector3.Dot(vel, normal) * overbounce;
 
-        change = normal*backoff;
+        change = normal * backoff;
         outvel = vel - change;
         // iterate once to make sure we aren't still moving through the plane
-        float adjust = Vector3.Dot( outvel, normal );
-        if( adjust < 0.0f ) {
-            outvel -= ( normal * adjust );
+        float adjust = Vector3.Dot(outvel, normal);
+        if (adjust < 0.0f)
+        {
+            outvel -= (normal * adjust);
         }
         return outvel;
     }
     // This command, in a nutshell, scales player input in order to take into account sqrt(2) distortions
     // from walking diagonally. It also multiplies the answer by the walkspeed for convenience.
-    public Vector3 GetCommandVelocity() {
+    public Vector3 GetCommandVelocity()
+    {
         float max;
         float total;
         float scale;
-        Vector3 command = new Vector3 (Input.GetAxisRaw ("Horizontal"), 0, Input.GetAxisRaw ("Vertical"));
+        Vector3 command = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
 
-        max = Mathf.Max (Mathf.Abs(command.z), Mathf.Abs(command.x));
-        if (max <= 0) {
-            return new Vector3 (0f, 0f, 0f);
+        max = Mathf.Max(Mathf.Abs(command.z), Mathf.Abs(command.x));
+        if (max <= 0)
+        {
+            return new Vector3(0f, 0f, 0f);
         }
 
         total = Mathf.Sqrt(command.z * command.z + command.x * command.x);
         scale = max / total;
 
-        return command*scale*walkSpeed;
+        return command * scale * walkSpeed;
     }
-    private void Gravity() {
+    // Eh
+    private void Gravity()
+    {
         velocity += gravity * Time.deltaTime;
     }
-    private void CheckJump() {
+
+    // Checks if we pressed the jump button, oh also checks if you are suddenly launched into the air.
+    private void CheckJump()
+    {
         // Check to make sure we have a ground under us, and that it's stable ground.
-        if ( Input.GetButton("Jump") && groundEntity && Vector3.Angle(groundNormal,new Vector3(0f,1f,0f)) < controller.slopeLimit ) {
+        if (Input.GetButton("Jump") && groundEntity && Vector3.Angle(groundNormal, new Vector3(0f, 1f, 0f)) < controller.slopeLimit)
+        {
             // Right before we jump, lets clip our velocity real quick. That way if we're jumping down a sloped surface, we go faster!
             velocity = ClipVelocity(velocity, groundNormal);
             // Play a grunt sound, but only so often.
-            if (Time.time - lastGrunt > 0.3) {
-                jumpGrunt.Play ();
+            if (Time.time - lastGrunt > 0.3)
+            {
+                jumpGrunt.Play();
                 lastGrunt = Time.time;
             }
             velocity.y = jumpSpeed;
@@ -196,32 +251,38 @@ public class SourcePlayer : MonoBehaviour {
             groundVelocity = Vector3.zero;
             // We give a certain percentage of the current forward movement as a bonus to the jump speed.  That bonus is clipped
             // to not accumulate over time
-            Vector3 commandVel = GetCommandVelocity ();
-            float flSpeedAddition = Mathf.Abs( commandVel.z * jumpSpeedBonus );
-            float flMaxSpeed = maxSpeed + ( maxSpeed * jumpSpeedBonus );
-            Vector3 flatvel = new Vector3( velocity.x, 0, velocity.z );
-            float flNewSpeed = ( flSpeedAddition + flatvel.magnitude );
+            Vector3 commandVel = GetCommandVelocity();
+            float flSpeedAddition = Mathf.Abs(commandVel.z * jumpSpeedBonus);
+            float flMaxSpeed = maxSpeed + (maxSpeed * jumpSpeedBonus);
+            Vector3 flatvel = new Vector3(velocity.x, 0, velocity.z);
+            float flNewSpeed = (flSpeedAddition + flatvel.magnitude);
             // If we're over the maximum, we want to only boost as much as will get us to the goal speed
-            if ( flNewSpeed > flMaxSpeed ) {
+            if (flNewSpeed > flMaxSpeed)
+            {
                 flSpeedAddition -= flNewSpeed - flMaxSpeed;
             }
-            if (commandVel.z < 0.0f) {
+            if (commandVel.z < 0.0f)
+            {
                 flSpeedAddition *= -1.0f;
             }
             velocity += transform.forward * flSpeedAddition;
             justJumped = true;
         }
         // We were standing on the ground, then suddenly are not.
-        if (velocity.y >= jumpSpeed/2f) {
+        if (velocity.y >= jumpSpeed / 2f)
+        {
             // We don't inherit the groundVelocity here, because if we just were bumped slightly off of a moving ground
             // that would allow us to accelerate crazily by just being on unstable ground (like a rigidbody).
             groundEntity = null;
         }
     }
-    private void CheckFalling() {
+    // This is ran ONLY when you hit the ground. Calculates hit sounds and fall damage values.
+    private void CheckFalling()
+    {
         //Debug.Log (fallVelocity);
         // this function really deals with landing, not falling, so early out otherwise
-        if (groundEntity == null || Vector3.Angle (groundNormal, Vector3.up) > controller.slopeLimit || fallVelocity <= 0f) {
+        if (groundEntity == null || Vector3.Angle(groundNormal, Vector3.up) > controller.slopeLimit || fallVelocity <= 0f)
+        {
             return;
         }
 
@@ -231,14 +292,18 @@ public class SourcePlayer : MonoBehaviour {
         {
             velocity -= groundVelocity;
         }
-        if (fallVelocity >= fallSoundThreshold) {
-            float fvol = Mathf.Min ((fallVelocity - fallSoundThreshold) / (maxSafeFallSpeed - fallSoundThreshold), 1f);
+        // If we're falling faster than our fallSoundThreshold, we play a sound.
+        if (fallVelocity >= fallSoundThreshold)
+        {
+            float fvol = Mathf.Min((fallVelocity - fallSoundThreshold) / (maxSafeFallSpeed - fallSoundThreshold), 1f);
             RaycastHit hit;
-            if (Physics.SphereCast (transform.position, radius, -transform.up, out hit, distToGround - radius + 0.1f, layerMask, QueryTriggerInteraction.Ignore)) {
-                PlayerRoughLandingEffects (fvol, hit.point, hit.normal);
+            if (Physics.SphereCast(transform.position, radius, -transform.up, out hit, distToGround - radius + 0.1f, layerMask, QueryTriggerInteraction.Ignore))
+            {
+                PlayerRoughLandingEffects(fvol, hit.point, hit.normal);
             }
         }
-        if ( fallVelocity >= fallPunchThreshold ) {
+        if (fallVelocity >= fallPunchThreshold)
+        {
 
             // Scale it down if we landed on something that's floating...
             //if ( player->GetGroundEntity()->IsFloating() ) {
@@ -250,29 +315,33 @@ public class SourcePlayer : MonoBehaviour {
             //
 
             // Player landed on a descending object. Subtract the velocity of the ground entity.
-            if (groundVelocity.y < 0f) {
+            if (groundVelocity.y < 0f)
+            {
                 fallVelocity += groundVelocity.y;
-                fallVelocity = Mathf.Max (0.1f, fallVelocity);
+                fallVelocity = Mathf.Max(0.1f, fallVelocity);
             }
 
-            float shakeIntensity = Mathf.Min ((fallVelocity - fallPunchThreshold) / (maxSafeFallSpeed - fallPunchThreshold), 1f);
-            gameObject.SendMessage ("ShakeImpact", Vector3.down*shakeIntensity);
+            // Calculate camera shake amounts.
+            float shakeIntensity = Mathf.Min((fallVelocity - fallPunchThreshold) / (maxSafeFallSpeed - fallPunchThreshold), 1f);
+            gameObject.SendMessage("ShakeImpact", Vector3.down * shakeIntensity);
 
-            if ( fallVelocity > maxSafeFallSpeed ) {
+            if (fallVelocity > maxSafeFallSpeed)
+            {
                 //
                 // If they hit the ground going this fast they may take damage (and die).
                 //
                 justTookFallDamage = true;
-                hardLand.Play ();
+                hardLand.Play();
                 //gameObject.SendMessage("Damage", (fallVelocity - maxSafeFallSpeed)*5f );
             }
             // Linearly scale the impact volume with how fast we hit.
         }
 
         // Clip our velocity, even if we landed on solid ground, we might gain or lose speed depending on the slope...
-        // Jumping also clips our velocity, we only want to do it once.
-        if (!Input.GetButton ("Jump")) {
-            velocity = ClipVelocity (velocity, groundNormal);
+        // Jumping also clips our velocity, we only want to do it once so we check to make sure we're not jumping.
+        if (!Input.GetButton("Jump"))
+        {
+            velocity = ClipVelocity(velocity, groundNormal);
         }
         //
         // Clear the fall velocity so the impact doesn't happen again.
@@ -280,29 +349,36 @@ public class SourcePlayer : MonoBehaviour {
         fallVelocity = 0;
     }
 
-    private void PlayerRoughLandingEffects(float volume, Vector3 hitpos, Vector3 hitnormal) {
+    // Cast a ray to determine materials, then play the appropriate sounds at the location.
+    private void PlayerRoughLandingEffects(float volume, Vector3 hitpos, Vector3 hitnormal)
+    {
         RaycastHit hit;
-        if (Physics.Raycast(hitpos+hitnormal*0.1f, -hitnormal, out hit, 1f)) {
-            AudioSource.PlayClipAtPoint (ImpactSounds.GetSound(Helper.getMaterial(hit)), hitpos, volume);
+        if (Physics.Raycast(hitpos + hitnormal * 0.1f, -hitnormal, out hit, 1f))
+        {
+            AudioSource.PlayClipAtPoint(ImpactSounds.GetSound(Helper.getMaterial(hit)), hitpos, volume);
         }
     }
 
-    private void Friction() {
-        float   speed, newspeed, control;
-        float   friction;
-        float   drop;
+    // Applies friction.
+    private void Friction()
+    {
+        float speed, newspeed, control;
+        float friction;
+        float drop;
 
         // Calculate speed
         speed = velocity.magnitude;
 
         // If too slow, return
-        if (speed < 0.001f) {
+        if (speed < 0.001f)
+        {
             return;
         }
 
         drop = 0;
         // apply ground friction
-        if (groundEntity != null && !Input.GetButton("Jump")) { // On an entity that is the ground
+        if (groundEntity != null && !Input.GetButton("Jump"))
+        { // On an entity that is the ground
             friction = baseFriction * groundFriction;
 
             // Bleed off some speed, but if we have less than the bleed
@@ -310,56 +386,66 @@ public class SourcePlayer : MonoBehaviour {
             control = (speed < groundDecellerate) ? groundDecellerate : speed;
 
             // Add the amount to the drop amount.
-            drop += control*friction*Time.deltaTime;
+            drop += control * friction * Time.deltaTime;
         }
 
         // scale the velocity
         newspeed = speed - drop;
-        if (newspeed < 0) {
+        if (newspeed < 0)
+        {
             newspeed = 0;
         }
 
-        if ( newspeed != speed ) {
+        if (newspeed != speed)
+        {
             // Determine proportion of old speed we are using.
             newspeed /= speed;
             // Adjust velocity according to proportion.
             velocity *= newspeed;
         }
-
-        // mv->m_outWishVel -= (1.f-newspeed) * mv->m_vecVelocity; // ???
     }
-    private void CheckVelocity() {
+    // Make sure an external script didn't NaN our velocity, also ensures we're not going over our speed limit horizontally.
+    private void CheckVelocity()
+    {
         int i;
-        for (i=0; i < 3; i++) {
+        for (i = 0; i < 3; i++)
+        {
             // See if it's bogus.
-            if (float.IsNaN(velocity[i])){
-                Debug.Log ("Got a NaN velocity.");
+            if (float.IsNaN(velocity[i]))
+            {
+                Debug.Log("Got a NaN velocity.");
                 velocity[i] = 0;
             }
         }
         float savedy = velocity.y;
         velocity.y = 0;
-        if (velocity.magnitude > maxSpeed) {
-            velocity = Vector3.Normalize (velocity) * maxSpeed;
+        if (velocity.magnitude > maxSpeed)
+        {
+            velocity = Vector3.Normalize(velocity) * maxSpeed;
         }
         velocity.y = savedy;
     }
-    private void PlayerMove() {
+    // Detect which movement code we should run, and set up our parameters for it.
+    private void PlayerMove()
+    {
         CheckFalling();
         // If we are not on ground, store off how fast we are moving down
-        if ( groundEntity == null ) {
+        if (groundEntity == null)
+        {
             fallVelocity = -velocity.y;
         }
         // Was jump button pressed?
         CheckJump();
         // Make sure we're standing on solid ground
 
-        if (Vector3.Angle (groundNormal, new Vector3 (0f, 1f, 0f)) > controller.slopeLimit) {
+        if (Vector3.Angle(groundNormal, new Vector3(0f, 1f, 0f)) > controller.slopeLimit)
+        {
             groundEntity = null;
         }
         // Friction is handled before we add in any base velocity. That way, if we are on a conveyor, 
         //  we don't slow when standing still, relative to the conveyor.
-        if (groundEntity != null) {
+        if (groundEntity != null)
+        {
             velocity.y = 0;
             Friction();
         }
@@ -367,26 +453,31 @@ public class SourcePlayer : MonoBehaviour {
         // Make sure velocity is valid.
         CheckVelocity();
 
-        if (groundEntity != null) {
+        if (groundEntity != null)
+        {
             WalkMove();
-        } else {
+        }
+        else
+        {
             AirMove();  // Take into account movement when in air.
         }
 
         // Set final flags.
         //CategorizePosition();
 
-        // Make sure velocity is valid.
+        // Make sure velocity is still valid.
         CheckVelocity();
 
         Gravity();
 
         // If we are on ground, no downward velocity.
-        if ( groundEntity != null ) {
+        if (groundEntity != null)
+        {
             velocity.y = 0;
         }
     }
-    private void Accelerate( Vector3 wishdir, float wishspeed, float accel )
+    // Smoothly transform our velocity into wishdir*wishspeed at the speed of accel
+    private void Accelerate(Vector3 wishdir, float wishspeed, float accel)
     {
         //int i;
         float addspeed, accelspeed, currentspeed;
@@ -397,7 +488,8 @@ public class SourcePlayer : MonoBehaviour {
         //      return;
 
         // Cap speed
-        if (wishspeed > maxSpeed) {
+        if (wishspeed > maxSpeed)
+        {
             wishspeed = maxSpeed;
         }
 
@@ -408,7 +500,8 @@ public class SourcePlayer : MonoBehaviour {
         addspeed = wishspeed - currentspeed;
 
         // If not going to add any speed, done.
-        if (addspeed <= 0) {
+        if (addspeed <= 0)
+        {
             return;
         }
 
@@ -416,30 +509,38 @@ public class SourcePlayer : MonoBehaviour {
         accelspeed = accel * Time.deltaTime * wishspeed * groundFriction;
 
         // Cap at addspeed
-        if (accelspeed > addspeed) {
+        if (accelspeed > addspeed)
+        {
             accelspeed = addspeed;
         }
 
         velocity += accelspeed * wishdir;
     }
-    private void StayOnGround() {
+    // Try to keep ourselves on the ground, probably doesn't need all the raycasting mumbo jumbo.
+    private void StayOnGround()
+    {
         ignoreCollisions = true;
-        foreach( RaycastHit hit in Physics.SphereCastAll (transform.position+controller.center, radius, -transform.up, distToGround + stepSize - radius + 0.1f, layerMask, QueryTriggerInteraction.Ignore)) {
+        foreach (RaycastHit hit in Physics.SphereCastAll(transform.position + controller.center, radius, -transform.up, distToGround + stepSize - radius + 0.1f, layerMask, QueryTriggerInteraction.Ignore))
+        {
             // Snap the player to where the spherecast hit.
             // This means that our initial sphere is already colliding with something
             // if our initial sphere is colliding with something, we don't get any useful information...
-            if (hit.distance == 0) {
+            if (hit.distance == 0)
+            {
                 continue;
             }
-            if ( Vector3.Angle(hit.normal, Vector3.up) > controller.slopeLimit ) {
+            if (Vector3.Angle(hit.normal, Vector3.up) > controller.slopeLimit)
+            {
                 continue;
             }
-            controller.Move (new Vector3 (0, -hit.distance, 0));
+            controller.Move(new Vector3(0, -hit.distance, 0));
             break;
         }
         ignoreCollisions = false;
     }
-    private void WalkMove() {
+    // Movement for when on the ground walking/running.
+    private void WalkMove()
+    {
         //int i;
         Vector3 wishvel;
         float spd;
@@ -462,16 +563,16 @@ public class SourcePlayer : MonoBehaviour {
 
         // Zero out z components of movement vectors
         forward.y = 0;
-        right.y   = 0;
+        right.y = 0;
 
-        forward = Vector3.Normalize (forward);  // Normalize remainder of vectors.
-        right = Vector3.Normalize (right);    // 
+        forward = Vector3.Normalize(forward);  // Normalize remainder of vectors.
+        right = Vector3.Normalize(right);    // 
 
         // Determine x and y parts of velocity
         wishvel = forward * fmove + right * smove;
         wishvel.y = 0;             // Zero out z part of velocity
 
-        wishdir = new Vector3 (wishvel.x, wishvel.y, wishvel.z); // Determine maginitude of speed of move
+        wishdir = new Vector3(wishvel.x, wishvel.y, wishvel.z); // Determine maginitude of speed of move
         wishspeed = wishdir.magnitude;
         wishdir = Vector3.Normalize(wishdir);
 
@@ -486,7 +587,7 @@ public class SourcePlayer : MonoBehaviour {
 
         // Set pmove velocity
         velocity.y = 0;
-        Accelerate ( wishdir, wishspeed, groundAccelerate );
+        Accelerate(wishdir, wishspeed, groundAccelerate);
         velocity.y = 0;
 
         // Add in any base velocity to the current velocity.
@@ -495,8 +596,9 @@ public class SourcePlayer : MonoBehaviour {
 
         spd = velocity.magnitude;
 
-        if ( spd < 0.01f ) {
-            velocity = new Vector3 (0, 0, 0);
+        if (spd < 0.01f)
+        {
+            velocity = new Vector3(0, 0, 0);
             // Now pull the base velocity back out.   Base velocity is set if you are on a moving object, like a conveyor (or maybe another monster?)
             // VectorSubtract( mv->m_vecVelocity, player->GetBaseVelocity(), mv->m_vecVelocity );
             return;
@@ -510,13 +612,15 @@ public class SourcePlayer : MonoBehaviour {
 
         StayOnGround();
     }
-    private void AirMove() {
+    // Movement code for when we're in the air.
+    private void AirMove()
+    {
         //int                   i;
-        Vector3         wishvel;
-        float           fmove, smove;
-        Vector3         wishdir;
-        float           wishspeed;
-        Vector3         forward, right, up;
+        Vector3 wishvel;
+        float fmove, smove;
+        Vector3 wishdir;
+        float wishspeed;
+        Vector3 forward, right, up;
 
         //AngleVectors (mv->m_vecViewAngles, &forward, &right, &up);  // Determine movement angles
         forward = transform.forward;
@@ -537,23 +641,27 @@ public class SourcePlayer : MonoBehaviour {
         wishvel = forward * fmove + right * smove;
         wishvel.y = 0;             // Zero out up/down part of velocity
 
-        wishdir = new Vector3 (wishvel.x, wishvel.y, wishvel.z);
+        wishdir = new Vector3(wishvel.x, wishvel.y, wishvel.z);
         wishspeed = wishdir.magnitude;
         wishdir = Vector3.Normalize(wishdir);
 
         //
         // clamp to server defined max speed
         //
-        if ( wishspeed != 0 && (wishspeed > maxSpeed)) {
-            wishvel = wishvel * maxSpeed/wishspeed;
+        if (wishspeed != 0 && (wishspeed > maxSpeed))
+        {
+            wishvel = wishvel * maxSpeed / wishspeed;
             wishspeed = maxSpeed;
         }
 
         // If we're trying to stop, use airDeccelerate value (usually much larger value than airAccelerate)
-        if (Vector3.Dot (velocity, wishdir) < 0) {
-            Accelerate (wishdir, wishspeed, velocity.magnitude*airDeccelerateMultiplier);
-        } else {
-            Accelerate (wishdir, wishspeed, airAccelerate);
+        if (Vector3.Dot(velocity, wishdir) < 0)
+        {
+            Accelerate(wishdir, wishspeed, velocity.magnitude * airDeccelerateMultiplier);
+        }
+        else
+        {
+            Accelerate(wishdir, wishspeed, airAccelerate);
         }
 
         // Add in any base velocity to the current velocity.
@@ -567,81 +675,101 @@ public class SourcePlayer : MonoBehaviour {
         // Now pull the base velocity back out.   Base velocity is set if you are on a moving object, like a conveyor (or maybe another monster?)
         //VectorSubtract( mv->m_vecVelocity, player->GetBaseVelocity(), mv->m_vecVelocity );
     }
-    private void HandleCollision( GameObject obj, Vector3 hitNormal, Vector3 hitPos ) {
-        if (ignoreCollisions) {
+    // Either the character controller moved into something, or something moved into the supercollider spheres.
+    private void HandleCollision(GameObject obj, Vector3 hitNormal, Vector3 hitPos)
+    {
+        if (ignoreCollisions)
+        {
             return;
         }
         //Debug.Log ("Hello " + Time.time);
-        if ((layerMask & (1<<obj.layer)) == 0) {
+        if ((layerMask & (1 << obj.layer)) == 0)
+        {
             //Debug.Log ("Ignoring collsion of object with " + obj.layer);
             return;
         }
-        if (Vector3.Angle (hitNormal, Vector3.up) < controller.slopeLimit) {
+        if (Vector3.Angle(hitNormal, Vector3.up) < controller.slopeLimit)
+        {
             //Debug.Log ("Ignoring collsion because it's valid ground.");
             return;
         }
         float mag = velocity.magnitude;
         // If we walk off an edge, we won't inherit the ground velocity. So if we walk off an edge while moving fast
         // then hit a wall, this prevents us from infinitely being pushed into that wall from our inherited velocity.
-        if (groundVelocity.magnitude > 0f) {
+        if (groundVelocity.magnitude > 0f)
+        {
             velocity += groundVelocity;
             groundVelocity = Vector3.zero;
         }
-        velocity = ClipVelocity (velocity, hitNormal);
-        Movable check = obj.GetComponent<Movable> ();
-        if (check != null) {
+        velocity = ClipVelocity(velocity, hitNormal);
+        Movable check = obj.GetComponent<Movable>();
+        if (check != null)
+        {
             Vector3 vel = check.velocity;
-            float d = Vector3.Dot (vel, hitNormal); // How similar is our velocity to our hitnormal (perp = 0, backwards = -1, same = 1)
-            if ( d > 0 ) { // If the velocity should be applied
+            float d = Vector3.Dot(vel, hitNormal); // How similar is our velocity to our hitnormal (perp = 0, backwards = -1, same = 1)
+            if (d > 0)
+            { // If the velocity should be applied
                 velocity += hitNormal * d * overbounce; // We apply it with some overbounce, to keep us from getting stuck.
             }
         }
-        float change = Mathf.Abs (mag - velocity.magnitude);
-        Rigidbody rigidcheck = obj.GetComponent<Rigidbody> ();
-        if (rigidcheck != null) {
-            Vector3 vel = rigidcheck.GetPointVelocity (hitPos);
-            float d = Vector3.Dot (vel, hitNormal);
-            if ( d > 0 ) {
+        float change = Mathf.Abs(mag - velocity.magnitude);
+        Rigidbody rigidcheck = obj.GetComponent<Rigidbody>();
+        if (rigidcheck != null)
+        {
+            Vector3 vel = rigidcheck.GetPointVelocity(hitPos);
+            float d = Vector3.Dot(vel, hitNormal);
+            if (d > 0)
+            {
                 velocity += hitNormal * d * overbounce;// * rigidcheck.mass; // yeah don't multiply by the mass...
             }
-            rigidcheck.AddForceAtPosition (-hitNormal * change * mass, hitPos);
+            rigidcheck.AddForceAtPosition(-hitNormal * change * mass, hitPos);
         }
-        if (change > fallSoundThreshold) {
-            float fvol = Mathf.Min (change / (maxSafeFallSpeed - fallSoundThreshold), 1f);
-            PlayerRoughLandingEffects (fvol, hitPos, hitNormal);
+        if (change > fallSoundThreshold)
+        {
+            float fvol = Mathf.Min(change / (maxSafeFallSpeed - fallSoundThreshold), 1f);
+            PlayerRoughLandingEffects(fvol, hitPos, hitNormal);
         }
-        if (change > fallPunchThreshold) {
-            float shakeIntensity = Mathf.Min ((change - fallPunchThreshold) / (maxSafeFallSpeed - fallPunchThreshold), 1f);
-            gameObject.SendMessage ("ShakeImpact", -hitNormal * shakeIntensity);
+        if (change > fallPunchThreshold)
+        {
+            float shakeIntensity = Mathf.Min((change - fallPunchThreshold) / (maxSafeFallSpeed - fallPunchThreshold), 1f);
+            gameObject.SendMessage("ShakeImpact", -hitNormal * shakeIntensity);
         }
     }
-    void OnControllerColliderHit(ControllerColliderHit hit ) {
-        HandleCollision (hit.gameObject, hit.normal, hit.point);
+    void OnControllerColliderHit(ControllerColliderHit hit)
+    {
+        HandleCollision(hit.gameObject, hit.normal, hit.point);
     }
     // This function makes sure we don't phase through other colliders. (Since character controller doesn't provide this functionality lmao).
     // I copied it from https://github.com/IronWarrior/SuperCharacterController
     // I changed it a bit, but SuperCharacterController is under the MIT license, meaning we can't use it without making our game also under the MIT license.
     // so TODO: Change this enough that we don't have to use the MIT license if we don't want to.
-    private void RecursivePushback(int depth, int maxDepth) {
+    private void RecursivePushback(int depth, int maxDepth)
+    {
         bool contact = false;
-        foreach (var sphere in spheres) {
-            foreach (Collider col in Physics.OverlapSphere(SpherePosition(sphere), sphere.radius, layerMask, QueryTriggerInteraction.Ignore)) {
-                if (col.isTrigger) {
+        foreach (var sphere in spheres)
+        {
+            foreach (Collider col in Physics.OverlapSphere(SpherePosition(sphere), sphere.radius, layerMask, QueryTriggerInteraction.Ignore))
+            {
+                if (col.isTrigger)
+                {
                     continue;
                 }
-                if (col.gameObject == gameObject) {
+                if (col.gameObject == gameObject)
+                {
                     continue;
                 }
                 Vector3 position = SpherePosition(sphere);
                 Vector3 contactPoint;
                 bool contactPointSuccess = SuperCollider.ClosestPointOnSurface(col, position, radius, out contactPoint);
 
-                if (!contactPointSuccess) {
+                if (!contactPointSuccess)
+                {
                     return;
                 }
 
                 Vector3 v = contactPoint - position;
-                if (v != Vector3.zero) {
+                if (v != Vector3.zero)
+                {
                     // Cache the collider's layer so that we can cast against it
                     int layer = col.gameObject.layer;
                     col.gameObject.layer = TemporaryLayerIndex;
@@ -650,14 +778,20 @@ public class SourcePlayer : MonoBehaviour {
                     col.gameObject.layer = layer;
 
                     // Orient and scale our vector based on which side of the normal we are situated
-                    if (facingNormal) {
-                        if (Vector3.Distance(position, contactPoint) < radius) {
+                    if (facingNormal)
+                    {
+                        if (Vector3.Distance(position, contactPoint) < radius)
+                        {
                             v = v.normalized * (radius - v.magnitude) * -1;
-                        } else {
+                        }
+                        else
+                        {
                             // A previously resolved collision has had a side effect that moved us outside this collider
                             continue;
                         }
-                    } else {
+                    }
+                    else
+                    {
                         v = v.normalized * (radius + v.magnitude);
                     }
 
@@ -668,57 +802,74 @@ public class SourcePlayer : MonoBehaviour {
                     RaycastHit normalHit;
                     Physics.SphereCast(new Ray(position + v, contactPoint - (position + v)), TinyTolerance, out normalHit, 1 << TemporaryLayerIndex);
                     col.gameObject.layer = layer;
-                    HandleCollision (col.gameObject, normalHit.normal, normalHit.point);
+                    HandleCollision(col.gameObject, normalHit.normal, normalHit.point);
                 }
-            }            
+            }
         }
-        if (depth < maxDepth && contact) {
+        if (depth < maxDepth && contact)
+        {
             RecursivePushback(depth + 1, maxDepth);
         }
     }
-    private void StepMove() {
+    private void StepMove()
+    {
+        //Temporarily ignore collisions.
         ignoreCollisions = true;
         // Try sliding forward both on ground and up 16 pixels
         //  take the move that goes farthest
         Vector3 savePos = transform.position;
-        controller.Move (velocity*Time.deltaTime);
-
+        // Move normally, then save that position.
+        controller.Move(velocity * Time.deltaTime);
         Vector3 groundMove = transform.position;
+        // Reset
         transform.position = savePos;
         // Move straight up,
-        controller.Move (new Vector3(0f,stepSize,0f));
+        controller.Move(new Vector3(0f, stepSize, 0f));
         // Then move normally.
-        controller.Move (velocity*Time.deltaTime);
-        // Then try to snap back to the stair
-        controller.Move (new Vector3(0f,-stepSize,0f));
+        controller.Move(velocity * Time.deltaTime);
+        // Then try to snap back down
+        controller.Move(new Vector3(0f, -stepSize, 0f));
+        // Save this position
         Vector3 stepMove = transform.position;
         // If we're in the air after trying to step move, use the original move attempt
         RaycastHit hit;
-        if (!Physics.SphereCast (transform.position, radius, -transform.up, out hit, distToGround - radius + 0.1f, layerMask, QueryTriggerInteraction.Ignore)) {
+        if (!Physics.SphereCast(transform.position, radius, -transform.up, out hit, distToGround - radius + 0.1f, layerMask, QueryTriggerInteraction.Ignore))
+        {
             transform.position = groundMove;
             ignoreCollisions = false;
             return;
         }
 
         // Select whichever went furthest
-        float stepMoveDist = (savePos.x-stepMove.x)*(savePos.x-stepMove.x) + (savePos.z-stepMove.z)*(savePos.z-stepMove.z);
-        float groundMoveDist = (savePos.x-groundMove.x)*(savePos.x-groundMove.x) + (savePos.z-groundMove.z)*(savePos.z-groundMove.z);
-        if (stepMoveDist > groundMoveDist) {
+        float stepMoveDist = (savePos.x - stepMove.x) * (savePos.x - stepMove.x) + (savePos.z - stepMove.z) * (savePos.z - stepMove.z);
+        float groundMoveDist = (savePos.x - groundMove.x) * (savePos.x - groundMove.x) + (savePos.z - groundMove.z) * (savePos.z - groundMove.z);
+        if (stepMoveDist > groundMoveDist)
+        {
             transform.position = stepMove;
-        } else {
+        }
+        else
+        {
             transform.position = groundMove;
         }
+        // Enable collisions
         ignoreCollisions = false;
     }
-    public Vector3 SpherePosition(CollisionSphere sphere) {
+    // Calculates the position of the sphere, probably unnecessary, it's just how they do it from the code i copied.
+    public Vector3 SpherePosition(CollisionSphere sphere)
+    {
         return transform.position + sphere.offset * transform.up;
     }
-    void Damage( float damage ) {
+    // When we take damage from anything.
+    void Damage(float damage)
+    {
         health -= damage;
-        painGrunt.Play ();
-        if (health <= 0f) {
-            // gameObject.SetActive (false);
-            // Instantiate (deathSpawn, transform.position, Quaternion.identity);
+        // play a pain grunt.
+        painGrunt.Play();
+        if (health <= 0f)
+        {
+            // die
+            // gameObject.SetActive(false);
+            // Instantiate(deathSpawn, transform.position, Quaternion.identity);
             GameManager.instance.GetComponent<PlayerManager>().Died();
         }
     }
@@ -729,7 +880,8 @@ public class CollisionSphere
     public float offset;
     public float radius;
 
-    public CollisionSphere(float offset, float radius) {
+    public CollisionSphere(float offset, float radius)
+    {
         this.offset = offset;
         this.radius = radius;
     }
