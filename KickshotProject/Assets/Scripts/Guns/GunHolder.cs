@@ -5,6 +5,30 @@ using UnityEngine;
 public class GunHolder : MonoBehaviour {
     public List<GunBase> Guns;
     public GunBase EquippedGun;
+    private GunHolderSave startSave;
+    public class GunHolderSave {
+        private List<GunBase> Guns;
+        private GunBase EquippedGun;
+        public GunHolderSave( GunHolder g ) {
+            this.Guns = new List<GunBase>(g.Guns);
+            this.EquippedGun = g.EquippedGun;
+        }
+        public void Load( GunHolder g ) {
+            g.Guns = new List<GunBase> (this.Guns);
+            g.EquippedGun = EquippedGun;
+        }
+    }
+    void Start() {
+        startSave = new GunHolderSave (this);
+    }
+    void Reset() {
+        if (startSave != null) {
+            startSave.Load (this);
+        }
+        foreach( GunBase gun in Guns ) {
+            gun.SendMessage ("Reset");
+        }
+    }
     void Update() {
         float d = Input.GetAxis ("Mouse ScrollWheel");
         if (d > 0f) {

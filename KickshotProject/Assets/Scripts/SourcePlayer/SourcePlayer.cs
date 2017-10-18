@@ -205,7 +205,9 @@ public class SourcePlayer : MonoBehaviour {
     }
 
     void Reset() {
-        spawnSave.Load (this);
+        if (spawnSave != null) {
+            spawnSave.Load (this);
+        }
     }
 
     void Update () {

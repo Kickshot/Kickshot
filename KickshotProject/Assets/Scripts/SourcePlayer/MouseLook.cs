@@ -75,7 +75,9 @@ public class MouseLook : MonoBehaviour {
         startSave = new MouseLookSave (this);
     }
     void Reset() {
-        startSave.Load (this);
+        if (startSave != null) {
+            startSave.Load (this);
+        }
     }
     void Update () {
         if (Cursor.lockState == CursorLockMode.None) {
