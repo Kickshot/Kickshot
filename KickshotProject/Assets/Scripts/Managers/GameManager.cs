@@ -20,15 +20,4 @@ public class GameManager : MonoBehaviour
         
         DontDestroyOnLoad(gameObject);
     }
-
-    void Start()
-    {
-        tag = "GameController";
-        m_timer = GetComponent<LevelTimer>();
-    }
-
-    void Countdown()
-    {
-        m_timer.StartCountdown();
-    }
 }

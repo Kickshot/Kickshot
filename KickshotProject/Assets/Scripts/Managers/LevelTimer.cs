@@ -16,7 +16,7 @@ using UnityEngine.UI;
         // Use this for initialization
         void Awake()
         {
-            _timer_text = GameObject.FindGameObjectWithTag("TimerText").GetComponent<Text>();
+            _timer_text = GameObject.Find("TimerText").GetComponent<Text>();
             Reset();
         }
 
@@ -25,13 +25,18 @@ using UnityEngine.UI;
             if (_running)
             {
                 _time_left -= Time.deltaTime;
-                updateUIText();
+                UpdateUIText();
 
                 if (_time_left <= 0)
                 {
                     GetComponent<PlayerManager>().Died();
                 }
             }
+        }
+    
+        void UpdateUIText()
+        {
+            _timer_text.text = _time_left.ToString("N2");
         }
 
         public void StartCountdown()
@@ -49,11 +54,6 @@ using UnityEngine.UI;
             _time_left = InitialTime;
             _running = false;
 
-            updateUIText();
-        }
-
-        void updateUIText()
-        {
-            _timer_text.text = _time_left.ToString("N2");
+            UpdateUIText();
         }
     }
