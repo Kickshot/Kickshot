@@ -7,6 +7,6 @@ public class FinishTrigger : MonoBehaviour {
     void OnTriggerEnter(Collider other)
     {
         if (other.tag == "Player")
-            GameManager.instance.GetComponent<PlayerManager>().LevelFinished();
+            GameManager.instance.LevelFinished();
     }
 }

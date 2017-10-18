@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class PlayerManager : MonoBehaviour
 {
@@ -13,6 +14,9 @@ public class PlayerManager : MonoBehaviour
     public GameObject FinishPoint;
 
     public GameObject PlayerPrefab;
+    public GameObject StartPrefab;
+    public GameObject FinishPrefab;
+
 
     private GameObject _finish_text;
     private Text _speed_text;
@@ -20,18 +24,25 @@ public class PlayerManager : MonoBehaviour
 
     void Start()
     {
+        FindAssets();
+        Died();
+    }
+
+    void FindAssets()
+    {
         Player = GameObject.FindGameObjectWithTag("Player");
         if (Player == null)
             Player = Instantiate(PlayerPrefab);
-        
+
         StartPoint = GameObject.FindGameObjectWithTag("Start");
+        if (StartPoint == null)
+            StartPoint = Instantiate(StartPrefab, Player.transform.position, Quaternion.identity);
+
         FinishPoint = GameObject.FindGameObjectWithTag("Finish");
 
         _finish_text = GameObject.Find("FinishText");
         _speed_text = GameObject.Find("SpeedText").GetComponent<Text>();
 
-
-        Died();
     }
 
     void Update()
@@ -55,13 +66,11 @@ public class PlayerManager : MonoBehaviour
     {
         LevelTimer timer = GetComponent<LevelTimer>();
 
-        timer.Reset();
-
         Player.SendMessage ("Reset");
         Player.transform.position = getSpawnLocation();
         
         timer.Reset();
-        //timer.StartCountdown();
+        timer.StartCountdown();
     }
 
     Vector3 getSpawnLocation()
