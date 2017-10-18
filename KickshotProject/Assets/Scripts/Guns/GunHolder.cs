@@ -15,18 +15,36 @@ public class GunHolder : MonoBehaviour {
         }
         public void Load( GunHolder g ) {
             g.Guns = new List<GunBase> (this.Guns);
+            foreach( GunBase gun in g.Guns ) {
+                gun.OnUnequip(g.gameObject);
+                gun.equipped = false;
+            }
             g.EquippedGun = EquippedGun;
+            g.EquippedGun.OnEquip(g.gameObject);
+            g.EquippedGun.equipped = true;
         }
     }
     void Start() {
+        foreach( GunBase gun in Guns ) {
+            gun.OnUnequip(gameObject);
+            gun.equipped = false;
+            gun.Resave();
+        }
+        if ( !Guns.Contains( EquippedGun ) ) {
+            Guns.Add(EquippedGun);
+        }
+        EquippedGun.OnEquip(gameObject);
+        EquippedGun.equipped = true;
+        EquippedGun.Resave();
         startSave = new GunHolderSave (this);
     }
     void Reset() {
         if (startSave != null) {
+            foreach( GunBase gun in Guns ) {
+                gun.gameObject.SetActive(true);
+                gun.gameObject.SendMessage ("Reset");
+            }
             startSave.Load (this);
-        }
-        foreach( GunBase gun in Guns ) {
-            gun.SendMessage ("Reset");
         }
     }
     void Update() {
