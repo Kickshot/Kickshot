@@ -1,5 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Runtime.Serialization;
+using System.IO;
 using UnityEngine;
 
 public static class Helper {
@@ -30,6 +33,19 @@ public static class Helper {
             }
         }
         return null;
+    }
+
+    public static byte[] Save<T>( T obj ) {
+        MemoryStream o = new MemoryStream ();
+        BinaryFormatter binarySerializer = new BinaryFormatter();
+        binarySerializer.Serialize(o,obj);
+        return o.GetBuffer ();
+    }
+
+    public static T Load<T>( byte[] state ) {
+        BinaryFormatter binarySerializer = new BinaryFormatter();
+        MemoryStream o = new MemoryStream (state);
+        return (T)binarySerializer.Deserialize (o);
     }
 
     public static Material getMaterialFromMesh( RaycastHit hit, Mesh mesh, GameObject parent ) {

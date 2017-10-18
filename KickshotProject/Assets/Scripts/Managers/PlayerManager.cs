@@ -57,7 +57,7 @@ public class PlayerManager : MonoBehaviour
 
         timer.Reset();
 
-        // Player.GetComponent<SourcePlayer>().ResetVars();  // Need this ASAP
+        Player.SendMessage ("Reset");
         Player.transform.position = getSpawnLocation();
         
         timer.Reset();
