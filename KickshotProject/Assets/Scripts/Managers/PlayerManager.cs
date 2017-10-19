@@ -6,12 +6,9 @@ using UnityEngine.SceneManagement;
 
 public class PlayerManager : MonoBehaviour
 {
-    [HideInInspector]
-    public GameObject Player;
-    [HideInInspector]
-    public GameObject StartPoint;
-    [HideInInspector]
-    public GameObject FinishPoint;
+    [HideInInspector] public GameObject Player;
+    [HideInInspector] public GameObject StartPoint;
+    [HideInInspector] public GameObject FinishPoint;
 
     public GameObject PlayerPrefab;
     public GameObject StartPrefab;
@@ -96,4 +93,8 @@ public class PlayerManager : MonoBehaviour
         t.color = new Color(0, 0, 0, 1);
     }
 
+    public void SetNewPlayer(GameObject newPlayer)
+    {
+        Player = newPlayer;
+    }
 }
