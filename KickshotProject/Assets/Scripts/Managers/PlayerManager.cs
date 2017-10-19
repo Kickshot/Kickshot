@@ -50,11 +50,11 @@ public class PlayerManager : MonoBehaviour
 
     void updateSpeedText()
     {
-        //Vector3 vel = Player.GetComponent<SourcePlayer>().velocity;
-        //vel.y = 0;
-        //float speed = vel.magnitude * 10;
+        Vector3 vel = Player.GetComponent<SourcePlayer>().velocity;
+        vel.y = 0;
+        float speed = vel.magnitude * 10;
 
-        //_speed_text.text = speed.ToString("N0");
+        _speed_text.text = speed.ToString("N0");
     }
 
     // Call this in a fail state to reset the player.
