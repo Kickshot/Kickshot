@@ -8,53 +8,12 @@ public class MouseLook : MonoBehaviour {
     private Quaternion offset;
     public float xMouseSensitivity = 30.0f;
     public float yMouseSensitivity = 30.0f;
-    private float rotX;
-    private float rotY;
+    public float rotX;
+    public float rotY;
     private Vector3 shakePos;
     private float shakeTimer;
     private float shakeTimerMax;
     private Vector3 shakeIntensity;
-    private MouseLookSave startSave;
-
-    public class MouseLookSave {
-        private Transform view;
-        private Vector3 viewOffset;
-        private Quaternion offset;
-        private float xMouseSensitivity;
-        private float yMouseSensitivity;
-        private float rotX;
-        private float rotY;
-        private Vector3 shakePos;
-        private float shakeTimer;
-        private float shakeTimerMax;
-        private Vector3 shakeIntensity;
-        public MouseLookSave( MouseLook m ) {
-            this.view = m.view;
-            this.viewOffset = m.viewOffset;
-            this.offset = m.offset;
-            this.xMouseSensitivity = m.xMouseSensitivity;
-            this.yMouseSensitivity = m.yMouseSensitivity;
-            this.rotX = m.rotX;
-            this.rotY = m.rotY;
-            this.shakePos = m.shakePos;
-            this.shakeTimer = m.shakeTimer;
-            this.shakeTimerMax = m.shakeTimerMax;
-            this.shakeIntensity = m.shakeIntensity;
-        }
-        public void Load( MouseLook sm ) {
-            sm.view = view;
-            sm.viewOffset = viewOffset;
-            sm.offset = offset;
-            sm.xMouseSensitivity = xMouseSensitivity;
-            sm.yMouseSensitivity = yMouseSensitivity;
-            sm.rotX = rotX;
-            sm.rotY = rotY;
-            sm.shakePos = shakePos;
-            sm.shakeTimer = shakeTimer;
-            sm.shakeTimerMax = shakeTimerMax;
-            sm.shakeIntensity = shakeIntensity;
-        }
-    }
 
     public void ShakeImpact (Vector3 intensity) {
         shakeIntensity += intensity/3.5f;
@@ -72,12 +31,6 @@ public class MouseLook : MonoBehaviour {
     void Start() {
         viewOffset = view.localPosition;
         SetRotation (transform.rotation);
-        startSave = new MouseLookSave (this);
-    }
-    void Reset() {
-        if (startSave != null) {
-            startSave.Load (this);
-        }
     }
     void Update () {
         if (Cursor.lockState == CursorLockMode.None) {

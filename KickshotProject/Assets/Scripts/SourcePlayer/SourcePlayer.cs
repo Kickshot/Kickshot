@@ -38,10 +38,13 @@ public class SourcePlayer : MonoBehaviour {
     public float mass = 2f;
 
     // Accessible because it's useful
-    public PlayerSave spawnSave;
+    [HideInInspector]
     public bool justJumped = false;
+    [HideInInspector]
     public bool justTookFallDamage = false;
+    [HideInInspector]
     public Vector3 groundVelocity;
+    [HideInInspector]
     public GameObject groundEntity = null;
 
     // Shouldn't need to access these, probably
@@ -70,71 +73,7 @@ public class SourcePlayer : MonoBehaviour {
     private AudioSource painGrunt;
     private AudioSource hardLand;
 
-    public class PlayerSave {
-        private GameObject deathSpawn;
-        private Vector3 pos;
-        private Quaternion rot;
-        private Vector3 velocity;
-        private Vector3 gravity;
-        private float baseFriction;
-        private float maxSpeed;
-        private float groundAccelerate;
-        private float groundDecellerate;
-        private float airAccelerate;
-        private float airDeccelerateMultiplier;
-        private float walkSpeed;
-        private float jumpSpeed;
-        private float fallSoundThreshold;
-        private float fallPunchThreshold;
-        private float maxSafeFallSpeed;
-        private float jumpSpeedBonus;
-        private float health;
-        private float mass;
-        public PlayerSave( SourcePlayer p ) {
-            this.pos = p.transform.position;
-            this.rot = p.transform.rotation;
-            this.deathSpawn = p.deathSpawn;
-            this.velocity = p.velocity;
-            this.gravity = p.gravity;
-            this.baseFriction = p.baseFriction;
-            this.maxSpeed = p.maxSpeed;
-            this.groundAccelerate = p.groundAccelerate;
-            this.groundDecellerate = p.groundDecellerate;
-            this.airAccelerate = p.airAccelerate;
-            this.airDeccelerateMultiplier = p.airDeccelerateMultiplier;
-            this.walkSpeed = p.walkSpeed;
-            this.jumpSpeed = p.jumpSpeed;
-            this.fallSoundThreshold = p.fallSoundThreshold;
-            this.fallPunchThreshold = p.fallPunchThreshold;
-            this.maxSafeFallSpeed = p.maxSafeFallSpeed;
-            this.jumpSpeedBonus = p.jumpSpeedBonus;
-            this.health = p.health;
-            this.mass = p.mass;
-        }
-        public void Load( SourcePlayer ps ) {
-            ps.transform.position = this.pos;
-            ps.transform.rotation = this.rot;
-            ps.deathSpawn = this.deathSpawn;
-            ps.velocity = this.velocity;
-            ps.gravity = this.gravity;
-            ps.baseFriction = this.baseFriction;
-            ps.maxSpeed = this.maxSpeed;
-            ps.groundAccelerate = this.groundAccelerate;
-            ps.groundDecellerate = this.groundDecellerate;
-            ps.airAccelerate = this.airAccelerate;
-            ps.airDeccelerateMultiplier = this.airDeccelerateMultiplier;
-            ps.walkSpeed = this.walkSpeed;
-            ps.jumpSpeed = this.jumpSpeed;
-            ps.fallSoundThreshold = this.fallSoundThreshold;
-            ps.fallPunchThreshold = this.fallPunchThreshold;
-            ps.maxSafeFallSpeed = this.maxSafeFallSpeed;
-            ps.jumpSpeedBonus = this.jumpSpeedBonus;
-            ps.health = this.health;
-            ps.mass = this.mass;
-        }
-    }
-
-    void Start () {
+    void Awake() {
         // Not sure how audio is supposed to work in unity, I just have a list of them on the player to have the jump, pain, and break sounds.
         var aSources = GetComponents<AudioSource> ();
         jumpGrunt = aSources [0];
@@ -168,7 +107,6 @@ public class SourcePlayer : MonoBehaviour {
         };
         // We use this layer to quickly do collision tests with singular objects.
         TemporaryLayerIndex = LayerMask.NameToLayer (TemporaryLayer);
-        spawnSave = new PlayerSave (this);
     }
     // CalculateGround takes a raycast and generates ground information from it.
     // This is necessary to grab material frictions, moving ground velocities, and normals.
@@ -202,12 +140,6 @@ public class SourcePlayer : MonoBehaviour {
             groundVelocity = cccheck.GetPointVelocity (hit.point);
         }
         return true;
-    }
-
-    void Reset() {
-        if (spawnSave != null) {
-            spawnSave.Load (this);
-        }
     }
 
     void Update () {

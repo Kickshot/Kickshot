@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: be75370ed5646e64dbeb78bc4ec9fc4a
+timeCreated: 1508384970
+licenseType: Free
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences:
+  - rocketLauncherPrefab: {fileID: 1847816023185564, guid: b2fc85fc551da4b44b54a38f6f44a718,
+      type: 2}
+  - tractorGrapplePrefab: {fileID: 1062845345431462, guid: 3b5e6699c4bd8ba47ba4f51282811d68,
+      type: 2}
+  - recoilGunPrefab: {fileID: 1647826917863152, guid: 3d5e9e26dcede4643b696c6b699d66e1,
+      type: 2}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

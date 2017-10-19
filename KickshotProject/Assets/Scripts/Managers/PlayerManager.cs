@@ -21,10 +21,9 @@ public class PlayerManager : MonoBehaviour
     private GameObject _finish_text;
     private Text _speed_text;
 
-
-    void Start()
-    {
+    void Start() {
         FindAssets();
+        SaveManager.Save ();
         Died();
     }
 
@@ -52,11 +51,11 @@ public class PlayerManager : MonoBehaviour
 
     void updateSpeedText()
     {
-        Vector3 vel = Player.GetComponent<SourcePlayer>().velocity;
-        vel.y = 0;
-        float speed = vel.magnitude * 10;
+        //Vector3 vel = Player.GetComponent<SourcePlayer>().velocity;
+        //vel.y = 0;
+        //float speed = vel.magnitude * 10;
 
-        _speed_text.text = speed.ToString("N0");
+        //_speed_text.text = speed.ToString("N0");
     }
 
     // Call this in a fail state to reset the player.
@@ -66,7 +65,8 @@ public class PlayerManager : MonoBehaviour
     {
         LevelTimer timer = GetComponent<LevelTimer>();
 
-        Player.SendMessage ("Reset");
+        SaveManager.Load ();
+        FindAssets();
         Player.transform.position = getSpawnLocation();
         
         timer.Reset();

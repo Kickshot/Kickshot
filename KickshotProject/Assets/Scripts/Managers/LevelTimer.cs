@@ -42,7 +42,7 @@ public class LevelTimer : MonoBehaviour
     
     void UpdateUIText()
     {
-        _timer_text.text = _time_left.ToString("N2");
+        //_timer_text.text = _time_left.ToString("N2");
     }
 
     public void StartCountdown()

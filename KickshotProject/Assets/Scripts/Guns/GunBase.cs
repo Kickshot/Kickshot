@@ -19,7 +19,7 @@ public class GunBase : MonoBehaviour {
     public bool autoReload = true; // Checks if the gun is out of ammo and not busy, then reloads it automatically. Otherwise the player has to press the reload key.
     public bool autoFire = true; // Determines if the player can just hold down the mouse to fire, rather than spam clicks.
 
-    public SourcePlayer player;
+    public SourcePlayer player = null;
     public Transform view;
     public bool equipped = false; // This is used internally to turn on/off the actual gun stuff. If we're unequipped we're either on the floor in in someone's pockets.
     private bool pfiring = false; // These dumb booleans just keep track to make sure that OnPrimaryRelease doesn't get called before OnPrimaryFire.
