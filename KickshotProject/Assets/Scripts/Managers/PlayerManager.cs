@@ -23,7 +23,6 @@ public class PlayerManager : MonoBehaviour
 
     void Start() {
         FindAssets();
-        SaveManager.Save ();
         Died();
     }
 
@@ -41,7 +40,7 @@ public class PlayerManager : MonoBehaviour
 
         _finish_text = GameObject.Find("FinishText");
         _speed_text = GameObject.Find("SpeedText").GetComponent<Text>();
-
+        SaveManager.Save ();
     }
 
     void Update()
@@ -65,7 +64,6 @@ public class PlayerManager : MonoBehaviour
     {
         LevelTimer timer = GetComponent<LevelTimer>();
 
-        SaveManager.Load ();
         FindAssets();
         Player.transform.position = getSpawnLocation();
         
