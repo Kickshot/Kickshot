@@ -65,7 +65,7 @@ public class PlayerManager : MonoBehaviour
         Player.transform.position = getSpawnLocation();
         
         timer.Reset();
-        timer.StartCountdown();
+        timer.StartTimer();
     }
 
     Vector3 getSpawnLocation()

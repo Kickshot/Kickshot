@@ -78,7 +78,6 @@ public class SourcePlayerSaveData : SaveData {
     }
     public override GameObject Load() {
         GameObject obj = GameObject.Instantiate (SaveManager.playerPrefab);
-        GameManager.instance.GetComponent<PlayerManager>().SetNewPlayer(obj);  //may need to change this system if we are going to have multiple players
         SourcePlayer ps = obj.GetComponent<SourcePlayer> ();
         if (!ps) {
             throw new UnityException ("Tried to load a gameobject as a SourcePlayer, but it isn't one!");

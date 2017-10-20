@@ -825,7 +825,7 @@ public class SourcePlayer : MonoBehaviour {
             // die
             // gameObject.SetActive(false);
             // Instantiate(deathSpawn, transform.position, Quaternion.identity);
-            GameManager.instance.GetComponent<PlayerManager> ().Died ();
+            GameManager.instance.Died();
         }
     }
 }

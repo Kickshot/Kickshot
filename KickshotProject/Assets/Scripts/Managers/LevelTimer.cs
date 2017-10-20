@@ -1,65 +1,38 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
 public class LevelTimer : MonoBehaviour
 {
-    public float InitialTime = 60;
-
-
-    float _time_left;           // Time left on clock in seconds
+    public float CurrentTime;          // Time left on clock in seconds
     bool _running;              // True when the Timer is actually counting down
-    Text _timer_text;
-
-
+    
     // Use this for initialization
     void Awake()
     {
-        FindAssets();
         Reset();
-    }
-
-    void FindAssets()
-    {
-        _timer_text = GameObject.Find("TimerText").GetComponent<Text>();
     }
 
     void Update()
     {
         if (_running)
         {
-            _time_left -= Time.deltaTime;
-            UpdateUIText();
-
-            if (_time_left <= 0)
-            {
-                GetComponent<PlayerManager>().Died();
-            }
+            CurrentTime += Time.deltaTime;
         }
     }
-    
-    void UpdateUIText()
-    {
-        _timer_text.text = _time_left.ToString("N2");
-    }
 
-    public void StartCountdown()
+    public void StartTimer()
     {
         _running = true;
     }
-
-    public void StopCountdown()
+    public void StopTimer()
     {
         _running = false;
     }
-
     public void Reset()
     {
-        _time_left = InitialTime;
-        _running = false;
-
-        UpdateUIText();
+        CurrentTime = 0;
+        _running = true;  // Change this eventually not to start until the player does something
     }
 }
