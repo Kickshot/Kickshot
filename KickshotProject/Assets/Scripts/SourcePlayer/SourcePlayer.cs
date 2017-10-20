@@ -8,34 +8,24 @@ public class SourcePlayer : MonoBehaviour {
     // Accessible because it's configurable
     public GameObject deathSpawn;
     public Vector3 velocity;
-    public Vector3 gravity = new Vector3 (0, -20f, 0);
-    // gravity in meters per second per second.
-    public float baseFriction = 6f;
-    // A friction multiplier, higher means more friction.
-    public float maxSpeed = 35f;
-    // The maximum speed the player can move at.
-    public float groundAccelerate = 10f;
-    // How fast we accelerate while on solid ground.
-    public float groundDecellerate = 10f;
-    // How fast we deaccelerate on solid ground.
-    public float airAccelerate = 1f;
-    // How much air control the player has.
-    public float airDeccelerateMultiplier = 1f;
-    // How fast the player can stop in mid-air or slow down.
-    public float walkSpeed = 10f;
-    // How fast the player runs.
-    public float jumpSpeed = 8f;
-    // The y velocity to set our character at when they jump.
-    public float fallSoundThreshold = 8f;
-    // How fast we must be falling before we make a thud.
-    public float fallPunchThreshold = 10f;
-    // How fast we must be falling before we shake the screen.
-    public float maxSafeFallSpeed = 25f;
-    // How fast we must be falling before we take damage.
-    public float jumpSpeedBonus = 0.1f;
-    // Speed boost from just jumping forward as a percentage.
+    public Vector3 gravity = new Vector3 (0, -20f, 0);// gravity in meters per second per second.
+    public float baseFriction = 6f;// A friction multiplier, higher means more friction.
+    public float maxSpeed = 35f;// The maximum speed the player can move at.
+    public float groundAccelerate = 10f;// How fast we accelerate while on solid ground.
+    public float groundDecellerate = 10f;// How fast we deaccelerate on solid ground.
+    public float airAccelerate = 1f;// How much air control the player has.
+    public float airDeccelerateMultiplier = 1f; // How fast the player can stop in mid-air or slow down.
+    public float walkSpeed = 10f; // How fast the player runs.
+    public float jumpSpeed = 8f; // The y velocity to set our character at when they jump.
+    public float fallSoundThreshold = 8f; // How fast we must be falling before we make a thud.
+    public float fallPunchThreshold = 10f; // How fast we must be falling before we shake the screen.
+    public float maxSafeFallSpeed = 25f; // How fast we must be falling before we take damage.
+    public float jumpSpeedBonus = 0.1f; // Speed boost from just jumping forward as a percentage.
     public float health = 100f;
     public float mass = 2f;
+    public float crouchHeight = 1f;
+    public float crouchSpeedMultiplier = 0.7f;
+    public float stepSize = 0.5f;
 
     // Accessible because it's useful
     [HideInInspector]
@@ -46,20 +36,17 @@ public class SourcePlayer : MonoBehaviour {
     public Vector3 groundVelocity;
     [HideInInspector]
     public GameObject groundEntity = null;
+    [HideInInspector]
+    public bool crouched = false;
 
     // Shouldn't need to access these, probably
+    private float originalHeight;
     private CollisionSphere[] spheres;
     private bool ignoreCollisions = false;
-    private const float overbounce = 1f;
-    // How much to multiply incoming collision velocities, to keep us from getting stuck in moving objects.
-    // We only collide with these layers.
-    private int layerMask;
-    private const float TinyTolerance = 0.05f;
-    // How much to allow penetration.
-    private const float buffer = 0.25f;
-    // Distance to try and keep the character controller from touching anything. Because the character controller acts like it has infinite mass, and also because it acts funny with moving colliders.
+    private const float overbounce = 1f; // How much to multiply incoming collision velocities, to keep us from getting stuck in moving objects.
+    private int layerMask; // We only collide with these layers.
+    private const float TinyTolerance = 0.05f; // How much to allow penetration.
     private float lastGrunt;
-    private float stepSize = 0.5f;
     private float fallVelocity;
     private CharacterController controller;
     private Vector3 groundNormal = new Vector3 (0f, 1f, 0f);
@@ -93,20 +80,59 @@ public class SourcePlayer : MonoBehaviour {
         controller = GetComponent<CharacterController> ();
         controller.stepOffset = 0f; // We can climb up walls with this set to anything other than 0. Don't ask me why that happens. I have my own step detection anyway.
         controller.detectCollisions = false; // The default collision resolution for character controller vs rigidbody is analogus to unstoppable infinite mass vs paper. We don't want that.
+        controller.enableOverlapRecovery = false;
 
-        // We need this variable in a couple places, so we cache it at the start.
-        distToGround = controller.height / 2f;
-        // Calculate our radius based on the character controller radius and our buffer. It's necessary to have a buffer since
-        // the default unity player controller really doesn't like moving colliders, so we just keep it from colliding with anything...
-        radius = controller.radius + buffer;
-        // We define our collision spheres, we have one at our center, and one at our head. We let the unity controller deal with the feet
-        // collisions.
-        spheres = new CollisionSphere[2] {
-            new CollisionSphere (0f, radius),
-            new CollisionSphere (controller.height / 4f, radius),
-        };
+        originalHeight = controller.height;
+        RepositionHitboxes ();
         // We use this layer to quickly do collision tests with singular objects.
         TemporaryLayerIndex = LayerMask.NameToLayer (TemporaryLayer);
+    }
+
+    private bool RaycastForGround( out RaycastHit resultHit) {
+        // Loop through everything in our spherecast, checking for if there's a ground below us.
+        foreach (RaycastHit hit in Physics.BoxCastAll(transform.position, new Vector3(radius,0.1f,radius), -transform.up, transform.rotation, distToGround + 0.1f, layerMask, QueryTriggerInteraction.Ignore)) {
+            // This means that our initial sphere is already colliding with something
+            // if our initial sphere is colliding with something, we don't get any useful information...
+            // A corner case this solves is if we're pressed up into the corner of the inside of a mesh box, it wouldn't detect ground
+            // because the box is detected as a wall and promptly added to the ignore list, keeping it from detecting the floor.
+            if (hit.distance == 0) {
+                // We have to do another separate raycast, this takes care of a corner case (literally).
+                RaycastHit newHit;
+                if (Physics.Raycast (transform.position, -transform.up, out newHit, distToGround + 0.1f, layerMask, QueryTriggerInteraction.Ignore)) {
+                    if (newHit.normal.y > 0.7) {
+                        resultHit = newHit;
+                        return true;
+                    }
+                }
+                continue;
+            }
+            if (hit.normal.y > 0.7) {
+                resultHit = hit;
+                return true;
+            }
+        }
+        resultHit = new RaycastHit ();
+        return false;
+    }
+
+    private void RepositionHitboxes() {
+        distToGround = controller.height / 2f;
+        radius = controller.radius;
+        // We define our collision spheres, we have one at our center, one at our head, and one at our feet.
+        if (spheres == null) {
+            spheres = new CollisionSphere[3] {
+                new CollisionSphere (-controller.height / 2 + radius, radius),
+                new CollisionSphere (0f, radius),
+                new CollisionSphere (controller.height / 2 - radius, radius),
+            };
+        } else {
+            spheres [0].offset = -controller.height / 2 + radius;
+            spheres [1].offset = 0f;
+            spheres [2].offset = controller.height / 2 - radius;
+            spheres [0].radius = radius;
+            spheres [1].radius = radius;
+            spheres [2].radius = radius;
+        }
     }
     // CalculateGround takes a raycast and generates ground information from it.
     // This is necessary to grab material frictions, moving ground velocities, and normals.
@@ -116,7 +142,6 @@ public class SourcePlayer : MonoBehaviour {
         if (hit.normal.y < .7f) {
             return false;
         }
-        // Snap the player to where the spherecast hit.
         groundEntity = hit.collider.gameObject;
         groundNormal = hit.normal;
         // If we have a collider, since the raycast hit it-- we probably do, but i check anyway!
@@ -142,6 +167,39 @@ public class SourcePlayer : MonoBehaviour {
         return true;
     }
 
+    private void CheckCrouched() {
+        ignoreCollisions = true;
+        float diff = originalHeight - crouchHeight;
+        if (Input.GetButton ("Crouch") && !crouched) {
+            crouched = true;
+            controller.height = crouchHeight;
+            if (groundEntity != null) {
+                // If we're on the ground, we pull our head down.
+                controller.Move (new Vector3 (0, -diff/2f, 0));
+            } else {
+                // If we're in the air, we pull our legs up
+                controller.Move (new Vector3 (0, diff/2f, 0));
+            }
+            walkSpeed *= crouchSpeedMultiplier;
+            jumpSpeed *= crouchSpeedMultiplier;
+            RepositionHitboxes ();
+        } else if ( !Input.GetButton ("Crouch") && crouched ) {
+            crouched = false;
+            controller.height = originalHeight;
+            if (groundEntity != null) {
+                // If we're on the ground, we put our head up.
+                controller.Move (new Vector3 (0, diff/2f, 0));
+            } else {
+                // If we're in the air, we put our legs down
+                controller.Move (new Vector3 (0, -diff/2f, 0));
+            }
+            walkSpeed /= crouchSpeedMultiplier;
+            jumpSpeed /= crouchSpeedMultiplier;
+            RepositionHitboxes ();
+        }
+        ignoreCollisions = false;
+    }
+
     void Update () {
         // assume we haven't jumped and that we haven't taken damage.
         // assume we also haven't hit the ground.
@@ -150,27 +208,10 @@ public class SourcePlayer : MonoBehaviour {
         bool hitGround = false;
         // We only check for ground under us if we're moving downwards.
         if (velocity.y <= 0) {
-            // Loop through everything in our spherecast, checking for if there's a ground below us.
-            foreach (RaycastHit hit in Physics.SphereCastAll(transform.position, radius, -transform.up, distToGround - radius + 0.1f, layerMask, QueryTriggerInteraction.Ignore)) {
-                // This means that our initial sphere is already colliding with something
-                // if our initial sphere is colliding with something, we don't get any useful information...
-                // A corner case this solves is if we're pressed up into the corner of the inside of a mesh box, it wouldn't detect ground
-                // because the box is detected as a wall and promptly added to the ignore list, keeping it from detecting the floor.
-                if (hit.distance == 0) {
-                    // We have to do another separate raycast, this takes care of a corner case (literally).
-                    RaycastHit newHit;
-                    if (Physics.Raycast (transform.position, -transform.up, out newHit, distToGround + 0.1f, layerMask, QueryTriggerInteraction.Ignore)) {
-                        hitGround = hitGround || CalculateGround (newHit);
-                        if (hitGround) {
-                            break;
-                        }
-                    }
-                    continue;
-                }
-                hitGround = hitGround || CalculateGround (hit);
-                if (hitGround) {
-                    break;
-                }
+            RaycastHit hit;
+            hitGround = RaycastForGround (out hit);
+            if (hitGround) {
+                CalculateGround (hit);
             }
         }
 
@@ -182,9 +223,9 @@ public class SourcePlayer : MonoBehaviour {
             //groundVelocity = new Vector3 (0f, 0f, 0f); Shouldn't set this, need to remember how fast we were launched off of a moving object.
         }
 
-        PlayerMove ();
         // Push ourselves out of nearby objects.
         RecursivePushback (0, MaxPushbackIterations);
+        PlayerMove ();
     }
     // Slide off of impacting surface
     // This is just projecting a vector onto a plane (our velocity), check wikipedia or purple math if you want to confirm.
@@ -235,7 +276,7 @@ public class SourcePlayer : MonoBehaviour {
     // Checks if we pressed the jump button, oh also checks if you are suddenly launched into the air.
     private void CheckJump () {
         // Check to make sure we have a ground under us, and that it's stable ground.
-        if (Input.GetButton ("Jump") && groundEntity && Vector3.Angle (groundNormal, new Vector3 (0f, 1f, 0f)) < controller.slopeLimit) {
+        if (Input.GetButton ("Jump") && groundEntity && groundNormal.y > 0.7f) {
             // Right before we jump, lets clip our velocity real quick. That way if we're jumping down a sloped surface, we go faster!
             velocity = ClipVelocity (velocity, groundNormal);
             // Play a grunt sound, but only so often.
@@ -288,7 +329,7 @@ public class SourcePlayer : MonoBehaviour {
         if (fallVelocity >= fallSoundThreshold) {
             float fvol = Mathf.Min ((fallVelocity - fallSoundThreshold) / (maxSafeFallSpeed - fallSoundThreshold), 1f);
             RaycastHit hit;
-            if (Physics.SphereCast (transform.position, radius, -transform.up, out hit, distToGround - radius + 0.1f, layerMask, QueryTriggerInteraction.Ignore)) {
+            if (RaycastForGround (out hit)) {
                 PlayerRoughLandingEffects (fvol, hit.point, hit.normal);
             }
         }
@@ -407,6 +448,7 @@ public class SourcePlayer : MonoBehaviour {
         if (groundEntity == null) {
             fallVelocity = -velocity.y;
         }
+        CheckCrouched ();
         // Was jump button pressed?
         CheckJump ();
         // Make sure we're standing on solid ground
@@ -479,23 +521,14 @@ public class SourcePlayer : MonoBehaviour {
 
         velocity += accelspeed * wishdir;
     }
-    // Try to keep ourselves on the ground, probably doesn't need all the raycasting mumbo jumbo.
+    // Try to keep ourselves on the ground
     private void StayOnGround () {
-        ignoreCollisions = true;
-        foreach (RaycastHit hit in Physics.SphereCastAll(transform.position + controller.center, radius, -transform.up, distToGround + stepSize - radius + 0.1f, layerMask, QueryTriggerInteraction.Ignore)) {
-            // Snap the player to where the spherecast hit.
-            // This means that our initial sphere is already colliding with something
-            // if our initial sphere is colliding with something, we don't get any useful information...
-            if (hit.distance == 0) {
-                continue;
-            }
-            if (Vector3.Angle (hit.normal, Vector3.up) > controller.slopeLimit) {
-                continue;
-            }
-            controller.Move (new Vector3 (0, -hit.distance, 0));
-            break;
+        RaycastHit hit;
+        if ( Physics.BoxCast (transform.position, new Vector3 (radius, 0.1f, radius), -transform.up, out hit, transform.rotation, distToGround + stepSize + 0.1f, layerMask, QueryTriggerInteraction.Ignore) ) {
+            ignoreCollisions = true;
+            controller.Move (new Vector3 (0, -(hit.distance-distToGround), 0));
+            ignoreCollisions = false;
         }
-        ignoreCollisions = false;
     }
     // Movement for when on the ground walking/running.
     private void WalkMove () {
@@ -620,6 +653,7 @@ public class SourcePlayer : MonoBehaviour {
         velocity += groundVelocity;
         //TryPlayerMove();
         controller.Move (velocity * Time.deltaTime);
+        //StepMove();
 
         velocity -= groundVelocity;
 
@@ -631,7 +665,6 @@ public class SourcePlayer : MonoBehaviour {
         if (ignoreCollisions) {
             return;
         }
-        //Debug.Log ("Hello " + Time.time);
         if ((layerMask & (1 << obj.layer)) == 0) {
             //Debug.Log ("Ignoring collsion of object with " + obj.layer);
             return;
@@ -662,7 +695,7 @@ public class SourcePlayer : MonoBehaviour {
             Vector3 vel = rigidcheck.GetPointVelocity (hitPos);
             float d = Vector3.Dot (vel, hitNormal);
             if (d > 0) {
-                velocity += hitNormal * d * overbounce;// * rigidcheck.mass; // yeah don't multiply by the mass...
+                velocity += hitNormal * d * overbounce;
             }
             rigidcheck.AddForceAtPosition (-hitNormal * change * mass, hitPos);
         }
@@ -688,9 +721,6 @@ public class SourcePlayer : MonoBehaviour {
         foreach (var sphere in spheres) {
             foreach (Collider col in Physics.OverlapSphere(SpherePosition(sphere), sphere.radius, layerMask, QueryTriggerInteraction.Ignore)) {
                 if (col.isTrigger) {
-                    continue;
-                }
-                if (col.gameObject == gameObject) {
                     continue;
                 }
                 Vector3 position = SpherePosition (sphere);
@@ -757,21 +787,27 @@ public class SourcePlayer : MonoBehaviour {
         controller.Move (new Vector3 (0f, -stepSize, 0f));
         // Save this position
         Vector3 stepMove = transform.position;
-        // If we're in the air after trying to step move, use the original move attempt
         RaycastHit hit;
-        if (!Physics.SphereCast (transform.position, radius, -transform.up, out hit, distToGround - radius + 0.1f, layerMask, QueryTriggerInteraction.Ignore)) {
-            transform.position = groundMove;
+        // If we step-moved onto unstable ground, or into the air.. use the original move.
+        if (!RaycastForGround (out hit)) {
+            // Move normally
+            transform.position = savePos;
             ignoreCollisions = false;
+            controller.Move (velocity * Time.deltaTime);
             return;
-        }
-
+        }    
         // Select whichever went furthest
         float stepMoveDist = (savePos.x - stepMove.x) * (savePos.x - stepMove.x) + (savePos.z - stepMove.z) * (savePos.z - stepMove.z);
         float groundMoveDist = (savePos.x - groundMove.x) * (savePos.x - groundMove.x) + (savePos.z - groundMove.z) * (savePos.z - groundMove.z);
-        if (stepMoveDist > groundMoveDist) {
+        // Only take the step move if it's a meaningful difference, it comes at a big cost (of no collision detection) after all..
+        if (stepMoveDist - groundMoveDist > 0.005f) {
+            // Teleport and ignore collisions.
             transform.position = stepMove;
         } else {
-            transform.position = groundMove;
+            // Move normally
+            transform.position = savePos;
+            ignoreCollisions = false;
+            controller.Move (velocity * Time.deltaTime);
         }
         // Enable collisions
         ignoreCollisions = false;
