@@ -116,7 +116,7 @@ public class SourcePlayerSaveData : SaveData {
         foreach (GunSaveData gundata in this.guns) {
             GameObject gun = gundata.Load ();
             GunBase realgun = gun.GetComponent<GunBase> ();
-            realgun.OnUnequip (obj);
+            realgun.player = obj.GetComponent<SourcePlayer>();
             realgun.equipped = false;
             g.Guns.Add (realgun);
         }
