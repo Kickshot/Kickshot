@@ -8,8 +8,30 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager instance = null;
 
-    bool _postLevelState = false;
+    SourcePlayer _player;
     LevelTimer _timer;
+
+    bool _postLevelState = false;
+
+    public SourcePlayer Player
+    {
+        get
+        {
+            if (_player == null)
+                _player = GameObject.FindGameObjectWithTag("Player").GetComponent<SourcePlayer>();
+            return _player;
+        }
+    }
+    public LevelTimer GameTimer
+    {
+        get
+        {
+            if (_timer == null)
+                _timer = GetComponent<LevelTimer>();
+            return _timer;
+        }
+    }
+
 
     void Awake()
     {
@@ -21,12 +43,13 @@ public class GameManager : MonoBehaviour
         
         DontDestroyOnLoad(gameObject);
 
-        SceneManager.sceneLoaded += OnSceneLoad;
+        SceneManager.sceneLoaded += SceneLoaded;
     }
 
-    void OnSceneLoad(Scene scene, LoadSceneMode mode)
+    void SceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        SendMessage("FindAssets");
+        SaveManager.Save();
+        GameTimer.Reset();
     }
 
     void Update()
@@ -41,13 +64,19 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void LoadNext()
+    public void Died()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+        SaveManager.Load();
+        GameTimer.Reset();
     }
 
     public void LevelFinished()
     {
         _postLevelState = true;
+    }
+
+    public void LoadNext()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
     }
 }
