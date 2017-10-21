@@ -233,11 +233,8 @@ public class SourcePlayer : MonoBehaviour {
         float overbounce = 1.0f; // How much to bounce off the surface, 1.0 means we just slide normally. 2.0 would bounce us off.
         float backoff;
         Vector3 change;
-        float angle;
-        int i, blocked;
         Vector3 outvel;
 
-        angle = normal.y;
         // Determine how far along plane to slide based on incoming direction.
         backoff = Vector3.Dot (vel, normal) * overbounce;
 

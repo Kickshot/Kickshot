@@ -12,8 +12,10 @@ public static class Helper {
         myLine.AddComponent<LineRenderer>();
         LineRenderer lr = myLine.GetComponent<LineRenderer>();
         lr.material = new Material(Shader.Find("Particles/Alpha Blended Premultiply"));
-        lr.SetColors(color, color);
-        lr.SetWidth(0.1f, 0.1f);
+        lr.startColor = color;
+        lr.endColor = color;
+        lr.startWidth = 1;
+        lr.endWidth = 1;
         lr.SetPosition(0, start);
         lr.SetPosition(1, end);
         GameObject.Destroy(myLine, duration);

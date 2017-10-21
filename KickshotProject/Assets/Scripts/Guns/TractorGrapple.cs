@@ -8,7 +8,6 @@ public class TractorGrapple: GunBase {
     private bool hitSomething = false;
     private Transform hitPosition;
     private float hitDist;
-    private Vector3 lastPosition;
     private float fade = 0f;
     public float fadeTime = 1f;
     public float range = 12f;
@@ -44,7 +43,6 @@ public class TractorGrapple: GunBase {
             //player.transform.position = hitPosition.position - player.view.forward * hitDist;
             Vector3 desiredPosition = hitPosition.position - view.forward * hitDist;
             player.velocity = (desiredPosition - player.transform.position) / Time.deltaTime;
-            lastPosition = player.transform.position;
             linerender.SetPosition (0, gunBarrelFront.position);
             linerender.SetPosition (1, hitPosition.position);
             fade = fadeTime;
@@ -73,7 +71,6 @@ public class TractorGrapple: GunBase {
             hitPosition.position = hit.point;
             hitSomething = true;
             hitDist = hit.distance;
-            lastPosition = player.transform.position;
             linerender.SetPosition (0, gunBarrelFront.position);
             linerender.SetPosition (1, hit.point);
             player.maxSpeed = 1000f;

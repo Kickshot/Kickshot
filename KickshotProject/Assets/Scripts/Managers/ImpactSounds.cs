@@ -45,5 +45,6 @@ public static class ImpactSounds {
         soundLookup["Sand (Instance)"] = dirt;
         soundLookup["StoneWall (Instance)"] = stone;
         soundLookup["CobbleStone (Instance)"] = stone;
+        generatedList = true;
     }
 }

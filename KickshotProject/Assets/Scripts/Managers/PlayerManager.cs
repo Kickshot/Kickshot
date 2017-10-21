@@ -74,7 +74,7 @@ public class PlayerManager : MonoBehaviour
         RaycastHit groundHit = new RaycastHit();
         if (Physics.Raycast(StartPoint.transform.position, Vector3.down, out groundHit))
         {
-            float yOffset = Player.GetComponent<CapsuleCollider>().height * Player.transform.lossyScale.y / 2;
+            //float yOffset = Player.GetComponent<CapsuleCollider>().height * Player.transform.lossyScale.y / 2;
             startLoc = new Vector3(groundHit.point.x, groundHit.point.y, groundHit.point.z);
             Player.transform.position = startLoc;
         }
