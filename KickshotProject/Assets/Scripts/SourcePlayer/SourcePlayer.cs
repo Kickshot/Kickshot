@@ -13,8 +13,9 @@ public class SourcePlayer : MonoBehaviour {
     public float maxSpeed = 35f;// The maximum speed the player can move at.
     public float groundAccelerate = 10f;// How fast we accelerate while on solid ground.
     public float groundDecellerate = 10f;// How fast we deaccelerate on solid ground.
-    public float airAccelerate = 1f;// How much air control the player has.
-    public float airDeccelerateMultiplier = 1f; // How fast the player can stop in mid-air or slow down.
+    public float airAccelerate = 0.1f;// How much the player can influence increasing speed in the air, mesured in meters/sec^2.
+    public float airPivotStrength = 5f; // How fast/easily the player can pivot in the air, measured in meters/sec^2.
+    public float airBreakStrength = 1.5f; // How fast the player can apply air breaks, measured as a multiplier of current speed.
     public float walkSpeed = 10f; // How fast the player runs.
     public float jumpSpeed = 8f; // The y velocity to set our character at when they jump.
     public float fallSoundThreshold = 8f; // How fast we must be falling before we make a thud.
@@ -43,6 +44,7 @@ public class SourcePlayer : MonoBehaviour {
     private float originalHeight;
     private CollisionSphere[] spheres;
     private bool ignoreCollisions = false;
+    private bool ignoreFootCollisions = false;
     private const float overbounce = 1f; // How much to multiply incoming collision velocities, to keep us from getting stuck in moving objects.
     private int layerMask; // We only collide with these layers.
     private const float TinyTolerance = 0.05f; // How much to allow penetration.
@@ -115,6 +117,10 @@ public class SourcePlayer : MonoBehaviour {
         return false;
     }
 
+    private bool RaycastForHeadroom() {
+        return Physics.BoxCast(transform.position, new Vector3(radius,0.1f,radius), transform.up, transform.rotation, originalHeight/2f, layerMask, QueryTriggerInteraction.Ignore);
+    }
+
     private void RepositionHitboxes() {
         distToGround = controller.height / 2f;
         radius = controller.radius;
@@ -167,6 +173,7 @@ public class SourcePlayer : MonoBehaviour {
         return true;
     }
 
+    // TODO: Gotta make this smoothly transition, shouldn't be hard.
     private void CheckCrouched() {
         ignoreCollisions = true;
         float diff = originalHeight - crouchHeight;
@@ -183,7 +190,7 @@ public class SourcePlayer : MonoBehaviour {
             walkSpeed *= crouchSpeedMultiplier;
             jumpSpeed *= crouchSpeedMultiplier;
             RepositionHitboxes ();
-        } else if ( !Input.GetButton ("Crouch") && crouched ) {
+        } else if ( !Input.GetButton ("Crouch") && crouched && !RaycastForHeadroom() ) {
             crouched = false;
             controller.height = originalHeight;
             if (groundEntity != null) {
@@ -276,7 +283,7 @@ public class SourcePlayer : MonoBehaviour {
         if (Input.GetButton ("Jump") && groundEntity && groundNormal.y > 0.7f) {
             // Right before we jump, lets clip our velocity real quick. That way if we're jumping down a sloped surface, we go faster!
             velocity = ClipVelocity (velocity, groundNormal);
-            // Play a grunt sound, but only so often.
+            // Play a grunt sound, but oMultipliernly so often.
             if (Time.time - lastGrunt > 0.3) {
                 jumpGrunt.Play ();
                 lastGrunt = Time.time;
@@ -638,12 +645,29 @@ public class SourcePlayer : MonoBehaviour {
             wishspeed = maxSpeed;
         }
 
-        // If we're trying to stop, use airDeccelerate value (usually much larger value than airAccelerate)
-        if (Vector3.Dot (velocity, wishdir) < 0) {
-            Accelerate (wishdir, wishspeed, velocity.magnitude * airDeccelerateMultiplier);
+        float accel;
+
+        // Check how our wish direction compares to our velocity
+        float check = Vector3.Dot (Vector3.Normalize(velocity), wishdir);
+        // If we're just trying to adjust our flight path, we use the airPivotStrength value.
+        // If we're trying to increase our speed, we use the airAcceleration value.
+        // If we're trying to stop, we use our current velocity multiplied by the airBreakStrength value.
+        // The air break is scaled by how much our wishdir and velocity are opposites.(-1 = max breaks, 0 = no break)
+        float airBreak = Mathf.Max(-check,0f)*velocity.magnitude*airBreakStrength;
+        if ( check < 0 ) {
+            accel = airPivotStrength;
         } else {
-            Accelerate (wishdir, wishspeed, airAccelerate);
+            accel = airAccelerate;
         }
+        accel += airBreak;
+        //if (check < 0) {
+            //check += 1;
+            //accel = airBreakStrength*velocity.magnitude*(1-check) + airPivotStrength*check;
+        //} else {
+            //accel = airPivotStrength*(1-check) + airAccelerate*check;
+        //}
+
+        Accelerate (wishdir, wishspeed, accel);
 
         // Add in any base velocity to the current velocity.
         //VectorAdd(mv->m_vecVelocity, player->GetBaseVelocity(), mv->m_vecVelocity );
@@ -661,6 +685,11 @@ public class SourcePlayer : MonoBehaviour {
     private void HandleCollision (GameObject obj, Vector3 hitNormal, Vector3 hitPos) {
         if (ignoreCollisions) {
             return;
+        }
+        if ( ignoreFootCollisions && (transform.position.y - distToGround + stepSize) > hitPos.y ) {
+            return;
+        } else if ( ignoreFootCollisions) {
+            Debug.Log( "Allowed " + hitPos.y );
         }
         if ((layerMask & (1 << obj.layer)) == 0) {
             //Debug.Log ("Ignoring collsion of object with " + obj.layer);
@@ -799,7 +828,13 @@ public class SourcePlayer : MonoBehaviour {
         // Only take the step move if it's a meaningful difference, it comes at a big cost (of no collision detection) after all..
         if (stepMoveDist - groundMoveDist > 0.005f) {
             // Teleport and ignore collisions.
-            transform.position = stepMove;
+            transform.position = savePos;
+            controller.Move (new Vector3 (0f, stepSize, 0f));
+            ignoreCollisions = false;
+            ignoreFootCollisions = true;
+            controller.Move (velocity * Time.deltaTime);
+            controller.Move (new Vector3 (0f, -stepSize, 0f));
+            ignoreFootCollisions = false;
         } else {
             // Move normally
             transform.position = savePos;
