@@ -6,6 +6,7 @@ using UnityEngine;
 
 public class SourcePlayer : MonoBehaviour {
     // Accessible because it's configurable
+    public Transform body;
     public GameObject deathSpawn;
     public Vector3 velocity;
     public Vector3 gravity = new Vector3 (0, -24f, 0);// gravity in meters per second per second.
@@ -42,6 +43,7 @@ public class SourcePlayer : MonoBehaviour {
     public bool crouched = false;
 
     // Shouldn't need to access these, probably
+    private Vector3 originalBodyPosition;
     private float originalHeight;
     private CollisionSphere[] spheres;
     private bool ignoreCollisions = false;
@@ -89,6 +91,7 @@ public class SourcePlayer : MonoBehaviour {
         RepositionHitboxes ();
         // We use this layer to quickly do collision tests with singular objects.
         TemporaryLayerIndex = LayerMask.NameToLayer (TemporaryLayer);
+        originalBodyPosition = body.localPosition;
     }
 
     private bool RaycastForGround( out RaycastHit resultHit) {
@@ -179,6 +182,7 @@ public class SourcePlayer : MonoBehaviour {
         ignoreCollisions = true;
         float diff = originalHeight - crouchHeight;
         if (Input.GetButton ("Crouch") && !crouched) {
+            body.position += new Vector3 (0, diff / 2f, 0);
             crouched = true;
             controller.height = crouchHeight;
             if (groundEntity != null) {
@@ -204,6 +208,11 @@ public class SourcePlayer : MonoBehaviour {
             walkSpeed /= crouchSpeedMultiplier;
             jumpSpeed /= crouchSpeedMultiplier;
             RepositionHitboxes ();
+        }
+        if (crouched && groundEntity != null) {
+            body.localPosition = originalBodyPosition - new Vector3(0, -diff/2f, 0);
+        } else {
+            body.localPosition = originalBodyPosition;
         }
         ignoreCollisions = false;
     }
