@@ -17,8 +17,8 @@ public class MouseLook : MonoBehaviour {
 
     public void ShakeImpact (Vector3 intensity) {
         shakeIntensity += intensity/3.5f;
-        if (shakeIntensity.magnitude > 1f) {
-            shakeIntensity = Vector3.Normalize (shakeIntensity);
+        if (shakeIntensity.magnitude > 0.5f) {
+            shakeIntensity = Vector3.Normalize (shakeIntensity)*0.5f;
         }
         shakeTimer = Mathf.Min(shakeIntensity.magnitude,1f);
         shakeTimerMax = shakeTimer;
@@ -39,6 +39,7 @@ public class MouseLook : MonoBehaviour {
             }
         } else {
             if ( Input.GetButtonDown("Cancel") ) {
+                Application.Quit ();
                 Cursor.lockState = CursorLockMode.None;
             }
         }
