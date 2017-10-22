@@ -8,24 +8,25 @@ public class SourcePlayer : MonoBehaviour {
     // Accessible because it's configurable
     public GameObject deathSpawn;
     public Vector3 velocity;
-    public Vector3 gravity = new Vector3 (0, -20f, 0);// gravity in meters per second per second.
+    public Vector3 gravity = new Vector3 (0, -24f, 0);// gravity in meters per second per second.
     public float baseFriction = 6f;// A friction multiplier, higher means more friction.
-    public float maxSpeed = 35f;// The maximum speed the player can move at.
+    public float maxSpeed = 100f;// The maximum speed the player can move at.
     public float groundAccelerate = 10f;// How fast we accelerate while on solid ground.
     public float groundDecellerate = 10f;// How fast we deaccelerate on solid ground.
-    public float airAccelerate = 0.1f;// How much the player can influence increasing speed in the air, mesured in meters/sec^2.
-    public float airPivotStrength = 5f; // How fast/easily the player can pivot in the air, measured in meters/sec^2.
-    public float airBreakStrength = 1.5f; // How fast the player can apply air breaks, measured as a multiplier of current speed.
-    public float walkSpeed = 10f; // How fast the player runs.
-    public float jumpSpeed = 8f; // The y velocity to set our character at when they jump.
-    public float fallSoundThreshold = 8f; // How fast we must be falling before we make a thud.
+    public float airAccelerate = 1f;// How much the player can influence increasing speed in the air, mesured in meters/sec^2.
+    public float airStrafeAccelerate = 10f;// How much the player can influence speed in the air, mesured in meters/sec^2.
+    public float airSpeedBonus = 0.2f; // How much we can accelerate a non-forward axis in the air. This is a good way to gain speed.
+    public float walkSpeed = 12f; // How fast the player runs.
+    public float flySpeed = 16f;
+    public float jumpSpeed = 10f; // The y velocity to set our character at when they jump.
+    public float fallSoundThreshold = 5f; // How fast we must be falling before we make a thud.
     public float fallPunchThreshold = 10f; // How fast we must be falling before we shake the screen.
     public float maxSafeFallSpeed = 25f; // How fast we must be falling before we take damage.
     public float jumpSpeedBonus = 0.1f; // Speed boost from just jumping forward as a percentage.
     public float health = 100f;
     public float mass = 2f;
     public float crouchHeight = 1f;
-    public float crouchSpeedMultiplier = 0.7f;
+    public float crouchSpeedMultiplier = 0.55f;
     public float stepSize = 0.5f;
 
     // Accessible because it's useful
@@ -255,7 +256,7 @@ public class SourcePlayer : MonoBehaviour {
         return outvel;
     }
     // This command, in a nutshell, scales player input in order to take into account sqrt(2) distortions
-    // from walking diagonally. It also multiplies the answer by the walkspeed for convenience.
+    // from walking diagonally.
     public Vector3 GetCommandVelocity () {
         float max;
         float total;
@@ -270,7 +271,7 @@ public class SourcePlayer : MonoBehaviour {
         total = Mathf.Sqrt (command.z * command.z + command.x * command.x);
         scale = max / total;
 
-        return command * scale * walkSpeed;
+        return command * scale;
     }
     // Eh
     private void Gravity () {
@@ -438,12 +439,12 @@ public class SourcePlayer : MonoBehaviour {
                 velocity [i] = 0;
             }
         }
-        float savedy = velocity.y;
+        /*float savedy = velocity.y;
         velocity.y = 0;
         if (velocity.magnitude > maxSpeed) {
             velocity = Vector3.Normalize (velocity) * maxSpeed;
         }
-        velocity.y = savedy;
+        velocity.y = savedy;*/
     }
     // Detect which movement code we should run, and set up our parameters for it.
     private void PlayerMove () {
@@ -490,33 +491,21 @@ public class SourcePlayer : MonoBehaviour {
         }
     }
     // Smoothly transform our velocity into wishdir*wishspeed at the speed of accel
-    private void Accelerate (Vector3 wishdir, float wishspeed, float accel) {
-        //int i;
+    private void Accelerate (Vector3 wishdir, float accel, float max_velocity) {
         float addspeed, accelspeed, currentspeed;
+        // Determine veer amount
+        currentspeed = Vector3.Dot (new Vector3(velocity.x, 0, velocity.z), wishdir);
 
-        // This gets overridden because some games (CSPort) want to allow dead (observer) players
-        // to be able to move around.
-        //if ( !CanAccelerate() )
-        //      return;
-
-        // Cap speed
-        if (wishspeed > maxSpeed) {
-            wishspeed = maxSpeed;
-        }
-
-        // See if we are changing direction a bit
-        currentspeed = Vector3.Dot (velocity, wishdir);
-
-        // Reduce wishspeed by the amount of veer.
-        addspeed = wishspeed - currentspeed;
+        // See how much to add
+        addspeed = max_velocity - currentspeed;
 
         // If not going to add any speed, done.
         if (addspeed <= 0) {
             return;
         }
-
+            
         // Determine amount of accleration.
-        accelspeed = accel * Time.deltaTime * wishspeed * groundFriction;
+        accelspeed = accel * Time.deltaTime * max_velocity;
 
         // Cap at addspeed
         if (accelspeed > addspeed) {
@@ -537,19 +526,15 @@ public class SourcePlayer : MonoBehaviour {
     // Movement for when on the ground walking/running.
     private void WalkMove () {
         //int i;
-        Vector3 wishvel;
-        float spd;
+        Vector3 wishDir;
         float fmove, smove;
-        Vector3 wishdir;
-        float wishspeed;
 
         //Vector3 dest;
-        Vector3 forward, right, up;
+        Vector3 forward, right;
 
         //AngleVectors (mv->m_vecViewAngles, &forward, &right, &up);  // Determine movement angles
         forward = transform.forward;
         right = transform.right;
-        up = transform.up;
 
         // Copy movement amounts
         Vector3 command = GetCommandVelocity ();
@@ -564,43 +549,18 @@ public class SourcePlayer : MonoBehaviour {
         right = Vector3.Normalize (right);    // 
 
         // Determine x and y parts of velocity
-        wishvel = forward * fmove + right * smove;
-        wishvel.y = 0;             // Zero out z part of velocity
-
-        wishdir = new Vector3 (wishvel.x, wishvel.y, wishvel.z); // Determine maginitude of speed of move
-        wishspeed = wishdir.magnitude;
-        wishdir = Vector3.Normalize (wishdir);
-
-        //
-        // Clamp to server defined max speed
-        //
-        if ((wishspeed != 0.0f) && (wishspeed > maxSpeed)) {
-            wishvel *= maxSpeed / wishspeed;
-            wishspeed = maxSpeed;
-        }
+        wishDir = forward * fmove + right * smove;
+        wishDir.y = 0;             // Zero out z part of velocity
 
         // Set pmove velocity
-        velocity.y = 0;
-        Accelerate (wishdir, wishspeed, groundAccelerate);
-        velocity.y = 0;
+        Accelerate (wishDir, groundAccelerate, walkSpeed);
 
         // Add in any base velocity to the current velocity.
-        //VectorAdd (mv->m_vecVelocity, player->GetBaseVelocity(), mv->m_vecVelocity );
         velocity += groundVelocity;
 
-        spd = velocity.magnitude;
-
-        if (spd < 0.01f) {
-            velocity = new Vector3 (0, 0, 0);
-            // Now pull the base velocity back out.   Base velocity is set if you are on a moving object, like a conveyor (or maybe another monster?)
-            // VectorSubtract( mv->m_vecVelocity, player->GetBaseVelocity(), mv->m_vecVelocity );
-            return;
-        }
-
-        //controller.Move (velocity * Time.deltaTime);
         StepMove ();
+
         // Now pull the base velocity back out.   Base velocity is set if you are on a moving object, like a conveyor (or maybe another monster?)
-        // VectorSubtract( mv->m_vecVelocity, player->GetBaseVelocity(), mv->m_vecVelocity );
         velocity -= groundVelocity;
 
         StayOnGround ();
@@ -608,16 +568,13 @@ public class SourcePlayer : MonoBehaviour {
     // Movement code for when we're in the air.
     private void AirMove () {
         //int                   i;
-        Vector3 wishvel;
-        float fmove, smove;
         Vector3 wishdir;
-        float wishspeed;
-        Vector3 forward, right, up;
+        float fmove, smove;
+        Vector3 forward, right;
 
-        //AngleVectors (mv->m_vecViewAngles, &forward, &right, &up);  // Determine movement angles
+        // Determine movement angles
         forward = transform.forward;
         right = transform.right;
-        up = transform.up;
 
         // Copy movement amounts
         Vector3 command = GetCommandVelocity ();
@@ -630,56 +587,37 @@ public class SourcePlayer : MonoBehaviour {
         Vector3.Normalize (forward);  // Normalize remainder of vectors
         Vector3.Normalize (right);    // 
 
-        wishvel = forward * fmove + right * smove;
-        wishvel.y = 0;             // Zero out up/down part of velocity
-
-        wishdir = new Vector3 (wishvel.x, wishvel.y, wishvel.z);
-        wishspeed = wishdir.magnitude;
-        wishdir = Vector3.Normalize (wishdir);
+        wishdir = forward * fmove + right * smove;
+        wishdir.y = 0;             // Zero out up/down part of velocity
 
         //
         // clamp to server defined max speed
         //
-        if (wishspeed != 0 && (wishspeed > maxSpeed)) {
+        /*if (wishspeed != 0 && (wishspeed > maxSpeed)) {
             wishvel = wishvel * maxSpeed / wishspeed;
             wishspeed = maxSpeed;
-        }
-
-        float accel;
+        }*/
 
         // Check how our wish direction compares to our velocity
-        float check = Vector3.Dot (Vector3.Normalize(velocity), wishdir);
-        // If we're just trying to adjust our flight path, we use the airPivotStrength value.
-        // If we're trying to increase our speed, we use the airAcceleration value.
+        Vector3 flatvel = new Vector3(velocity.x, 0, velocity.z);
+        float check = Vector3.Dot (Vector3.Normalize(flatvel), wishdir);
+        // If we're trying to change our speed, we use the airAcceleration value.
         // If we're trying to stop, we use our current velocity multiplied by the airBreakStrength value.
         // The air break is scaled by how much our wishdir and velocity are opposites.(-1 = max breaks, 0 = no break)
-        float airBreak = Mathf.Max(-check,0f)*velocity.magnitude*airBreakStrength;
-        if ( check < 0 ) {
-            accel = airPivotStrength;
-        } else {
-            accel = airAccelerate;
-        }
-        accel += airBreak;
-        //if (check < 0) {
-            //check += 1;
-            //accel = airBreakStrength*velocity.magnitude*(1-check) + airPivotStrength*check;
-        //} else {
-            //accel = airPivotStrength*(1-check) + airAccelerate*check;
-        //}
+        float airBreak = 1f / Time.deltaTime;
+        float airBreakMag = -Vector3.Dot (velocity, wishdir);
+        float airForward = Mathf.Abs (check)*airAccelerate;
+        float airStrafe = (1f - Mathf.Abs (check))*airStrafeAccelerate;
+        float wishSpeed = (Mathf.Abs (check)+(airSpeedBonus))/(1f + airSpeedBonus);
 
-        Accelerate (wishdir, wishspeed, accel);
+        Accelerate (wishdir, airBreak, airBreakMag);
+        Accelerate (wishdir, airForward + airStrafe, wishSpeed*flySpeed);
 
         // Add in any base velocity to the current velocity.
-        //VectorAdd(mv->m_vecVelocity, player->GetBaseVelocity(), mv->m_vecVelocity );
         velocity += groundVelocity;
-        //TryPlayerMove();
         controller.Move (velocity * Time.deltaTime);
-        //StepMove();
-
-        velocity -= groundVelocity;
-
         // Now pull the base velocity back out.   Base velocity is set if you are on a moving object, like a conveyor (or maybe another monster?)
-        //VectorSubtract( mv->m_vecVelocity, player->GetBaseVelocity(), mv->m_vecVelocity );
+        velocity -= groundVelocity;
     }
     // Either the character controller moved into something, or something moved into the supercollider spheres.
     private void HandleCollision (GameObject obj, Vector3 hitNormal, Vector3 hitPos) {
@@ -688,8 +626,6 @@ public class SourcePlayer : MonoBehaviour {
         }
         if ( ignoreFootCollisions && (transform.position.y - distToGround + stepSize) > hitPos.y ) {
             return;
-        } else if ( ignoreFootCollisions) {
-            Debug.Log( "Allowed " + hitPos.y );
         }
         if ((layerMask & (1 << obj.layer)) == 0) {
             //Debug.Log ("Ignoring collsion of object with " + obj.layer);

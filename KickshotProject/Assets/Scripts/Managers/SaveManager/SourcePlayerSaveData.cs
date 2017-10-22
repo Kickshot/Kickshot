@@ -13,8 +13,8 @@ public class SourcePlayerSaveData : SaveData {
     private float groundAccelerate;
     private float groundDecellerate;
     private float airAccelerate;
-    private float airBreakStrength;
-    private float airPivotStrength;
+    private float airStrafeAccelerate;
+    private float airSpeedBonus;
     private float walkSpeed;
     private float jumpSpeed;
     private float fallSoundThreshold;
@@ -50,8 +50,8 @@ public class SourcePlayerSaveData : SaveData {
         this.groundAccelerate = p.groundAccelerate;
         this.groundDecellerate = p.groundDecellerate;
         this.airAccelerate = p.airAccelerate;
-        this.airPivotStrength = p.airPivotStrength;
-        this.airBreakStrength = p.airBreakStrength;
+        this.airStrafeAccelerate = p.airStrafeAccelerate;
+        this.airSpeedBonus = p.airSpeedBonus;
         this.walkSpeed = p.walkSpeed;
         this.jumpSpeed = p.jumpSpeed;
         this.fallSoundThreshold = p.fallSoundThreshold;
@@ -93,8 +93,8 @@ public class SourcePlayerSaveData : SaveData {
         ps.groundAccelerate = this.groundAccelerate;
         ps.groundDecellerate = this.groundDecellerate;
         ps.airAccelerate = this.airAccelerate;
-        ps.airPivotStrength = this.airPivotStrength;
-        ps.airBreakStrength = this.airBreakStrength;
+        ps.airStrafeAccelerate = this.airStrafeAccelerate;
+        ps.airSpeedBonus = this.airSpeedBonus;
         ps.walkSpeed = this.walkSpeed;
         ps.jumpSpeed = this.jumpSpeed;
         ps.fallSoundThreshold = this.fallSoundThreshold;
