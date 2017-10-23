@@ -79,7 +79,7 @@ public class SourcePlayerSaveData : SaveData {
         this.equippedGun = g.Guns.IndexOf(g.EquippedGun);
     }
     public override GameObject Load() {
-        GameObject obj = GameObject.Instantiate (SaveManager.playerPrefab);
+        GameObject obj = GameObject.Instantiate (ResourceManager.GetResource<GameObject>("Player"));
         SourcePlayer ps = obj.GetComponent<SourcePlayer> ();
         if (!ps) {
             throw new UnityException ("Tried to load a gameobject as a SourcePlayer, but it isn't one!");

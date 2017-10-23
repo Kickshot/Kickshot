@@ -77,15 +77,15 @@ public class GunSaveData : SaveData {
         GunBase g = null;
         switch (type) {
         case GunType.RocketLauncher:
-            obj = GameObject.Instantiate (SaveManager.rocketLauncherPrefab);
+            obj = GameObject.Instantiate (ResourceManager.GetResource<GameObject>("RocketLauncher"));
             g = obj.GetComponent<RocketLauncher> ();
             break;
         case GunType.RecoilGun:
-            obj = GameObject.Instantiate (SaveManager.recoilGunPrefab);
+            obj = GameObject.Instantiate (ResourceManager.GetResource<GameObject>("RecoilGun"));
             g = obj.GetComponent<RecoilGun> ();
             break;
         case GunType.TractorGrapple:
-            obj = GameObject.Instantiate (SaveManager.tractorGrapplePrefab);
+            obj = GameObject.Instantiate (ResourceManager.GetResource<GameObject>("TractorGrapple"));
             g = obj.GetComponent<TractorGrapple> ();
             break;
         }
