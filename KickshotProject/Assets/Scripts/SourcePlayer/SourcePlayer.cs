@@ -526,7 +526,7 @@ public class SourcePlayer : MonoBehaviour {
     // Try to keep ourselves on the ground
     private void StayOnGround () {
         RaycastHit hit;
-        if (Physics.Raycast (transform.position, -transform.up, out hit, distToGround + stepSize + 0.1f, layerMask, QueryTriggerInteraction.Ignore)) {
+        if ( Physics.BoxCast(transform.position, new Vector3(radius*0.75f,0.1f,radius*0.75f), -transform.up, out hit, transform.rotation, distToGround + stepSize + 0.1f, layerMask, QueryTriggerInteraction.Ignore)) {
             ignoreCollisions = true;
             controller.Move (new Vector3 (0, -(hit.distance-distToGround), 0));
             ignoreCollisions = false;
