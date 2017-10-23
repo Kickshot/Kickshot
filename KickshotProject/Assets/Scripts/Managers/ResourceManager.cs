@@ -19,6 +19,7 @@ public static class ResourceManager {
         resources.Add ("RocketLauncher",    new string[]{"Prefabs/Weapons/RocketLauncher"});
         resources.Add ("TractorGrapple",    new string[]{"Prefabs/Weapons/TractorGrapple"});
         resources.Add ("RecoilGun",         new string[]{"Prefabs/Weapons/RecoilGun"});
+        generated = true;
     }
     // Randomly returns a resource with the given name.
     public static T GetResource<T>(string name) where T : class {
