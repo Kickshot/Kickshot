@@ -96,7 +96,7 @@ public class SourcePlayer : MonoBehaviour {
 
     private bool RaycastForGround( out RaycastHit resultHit) {
         // Loop through everything in our spherecast, checking for if there's a ground below us.
-        foreach (RaycastHit hit in Physics.BoxCastAll(transform.position, new Vector3(radius,0.1f,radius), -transform.up, transform.rotation, distToGround + 0.1f, layerMask, QueryTriggerInteraction.Ignore)) {
+        foreach (RaycastHit hit in Physics.BoxCastAll(transform.position, new Vector3(radius*0.75f,0.1f,radius*0.75f), -transform.up, transform.rotation, distToGround + 0.1f, layerMask, QueryTriggerInteraction.Ignore)) {
             // This means that our initial sphere is already colliding with something
             // if our initial sphere is colliding with something, we don't get any useful information...
             // A corner case this solves is if we're pressed up into the corner of the inside of a mesh box, it wouldn't detect ground
@@ -526,7 +526,7 @@ public class SourcePlayer : MonoBehaviour {
     // Try to keep ourselves on the ground
     private void StayOnGround () {
         RaycastHit hit;
-        if ( Physics.BoxCast (transform.position, new Vector3 (radius, 0.1f, radius), -transform.up, out hit, transform.rotation, distToGround + stepSize + 0.1f, layerMask, QueryTriggerInteraction.Ignore) ) {
+        if (Physics.Raycast (transform.position, -transform.up, out hit, distToGround + stepSize + 0.1f, layerMask, QueryTriggerInteraction.Ignore)) {
             ignoreCollisions = true;
             controller.Move (new Vector3 (0, -(hit.distance-distToGround), 0));
             ignoreCollisions = false;
@@ -568,6 +568,7 @@ public class SourcePlayer : MonoBehaviour {
         velocity += groundVelocity;
 
         StepMove ();
+        //controller.Move (velocity * Time.deltaTime);
 
         // Now pull the base velocity back out.   Base velocity is set if you are on a moving object, like a conveyor (or maybe another monster?)
         velocity -= groundVelocity;
@@ -633,7 +634,7 @@ public class SourcePlayer : MonoBehaviour {
         if (ignoreCollisions) {
             return;
         }
-        if ( ignoreFootCollisions && (transform.position.y - distToGround + stepSize) > hitPos.y ) {
+        if (ignoreFootCollisions && (transform.position.y - distToGround + stepSize) >= hitPos.y) {
             return;
         }
         if ((layerMask & (1 << obj.layer)) == 0) {
@@ -645,18 +646,12 @@ public class SourcePlayer : MonoBehaviour {
             return;
         }
         float mag = velocity.magnitude;
-        // If we walk off an edge, we won't inherit the ground velocity. So if we walk off an edge while moving fast
-        // then hit a wall, this prevents us from infinitely being pushed into that wall from our inherited velocity.
-        if (groundVelocity.magnitude > 0f) {
-            velocity += groundVelocity;
-            groundVelocity = Vector3.zero;
-        }
         velocity = ClipVelocity (velocity, hitNormal);
         Movable check = obj.GetComponent<Movable> ();
         if (check != null) {
             Vector3 vel = check.velocity;
             float d = Vector3.Dot (vel, hitNormal); // How similar is our velocity to our hitnormal (perp = 0, backwards = -1, same = 1)
-            if (d > 0) { // If the velocity should be applied
+            if (d > 0.01f) { // If the velocity should be applied
                 velocity += hitNormal * d * overbounce; // We apply it with some overbounce, to keep us from getting stuck.
             }
         }
@@ -665,7 +660,7 @@ public class SourcePlayer : MonoBehaviour {
         if (rigidcheck != null) {
             Vector3 vel = rigidcheck.GetPointVelocity (hitPos);
             float d = Vector3.Dot (vel, hitNormal);
-            if (d > 0) {
+            if (d > 0.01f) {
                 velocity += hitNormal * d * overbounce;
             }
             rigidcheck.AddForceAtPosition (-hitNormal * change * mass, hitPos);
@@ -742,6 +737,7 @@ public class SourcePlayer : MonoBehaviour {
     private void StepMove () {
         //Temporarily ignore collisions.
         ignoreCollisions = true;
+        ignoreFootCollisions = true;
         // Try sliding forward both on ground and up 16 pixels
         //  take the move that goes farthest
         Vector3 savePos = transform.position;
@@ -776,10 +772,9 @@ public class SourcePlayer : MonoBehaviour {
             transform.position = savePos;
             controller.Move (new Vector3 (0f, stepSize, 0f));
             ignoreCollisions = false;
-            ignoreFootCollisions = true;
             controller.Move (velocity * Time.deltaTime);
+            ignoreCollisions = true;
             controller.Move (new Vector3 (0f, -stepSize, 0f));
-            ignoreFootCollisions = false;
         } else {
             // Move normally
             transform.position = savePos;
@@ -788,6 +783,7 @@ public class SourcePlayer : MonoBehaviour {
         }
         // Enable collisions
         ignoreCollisions = false;
+        ignoreFootCollisions = false;
     }
     // Calculates the position of the sphere, probably unnecessary, it's just how they do it from the code i copied.
     public Vector3 SpherePosition (CollisionSphere sphere) {
