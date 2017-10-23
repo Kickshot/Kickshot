@@ -58,18 +58,22 @@ public static class Helper {
         if (mesh.subMeshCount == 1) {
             return r.material;
         }
-        // Search for which submesh we hit, once we find it, return the coorisponding material.
-        Vector3 findTri = new Vector3 (mesh.triangles [hit.triangleIndex * 3],
-                mesh.triangles [hit.triangleIndex * 3 + 1],
-                mesh.triangles [hit.triangleIndex * 3 + 2]);
-        for (int i = 0; i < mesh.subMeshCount; i++) {
-            int[] subMesh = mesh.GetTriangles (i);
-            for (int j = 0; j < subMesh.Length; j += 3) {
-                Vector3 tri = new Vector3 (subMesh [j], subMesh [j + 1], subMesh [j + 2]);
-                if (tri == findTri) {
-                    return r.materials [i];
+        if (hit.collider is MeshCollider) {
+            // Search for which submesh we hit, once we find it, return the coorisponding material.
+            Vector3 findTri = new Vector3 (mesh.triangles [hit.triangleIndex * 3],
+                                  mesh.triangles [hit.triangleIndex * 3 + 1],
+                                  mesh.triangles [hit.triangleIndex * 3 + 2]);
+            for (int i = 0; i < mesh.subMeshCount; i++) {
+                int[] subMesh = mesh.GetTriangles (i);
+                for (int j = 0; j < subMesh.Length; j += 3) {
+                    Vector3 tri = new Vector3 (subMesh [j], subMesh [j + 1], subMesh [j + 2]);
+                    if (tri == findTri) {
+                        return r.materials [i];
+                    }
                 }
             }
+        } else {
+            return r.materials [0];
         }
         return null;
     }
