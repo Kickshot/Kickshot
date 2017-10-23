@@ -2,35 +2,37 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SourcePlayerSaveData : SaveData {
+[System.Serializable]
+public class SourcePlayerSaveData : SaveData
+{
     // Player
-    private Vector3 pos;
-    private Quaternion rot;
-    private Vector3 velocity;
-    private Vector3 gravity;
-    private float baseFriction;
-    private float maxSpeed;
-    private float groundAccelerate;
-    private float groundDecellerate;
-    private float airAccelerate;
-    private float airStrafeAccelerate;
-    private float airSpeedBonus;
-    private float walkSpeed;
-    private float jumpSpeed;
-    private float fallSoundThreshold;
-    private float fallPunchThreshold;
-    private float maxSafeFallSpeed;
-    private float jumpSpeedBonus;
-    private float health;
-    private float mass;
+    public Vector3 pos;
+    public Quaternion rot;
+    public Vector3 velocity;
+    public Vector3 gravity;
+    public float baseFriction;
+    public float maxSpeed;
+    public float groundAccelerate;
+    public float groundDecellerate;
+    public float airAccelerate;
+    public float airStrafeAccelerate;
+    public float airSpeedBonus;
+    public float walkSpeed;
+    public float jumpSpeed;
+    public float fallSoundThreshold;
+    public float fallPunchThreshold;
+    public float maxSafeFallSpeed;
+    public float jumpSpeedBonus;
+    public float health;
+    public float mass;
 
     // Mouse
-    private float headrotX;
-    private float headrotY;
+    public float headrotX;
+    public float headrotY;
 
     // Guns
-    private List<GunSaveData> guns;
-    private int equippedGun;
+    public GunSaveData[] guns;
+    public int equippedGun;
 
     public SourcePlayerSaveData( GameObject obj ) {
         Save( obj );
@@ -72,9 +74,12 @@ public class SourcePlayerSaveData : SaveData {
         if (g == null) {
             throw new UnityException ("Tried to save a gameobject as a SourcePlayer, but it isn't one!");
         }
-        guns = new List<GunSaveData> ();
+        guns = new GunSaveData[g.Guns.Count];
+
+        int i = 0;
         foreach (GunBase gun in g.Guns) {
-            guns.Add (new GunSaveData (gun.gameObject));
+            guns[i] = new GunSaveData(gun.gameObject);
+            i++;
         }
         this.equippedGun = g.Guns.IndexOf(g.EquippedGun);
     }
@@ -129,5 +134,10 @@ public class SourcePlayerSaveData : SaveData {
         }
         // Done!
         return obj;
+    }
+
+    public override object Deserialize(string json)
+    {
+        return JsonUtility.FromJson<SourcePlayerSaveData>(json);
     }
 }

@@ -2,38 +2,40 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
 public class GunSaveData : SaveData {
-    private enum GunType {
+    public enum GunType {
         RocketLauncher,
         TractorGrapple,
         RecoilGun
     }
-    private GunType type;
-    private string gunName;
-    private float reloadDelay;
-    private float primaryFireCooldown;
-    private float secondaryFireCooldown;
-    private float maxAmmo;
-    private float curAmmo;
-    private float magSize;
-    private float ammo;
-    private float primaryFireAmmoCost;
-    private float secondaryFireAmmoCost;
-    private float switchBusyTime;
-    private float busy;
-    private bool reloading;
-    private bool autoReload;
-    private bool autoFire;
-    private bool equipped;
-    private Vector3 pos;
-    private Quaternion rot;
-    private int layer;
+    public GunType type;
+    public string gunName;
+    public float reloadDelay;
+    public float primaryFireCooldown;
+    public float secondaryFireCooldown;
+    public float maxAmmo;
+    public float curAmmo;
+    public float magSize;
+    public float ammo;
+    public float primaryFireAmmoCost;
+    public float secondaryFireAmmoCost;
+    public float switchBusyTime;
+    public float busy;
+    public bool reloading;
+    public bool autoReload;
+    public bool autoFire;
+    public bool equipped;
+    public Vector3 pos;
+    public Quaternion rot;
+    public int layer;
 
     public GunSaveData(GameObject obj) {
         Save (obj);
     }
 
-    public override void Save (GameObject obj) {
+    public override void Save (GameObject obj)
+    {
         GunBase g = obj.GetComponent<GunBase> ();
         this.gunName = g.gunName;
         this.reloadDelay = g.reloadDelay;
@@ -121,5 +123,10 @@ public class GunSaveData : SaveData {
             }
         }
         return obj;
+    }
+
+    public override object Deserialize(string json)
+    {
+        return JsonUtility.FromJson<GunSaveData>(json);
     }
 }
