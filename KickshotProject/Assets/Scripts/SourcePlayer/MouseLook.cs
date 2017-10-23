@@ -56,8 +56,8 @@ public class MouseLook : MonoBehaviour {
         }
 
         view.localPosition = viewOffset+shakePos;
-        rotX -= Input.GetAxis("Mouse Y") * xMouseSensitivity * Time.deltaTime;
-        rotY += Input.GetAxis("Mouse X") * yMouseSensitivity * Time.deltaTime;
+        rotX -= Input.GetAxis("Mouse Y") * xMouseSensitivity * 0.03f;
+        rotY += Input.GetAxis("Mouse X") * yMouseSensitivity * 0.03f;
         if (rotX < -90f) {
             rotX = -90f;
         } else if (rotX > 90f) {
