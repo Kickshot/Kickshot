@@ -16,7 +16,8 @@ public class RocketLauncher : GunBase {
             transform.rotation = Quaternion.Lerp(Quaternion.LookRotation(-view.forward),Quaternion.LookRotation(view.forward),busy/reloadDelay);
         }
     }
-    public override void OnPrimaryFire() {
+    public override void OnPrimaryFire()
+    {
         RaycastHit hit;
         Vector3 hitpos = view.forward * 1000f;
         // We ignore player collisions.
