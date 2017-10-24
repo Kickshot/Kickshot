@@ -214,7 +214,6 @@ public class SourcePlayer : MonoBehaviour {
 
     // TODO: Gotta make this smoothly transition, shouldn't be hard.
     private void CheckCrouched() {
-        ignoreCollisions = true;
         RaycastHit hit;
         if (Input.GetButton ("Crouch") && !wantCrouch) {
             wantCrouch = true;
@@ -247,7 +246,6 @@ public class SourcePlayer : MonoBehaviour {
         } else {
             crouched = false;
         }
-        ignoreCollisions = false;
     }
 
     void Update () {
@@ -273,13 +271,13 @@ public class SourcePlayer : MonoBehaviour {
             //groundVelocity = new Vector3 (0f, 0f, 0f); Shouldn't set this, need to remember how fast we were launched off of a moving object.
         }
 
-        RaycastHit headHit;
+        //RaycastHit headHit;
         // Make sure the camera doesn't get pushed into a ceiling.
-        if (RaycastForHeadroom (out headHit)) {
-            if (headHit.distance < GetComponent<MouseLook> ().view.localPosition.y) {
-                GetComponent<MouseLook> ().view.localPosition = new Vector3( 0f, headHit.distance, 0f);
-            }
-        }
+        //if (RaycastForHeadroom (out headHit)) {
+            //if (headHit.distance < GetComponent<MouseLook> ().view.localPosition.y) {
+                //GetComponent<MouseLook> ().view.localPosition = new Vector3 (0f, headHit.distance, 0f);
+            //}
+        //}
 
         // Push ourselves out of nearby objects.
         RecursivePushback (0, MaxPushbackIterations);
@@ -344,7 +342,7 @@ public class SourcePlayer : MonoBehaviour {
                 jumpGrunt.Play ();
                 lastGrunt = Time.time;
             }
-            velocity.y = jumpSpeed;
+            velocity.y = crouched ? crouchJumpSpeed : jumpSpeed;
             groundEntity = null;
             velocity += groundVelocity;
             groundVelocity = Vector3.zero;
@@ -711,8 +709,8 @@ public class SourcePlayer : MonoBehaviour {
             //Debug.Log ("Ignoring collsion because we're ignorin."+Time.time);
             return;
         }
-        if (ignoreFootCollisions && (transform.position.y - distToGround + stepSize) >= hitPos.y) {
-            //Debug.Log ("Ignoring collsion because its feet."+Time.time);
+        if (ignoreFootCollisions && (transform.position.y - distToGround + stepSize) >= hitPos.y+0.01f) {
+            //Debug.Log ("Ignoring collsion because its feet."+hitPos.y + " " + (transform.position.y - distToGround + stepSize));
             return;
         }
         if ((layerMask & (1 << obj.layer)) == 0) {
@@ -846,8 +844,8 @@ public class SourcePlayer : MonoBehaviour {
         float stepMoveDist = (savePos.x - stepMove.x) * (savePos.x - stepMove.x) + (savePos.z - stepMove.z) * (savePos.z - stepMove.z);
         float groundMoveDist = (savePos.x - groundMove.x) * (savePos.x - groundMove.x) + (savePos.z - groundMove.z) * (savePos.z - groundMove.z);
         if (stepMoveDist - groundMoveDist > 0.05f) {
-            ignoreCollisions = false;
             transform.position = savePos;
+            ignoreCollisions = false;
             controller.Move (new Vector3 (0f, stepSize, 0f));
             controller.Move (velocity * Time.deltaTime);
             controller.Move (new Vector3 (0f, -stepSize, 0f));
