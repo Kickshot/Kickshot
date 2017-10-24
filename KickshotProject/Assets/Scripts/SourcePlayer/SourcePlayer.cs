@@ -31,6 +31,7 @@ public class SourcePlayer : MonoBehaviour {
     public float crouchHeight = 1f;
     public float crouchSpeedMultiplier = 0.55f; // This also multiplies jump height.
     public float stepSize = 0.5f;
+    public float crouchTime = 0.3f; // Time in seconds it takes to crouch
 
     // Accessible because it's useful
     [HideInInspector]
@@ -43,8 +44,11 @@ public class SourcePlayer : MonoBehaviour {
     public GameObject groundEntity = null;
     [HideInInspector]
     public bool crouched = false;
+    [HideInInspector]
+    public float crouchTimer = 0f;
 
     // Shouldn't need to access these, probably
+    private bool changedSpeed = false;
     private Vector3 originalBodyPosition;
     private float originalHeight;
     private CollisionSphere[] spheres;
@@ -98,7 +102,7 @@ public class SourcePlayer : MonoBehaviour {
 
     private bool RaycastForGround( out RaycastHit resultHit) {
         // Loop through everything in our spherecast, checking for if there's a ground below us.
-        foreach (RaycastHit hit in Physics.BoxCastAll(transform.position, new Vector3(radius*0.75f,0.1f,radius*0.75f), -transform.up, transform.rotation, distToGround + 0.1f, layerMask, QueryTriggerInteraction.Ignore)) {
+        foreach (RaycastHit hit in Physics.BoxCastAll(transform.position, new Vector3(radius,0.1f,radius), -transform.up, transform.rotation, distToGround + 0.1f, layerMask, QueryTriggerInteraction.Ignore)) {
             // This means that our initial sphere is already colliding with something
             // if our initial sphere is colliding with something, we don't get any useful information...
             // A corner case this solves is if we're pressed up into the corner of the inside of a mesh box, it wouldn't detect ground
@@ -123,8 +127,8 @@ public class SourcePlayer : MonoBehaviour {
         return false;
     }
 
-    private bool RaycastForHeadroom() {
-        return Physics.BoxCast(transform.position, new Vector3(radius,0.1f,radius), transform.up, transform.rotation, originalHeight/2f, layerMask, QueryTriggerInteraction.Ignore);
+    private bool RaycastForHeadroom(out RaycastHit hit) {
+        return Physics.BoxCast(transform.position, new Vector3(radius,0.1f,radius), transform.up, out hit, transform.rotation, originalHeight/2f, layerMask, QueryTriggerInteraction.Ignore);
     }
 
     private void RepositionHitboxes() {
@@ -182,39 +186,76 @@ public class SourcePlayer : MonoBehaviour {
     // TODO: Gotta make this smoothly transition, shouldn't be hard.
     private void CheckCrouched() {
         ignoreCollisions = true;
-        float diff = originalHeight - crouchHeight;
+        RaycastHit hit;
         if (Input.GetButton ("Crouch") && !crouched) {
-            body.position += new Vector3 (0, diff / 2f, 0);
             crouched = true;
-            controller.height = crouchHeight;
-            if (groundEntity != null) {
-                // If we're on the ground, we pull our head down.
-                controller.Move (new Vector3 (0, -diff/2f, 0));
-            } else {
-                // If we're in the air, we pull our legs up
-                controller.Move (new Vector3 (0, diff/2f, 0));
+            if (crouchTimer == 0f && changedSpeed == false) {
+                walkSpeed *= crouchSpeedMultiplier;
+                jumpSpeed *= crouchSpeedMultiplier;
+                changedSpeed = true;
             }
-            walkSpeed *= crouchSpeedMultiplier;
-            jumpSpeed *= crouchSpeedMultiplier;
-            RepositionHitboxes ();
-        } else if ( !Input.GetButton ("Crouch") && crouched && !RaycastForHeadroom() ) {
+        } else if ( !Input.GetButton ("Crouch") && crouched && !RaycastForHeadroom( out hit ) ) {
             crouched = false;
-            controller.height = originalHeight;
-            if (groundEntity != null) {
-                // If we're on the ground, we put our head up.
-                controller.Move (new Vector3 (0, diff/2f, 0));
-            } else {
-                // If we're in the air, we put our legs down
-                controller.Move (new Vector3 (0, -diff/2f, 0));
-            }
-            walkSpeed /= crouchSpeedMultiplier;
-            jumpSpeed /= crouchSpeedMultiplier;
-            RepositionHitboxes ();
         }
-        if (crouched && groundEntity != null) {
-            body.localPosition = originalBodyPosition - new Vector3(0, -diff/2f, 0);
+        if (crouched) {
+            // Make sure the camera doesn't get pushed into a ceiling.
+            if (RaycastForHeadroom (out hit)) {
+                if (hit.distance < GetComponent<MouseLook> ().view.localPosition.y) {
+                    GetComponent<MouseLook> ().view.localPosition = new Vector3( 0f, hit.distance, 0f);
+                }
+            }
+            if (crouchTimer < crouchTime) {
+                crouchTimer += Time.deltaTime;
+            } else {
+                crouchTimer = crouchTime;
+            }
+            float progress = crouchTimer / crouchTime;
+            float newheight = (originalHeight * (1f - progress)) + crouchHeight * progress;
+            float diff = newheight - controller.height;
+            if (diff != 0) {
+                body.localPosition = originalBodyPosition + new Vector3(0f, (originalHeight - newheight)/2f, 0f);
+                controller.height = newheight;
+                if (groundEntity != null) {
+                    // If we're on the ground, we pull our head down.
+                    controller.Move (new Vector3 (0, diff / 2f, 0));
+                } else {
+                    // If we're in the air, we pull our legs up
+                    controller.Move (new Vector3 (0, -diff / 2f, 0));
+                }
+                RepositionHitboxes ();
+            }
         } else {
-            body.localPosition = originalBodyPosition;
+            if (crouchTimer > 0f) {
+                crouchTimer -= Time.deltaTime;
+            } else if ( crouchTimer != 0f ) {
+                crouchTimer = 0f;
+                if (changedSpeed == true) {
+                    walkSpeed /= crouchSpeedMultiplier;
+                    jumpSpeed /= crouchSpeedMultiplier;
+                    changedSpeed = false;
+                }
+            }
+            if (RaycastForHeadroom (out hit)) { // If we can't stand all the way back up...
+                crouchTimer += Time.deltaTime;
+                if (hit.distance < GetComponent<MouseLook> ().view.localPosition.y) {
+                    GetComponent<MouseLook> ().view.localPosition = new Vector3( 0f, hit.distance, 0f);
+                }
+            }
+            float progress = (crouchTime-crouchTimer) / crouchTime;
+            float newheight = (crouchHeight * (1f - progress)) + originalHeight * progress;
+            float diff = newheight - controller.height;
+            if (diff != 0) {
+                body.localPosition = originalBodyPosition + new Vector3(0f, (originalHeight - newheight)/2f, 0f);
+                controller.height = newheight;
+                if (groundEntity != null) {
+                    // If we're on the ground, we pull our head up.
+                    controller.Move (new Vector3 (0, diff / 2f, 0));
+                } else {
+                    // If we're in the air, we put our legs down
+                    controller.Move (new Vector3 (0, -diff / 2f, 0));
+                }
+                RepositionHitboxes ();
+            }
         }
         ignoreCollisions = false;
     }
@@ -532,12 +573,9 @@ public class SourcePlayer : MonoBehaviour {
     }
     // Try to keep ourselves on the ground
     private void StayOnGround () {
-        RaycastHit hit;
-        if ( Physics.BoxCast(transform.position, new Vector3(radius*0.75f,0.1f,radius*0.75f), -transform.up, out hit, transform.rotation, distToGround + stepSize + 0.1f, layerMask, QueryTriggerInteraction.Ignore)) {
-            ignoreCollisions = true;
-            controller.Move (new Vector3 (0, -(hit.distance-distToGround), 0));
-            ignoreCollisions = false;
-        }
+        ignoreCollisions = true;
+        controller.Move (new Vector3 (0, -stepSize, 0));
+        ignoreCollisions = false;
     }
     // Movement for when on the ground walking/running.
     private void WalkMove () {
@@ -809,14 +847,11 @@ public class SourcePlayer : MonoBehaviour {
         // Select whichever went furthest
         float stepMoveDist = (savePos.x - stepMove.x) * (savePos.x - stepMove.x) + (savePos.z - stepMove.z) * (savePos.z - stepMove.z);
         float groundMoveDist = (savePos.x - groundMove.x) * (savePos.x - groundMove.x) + (savePos.z - groundMove.z) * (savePos.z - groundMove.z);
-        // Only take the step move if it's a meaningful difference, it comes at a big cost (of no collision detection) after all..
-        if (stepMoveDist - groundMoveDist > 0.005f) {
-            // Teleport and ignore collisions.
+        if (stepMoveDist - groundMoveDist > 0.05f) {
+            ignoreCollisions = false;
             transform.position = savePos;
             controller.Move (new Vector3 (0f, stepSize, 0f));
-            ignoreCollisions = false;
             controller.Move (velocity * Time.deltaTime);
-            ignoreCollisions = true;
             controller.Move (new Vector3 (0f, -stepSize, 0f));
         } else {
             // Move normally
