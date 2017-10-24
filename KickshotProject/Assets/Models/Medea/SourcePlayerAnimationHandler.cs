@@ -16,7 +16,7 @@ public class SourcePlayerAnimationHandler : MonoBehaviour {
 		Vector3 commandvel = new Vector3 (Input.GetAxisRaw ("Horizontal"), 0, Input.GetAxisRaw ("Vertical"));
 		smoothcommand += (commandvel-smoothcommand) * Time.deltaTime * 10f;
 		animator.SetBool ("isGrounded", player.groundEntity != null);
-        animator.SetBool ("isCrouched", player.crouched || player.crouchTimer != 0f);
+        animator.SetBool ("isCrouched", player.crouched);
 		animator.SetFloat ("Forward", smoothcommand.z);
 		animator.SetFloat ("Strafe", smoothcommand.x);
 		animator.SetFloat ("Speed", player.velocity.magnitude/10f);
