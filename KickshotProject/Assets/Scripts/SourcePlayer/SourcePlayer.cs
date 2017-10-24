@@ -630,9 +630,12 @@ public class SourcePlayer : MonoBehaviour {
         } else if (Mathf.Abs (command.z) == 0f && Mathf.Abs (command.x) != 0f && Mathf.Abs (check) < 0.5f) { // Trying to air-strafe.
             // Apply air breaks, this keeps our turning really REALLY **REALLY** sharp.
             // It also basically enables or disables surfing. Turning it off makes it feel really bad.
-            float airBreak = 1f / Time.deltaTime;
-            float airBreakMag = -Vector3.Dot (flatvel, wishdir);
-            Accelerate (wishdir, airBreak, airBreakMag);
+            float airbreak = 1f / Time.deltaTime;
+            // Future Dalton, YES this needs to use velocity, not flatvel, or it doesn't bring the character to a complete stop on that axis. (+-.1)
+            // You've tested it a thousand times stop changing it back to flatvel. You think "OH IT SHOULDN'T MATTER BECAUSE OF wishdir.y == 0"
+            // but Vector3.Dot() uses some approximation mumbo jumbo that makes it much more accurate to use velocity.
+            float airBreakMag = -Vector3.Dot (velocity, wishdir);
+            Accelerate (wishdir, airbreak, airBreakMag);
 
             // Then calculate how much we should air-strafe.
             float airStrafe = (1f - Mathf.Abs (check)) * airStrafeAccelerate;
