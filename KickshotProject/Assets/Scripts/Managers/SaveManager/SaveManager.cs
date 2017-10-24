@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -24,14 +25,22 @@ public static class SaveManager
     // Destroys everything in the world (that has save data), and recreates them with saved parameters.
     public static void Load()
     {
-        foreach( SourcePlayer player in UnityEngine.Object.FindObjectsOfType<SourcePlayer>() ) {
-            GameObject.Destroy (player.gameObject);
-        }
-        foreach( GunBase gun in UnityEngine.Object.FindObjectsOfType<GunBase>() ) {
-            GameObject.Destroy (gun.gameObject);
-        }
-        foreach (SaveData sd in data) {
+        Clean();
+        foreach (SaveData sd in data)
+        {
             sd.Load ();
+        }
+    }
+
+    public static void Clean()
+    {
+        foreach (SourcePlayer player in UnityEngine.Object.FindObjectsOfType<SourcePlayer>())
+        {
+            GameObject.Destroy(player.gameObject);
+        }
+        foreach (GunBase gun in UnityEngine.Object.FindObjectsOfType<GunBase>())
+        {
+            GameObject.Destroy(gun.gameObject);
         }
     }
 
@@ -40,10 +49,7 @@ public static class SaveManager
         path = string.IsNullOrEmpty(path) ? @"\Assets\" : path;
         name = string.IsNullOrEmpty(name) ? "Save1.json" : name;
 
-        if (data.Count == 0)
-        {
-            Save();
-        }
+        Save();
 
         Dictionary<string,string> jsonData = new Dictionary<string, string>();
         foreach (SaveData sd in data)
@@ -54,7 +60,7 @@ public static class SaveManager
             }
             if (sd is SourcePlayerSaveData)
             {
-                jsonData.Add(((SourcePlayerSaveData)sd).Serialize(), typeof(SourcePlayerSaveData).ToString());
+                jsonData.Add( ((SourcePlayerSaveData)sd).Serialize(), typeof(SourcePlayerSaveData).ToString());
             }
         }
 
@@ -73,5 +79,35 @@ public static class SaveManager
 
         MonoBehaviour.print(name + " Written!");
         return;
+    }
+
+    public static void ReadState(string name = null, string path = null)
+    {
+        Clean();
+        data.Clear();
+
+        path = string.IsNullOrEmpty(path) ? @"\Assets\" : path;
+        name = string.IsNullOrEmpty(name) ? "Save1.json" : name;
+
+        path = System.Environment.CurrentDirectory + path;
+
+        using (StreamReader reader = new StreamReader(File.Open(path + name, FileMode.Open)))
+        {
+            string line;
+            while ((line = reader.ReadLine()) != null)
+            {
+                Type T = Type.GetType(line);
+
+                SaveData newData = (SaveData)JsonUtility.FromJson(reader.ReadLine(), T);
+                data.Add(newData);
+            }
+        }
+
+        foreach (SaveData sd in data)
+        {
+            sd.Load();
+        }
+
+        MonoBehaviour.print(name + " Loaded!");
     }
 }
