@@ -94,7 +94,7 @@ public class SourcePlayer : MonoBehaviour {
         controller = GetComponent<CharacterController> ();
         controller.stepOffset = 0f; // We can climb up walls with this set to anything other than 0. Don't ask me why that happens. I have my own step detection anyway.
         controller.detectCollisions = false; // The default collision resolution for character controller vs rigidbody is analogus to unstoppable infinite mass vs paper. We don't want that.
-        controller.enableOverlapRecovery = false;
+        //controller.enableOverlapRecovery = false;
 
         originalHeight = controller.height;
         RepositionHitboxes ();
@@ -569,9 +569,12 @@ public class SourcePlayer : MonoBehaviour {
     }
     // Try to keep ourselves on the ground
     private void StayOnGround () {
-        ignoreCollisions = true;
-        controller.Move (new Vector3 (0, -stepSize, 0));
-        ignoreCollisions = false;
+        RaycastHit newHit;
+        if (Physics.Raycast (transform.position, -transform.up, distToGround + stepSize + 0.1f, layerMask, QueryTriggerInteraction.Ignore)) {
+            ignoreCollisions = true;
+            controller.Move (new Vector3 (0, -stepSize, 0));
+            ignoreCollisions = false;
+        }
     }
     // Movement for when on the ground walking/running.
     private void WalkMove () {
@@ -832,18 +835,20 @@ public class SourcePlayer : MonoBehaviour {
         Vector3 stepMove = transform.position;
         RaycastHit hit;
         // If we step-moved onto unstable ground, or into the air.. use the original move.
-        if (!RaycastForGround (out hit)) {
+        // Or if we managed to move backwards from the step move. (possible because the top of our capsule head can push us out from under stuff...)
+        if (!RaycastForGround (out hit) || Vector3.Dot( stepMove-savePos, velocity ) < 0 ) {
             // Move normally
             transform.position = savePos;
             ignoreCollisions = false;
             controller.Move (velocity * Time.deltaTime);
             ignoreFootCollisions = false;
             return;
-        }    
+        }
+            
         // Select whichever went furthest
         float stepMoveDist = (savePos.x - stepMove.x) * (savePos.x - stepMove.x) + (savePos.z - stepMove.z) * (savePos.z - stepMove.z);
         float groundMoveDist = (savePos.x - groundMove.x) * (savePos.x - groundMove.x) + (savePos.z - groundMove.z) * (savePos.z - groundMove.z);
-        if (stepMoveDist - groundMoveDist > 0.05f) {
+        if (stepMoveDist > groundMoveDist) {
             transform.position = savePos;
             ignoreCollisions = false;
             controller.Move (new Vector3 (0f, stepSize, 0f));
