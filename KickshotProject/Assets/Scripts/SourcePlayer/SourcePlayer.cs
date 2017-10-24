@@ -627,7 +627,7 @@ public class SourcePlayer : MonoBehaviour {
             } else {
                 Accelerate (wishdir, airAccelerate, flySpeed);
             }
-        } else if (Mathf.Abs (command.z) == 0f && Mathf.Abs (command.x) != 0f && Mathf.Abs (check) < 0.5f) { // Trying to air-strafe.
+        } else if (Mathf.Abs (command.z) == 0f && Mathf.Abs (command.x) != 0f && Mathf.Abs (check) < 0.75f) { // Trying to air-strafe.
             // Apply air breaks, this keeps our turning really REALLY **REALLY** sharp.
             // It also basically enables or disables surfing. Turning it off makes it feel really bad.
             float airbreak = 1f / Time.deltaTime;
