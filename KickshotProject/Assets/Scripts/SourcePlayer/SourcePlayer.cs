@@ -9,25 +9,27 @@ public class SourcePlayer : MonoBehaviour {
     public Transform body;
     public GameObject deathSpawn;
     public Vector3 velocity;
-    public Vector3 gravity = new Vector3 (0, -24f, 0);// gravity in meters per second per second.
-    public float baseFriction = 6f;// A friction multiplier, higher means more friction.
-    public float maxSpeed = 100f;// The maximum speed the player can move at.
-    public float groundAccelerate = 10f;// How fast we accelerate while on solid ground.
-    public float groundDecellerate = 10f;// How fast we deaccelerate on solid ground.
-    public float airAccelerate = 1f;// How much the player can influence increasing speed in the air, mesured in meters/sec^2.
-    public float airStrafeAccelerate = 10f;// How much the player can influence speed in the air, mesured in meters/sec^2.
-    public float airSpeedBonus = 0.2f; // How much we can accelerate a non-forward axis in the air. This is a good way to gain speed.
-    public float walkSpeed = 12f; // How fast the player runs.
-    public float flySpeed = 16f;
+    public Vector3 gravity = new Vector3 (0, -24f, 0); // gravity in meters per second per second.
+    public float baseFriction = 6f; // A friction multiplier, higher means more friction.
+    public float maxSpeed = 100f; // The maximum speed the player can move at. (CURRENTLY UNUSED)
+    public float groundAccelerate = 5f; // How fast we accelerate while on solid ground.
+    public float groundDecellerate = 10f; // How fast we deaccelerate on solid ground.
+    public float airAccelerate = 2f; // How much the player can influence increasing speed in the air, mesured in meters/sec^2.
+    public float airStrafeAccelerate = 10f; // How much the player can influence speed in the air while air-strafing, mesured in meters/sec^2.
+    public float airSpeedBonus = 0.08f; // How much the player is rewarded for strafe-jumping. Great way to gain speed.
+    public float airSpeedPunish = 1f; // How much we decelerate the player for trying to take turns too quickly while strafe jumping.
+    public float airBreak = 3f; // Acceleration multiplier for trying to stop with the backwards key. (typically S).
+    public float walkSpeed = 16f; // We stop applying standard acceleration when the player is this speed on the ground.
+    public float flySpeed = 12f; // We stop applying standard acceleration when the player is this speed in the air.
     public float jumpSpeed = 10f; // The y velocity to set our character at when they jump.
     public float fallSoundThreshold = 5f; // How fast we must be falling before we make a thud.
     public float fallPunchThreshold = 10f; // How fast we must be falling before we shake the screen.
     public float maxSafeFallSpeed = 25f; // How fast we must be falling before we take damage.
-    public float jumpSpeedBonus = 0.1f; // Speed boost from just jumping forward as a percentage.
+    public float jumpSpeedBonus = 0.1f; // Speed boost from just jumping forward as a percentage. Stops boosting when the player is already at or beyond flySpeed.
     public float health = 100f;
     public float mass = 2f;
     public float crouchHeight = 1f;
-    public float crouchSpeedMultiplier = 0.55f;
+    public float crouchSpeedMultiplier = 0.55f; // This also multiplies jump height.
     public float stepSize = 0.5f;
 
     // Accessible because it's useful
@@ -292,7 +294,12 @@ public class SourcePlayer : MonoBehaviour {
         // Check to make sure we have a ground under us, and that it's stable ground.
         if (Input.GetButton ("Jump") && groundEntity && groundNormal.y > 0.7f) {
             // Right before we jump, lets clip our velocity real quick. That way if we're jumping down a sloped surface, we go faster!
+            Vector3 vels = new Vector3(velocity.x, 0, velocity.z );
             velocity = ClipVelocity (velocity, groundNormal);
+            // Only use the new velocity if it made us faster! Don't punish players for trying to go up slopes...
+            if (vels.magnitude > velocity.magnitude) {
+                velocity = vels;
+            }
             // Play a grunt sound, but oMultipliernly so often.
             if (Time.time - lastGrunt > 0.3) {
                 jumpGrunt.Play ();
@@ -330,7 +337,7 @@ public class SourcePlayer : MonoBehaviour {
     private void CheckFalling () {
         //Debug.Log (fallVelocity);
         // this function really deals with landing, not falling, so early out otherwise
-        if (groundEntity == null || Vector3.Angle (groundNormal, Vector3.up) > controller.slopeLimit || fallVelocity <= 0f) {
+        if (groundEntity == null ||groundNormal.y < 0.7f || fallVelocity <= 0f) {
             return;
         }
 
@@ -611,17 +618,47 @@ public class SourcePlayer : MonoBehaviour {
         // Check how our wish direction compares to our velocity
         Vector3 flatvel = new Vector3(velocity.x, 0, velocity.z);
         float check = Vector3.Dot (Vector3.Normalize(flatvel), wishdir);
-        // If we're trying to change our speed, we use the airAcceleration value.
-        // If we're trying to stop, we use our current velocity multiplied by the airBreakStrength value.
-        // The air break is scaled by how much our wishdir and velocity are opposites.(-1 = max breaks, 0 = no break)
-        float airBreak = 1f / Time.deltaTime;
-        float airBreakMag = -Vector3.Dot (velocity, wishdir);
-        float airForward = Mathf.Abs (check)*airAccelerate;
-        float airStrafe = (1f - Mathf.Abs (check))*airStrafeAccelerate;
-        float wishSpeed = (Mathf.Abs (check)+(airSpeedBonus))/(1f + airSpeedBonus);
 
-        Accelerate (wishdir, airBreak, airBreakMag);
-        Accelerate (wishdir, airForward + airStrafe, wishSpeed*flySpeed);
+        if ((Mathf.Abs (command.z) != 0f && Mathf.Abs (command.x) != 0f) || flatvel.magnitude <= 1f) { // Trying to move diagonally, or is currently unaccelerated.
+            Accelerate (wishdir, airAccelerate, flySpeed);
+        } else if (Mathf.Abs (command.z) != 0f && Mathf.Abs (command.x) == 0f) { // Trying to move forward/backward.
+            if (command.z == -1f && check < -0.9f) { // Give an acceleration bonus based on if they're trying to stop.
+                Accelerate (wishdir, airAccelerate * airBreak, flySpeed);
+            } else {
+                Accelerate (wishdir, airAccelerate, flySpeed);
+            }
+        } else if (Mathf.Abs (command.z) == 0f && Mathf.Abs (command.x) != 0f && Mathf.Abs (check) < 0.5f) { // Trying to air-strafe.
+            // Apply air breaks, this keeps our turning really REALLY **REALLY** sharp.
+            // It also basically enables or disables surfing. Turning it off makes it feel really bad.
+            float airBreak = 1f / Time.deltaTime;
+            float airBreakMag = -Vector3.Dot (flatvel, wishdir);
+            Accelerate (wishdir, airBreak, airBreakMag);
+
+            // Then calculate how much we should air-strafe.
+            float airStrafe = (1f - Mathf.Abs (check)) * airStrafeAccelerate;
+            // We don't want to accelerate just because they pressed A or D, we need them to move their mouse a little also.
+            float wishStrafeSpeed = Mathf.Abs (check);
+            Accelerate (wishdir, airStrafe, wishStrafeSpeed * flySpeed);
+            // If they're turning at the right speeds, give them a speed bonus!
+            if (wishStrafeSpeed > 0.008f) {
+                float bonus = (wishStrafeSpeed - 0.008f) / 0.992f;
+                float bonusSpeed = airSpeedBonus * (1 - bonus);
+                float punishSpeed = 0f;
+                if (wishStrafeSpeed > 0.09f) { // Turning too fast, punish!
+                    float punish = (wishStrafeSpeed - 0.09f) / 0.91f;
+                    punishSpeed = airSpeedPunish * punish;
+                }
+                Vector3 pvel = velocity;
+                pvel.y = 0f;
+                if (pvel.magnitude > 0.9f) { // Only give the speed bonus if we're moving, otherwise we oscillate like crazy.
+                    float yvel = velocity.y;
+                    velocity = Vector3.Normalize (pvel) * (pvel.magnitude + bonusSpeed - punishSpeed);
+                    velocity.y = yvel;
+                }
+            }
+        } else { // Pressing a/d but not actually trying to airstrafe.
+            Accelerate (wishdir, airAccelerate, flySpeed);
+        }
 
         // Add in any base velocity to the current velocity.
         velocity += groundVelocity;
@@ -632,9 +669,11 @@ public class SourcePlayer : MonoBehaviour {
     // Either the character controller moved into something, or something moved into the supercollider spheres.
     private void HandleCollision (GameObject obj, Vector3 hitNormal, Vector3 hitPos) {
         if (ignoreCollisions) {
+            //Debug.Log ("Ignoring collsion because we're ignorin."+Time.time);
             return;
         }
         if (ignoreFootCollisions && (transform.position.y - distToGround + stepSize) >= hitPos.y) {
+            //Debug.Log ("Ignoring collsion because its feet."+Time.time);
             return;
         }
         if ((layerMask & (1 << obj.layer)) == 0) {
@@ -642,7 +681,7 @@ public class SourcePlayer : MonoBehaviour {
             return;
         }
         if (Vector3.Angle (hitNormal, Vector3.up) < controller.slopeLimit) {
-            //Debug.Log ("Ignoring collsion because it's valid ground.");
+            //Debug.Log ("Ignoring collsion because it's valid ground."+Time.time);
             return;
         }
         float mag = velocity.magnitude;
@@ -761,6 +800,7 @@ public class SourcePlayer : MonoBehaviour {
             transform.position = savePos;
             ignoreCollisions = false;
             controller.Move (velocity * Time.deltaTime);
+            ignoreFootCollisions = false;
             return;
         }    
         // Select whichever went furthest

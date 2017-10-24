@@ -17,6 +17,8 @@ public class SourcePlayerSaveData : SaveData
     public float airAccelerate;
     public float airStrafeAccelerate;
     public float airSpeedBonus;
+    public float airSpeedPunish;
+    public float airBreak;
     public float walkSpeed;
     public float jumpSpeed;
     public float fallSoundThreshold;
@@ -54,6 +56,8 @@ public class SourcePlayerSaveData : SaveData
         this.airAccelerate = p.airAccelerate;
         this.airStrafeAccelerate = p.airStrafeAccelerate;
         this.airSpeedBonus = p.airSpeedBonus;
+        this.airSpeedPunish = p.airSpeedPunish;
+        this.airBreak = p.airBreak;
         this.walkSpeed = p.walkSpeed;
         this.jumpSpeed = p.jumpSpeed;
         this.fallSoundThreshold = p.fallSoundThreshold;
@@ -100,6 +104,8 @@ public class SourcePlayerSaveData : SaveData
         ps.airAccelerate = this.airAccelerate;
         ps.airStrafeAccelerate = this.airStrafeAccelerate;
         ps.airSpeedBonus = this.airSpeedBonus;
+        ps.airSpeedPunish = this.airSpeedPunish;
+        ps.airBreak = this.airBreak;
         ps.walkSpeed = this.walkSpeed;
         ps.jumpSpeed = this.jumpSpeed;
         ps.fallSoundThreshold = this.fallSoundThreshold;
