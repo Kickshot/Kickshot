@@ -46,7 +46,7 @@ public static class SaveManager
 
     public static void WriteState(string name = null, string path = null)
     {
-        path = string.IsNullOrEmpty(path) ? @"\Assets\" : path;
+        path = string.IsNullOrEmpty(path) ? @"/Assets/" : path;
         name = string.IsNullOrEmpty(name) ? "Save1.json" : name;
 
         Save();
@@ -86,7 +86,7 @@ public static class SaveManager
         Clean();
         data.Clear();
 
-        path = string.IsNullOrEmpty(path) ? @"\Assets\" : path;
+        path = string.IsNullOrEmpty(path) ? @"/Assets/" : path;
         name = string.IsNullOrEmpty(name) ? "Save1.json" : name;
 
         path = System.Environment.CurrentDirectory + path;
