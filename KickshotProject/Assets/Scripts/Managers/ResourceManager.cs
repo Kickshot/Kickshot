@@ -19,6 +19,10 @@ public static class ResourceManager {
         resources.Add ("RocketLauncher",    new string[]{"Prefabs/Weapons/RocketLauncher"});
         resources.Add ("TractorGrapple",    new string[]{"Prefabs/Weapons/TractorGrapple"});
         resources.Add ("RecoilGun",         new string[]{"Prefabs/Weapons/RecoilGun"});
+        // Whomp Fortress music.
+        resources.Add ("MarioMusic",        new string[]{"Sounds/Super Mario 64 - Main Theme Music - Bob-Omb Battlefield"});
+        // DK Mountain music
+        resources.Add ("DKMusic",           new string[]{"Sounds/Mario Kart Double Dash - DK Mountain Music"});
         generated = true;
     }
     // Randomly returns a resource with the given name.

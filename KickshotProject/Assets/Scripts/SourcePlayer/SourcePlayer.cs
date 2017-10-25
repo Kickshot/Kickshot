@@ -569,7 +569,6 @@ public class SourcePlayer : MonoBehaviour {
     }
     // Try to keep ourselves on the ground
     private void StayOnGround () {
-        RaycastHit newHit;
         if (Physics.Raycast (transform.position, -transform.up, distToGround + stepSize + 0.1f, layerMask, QueryTriggerInteraction.Ignore)) {
             ignoreCollisions = true;
             controller.Move (new Vector3 (0, -stepSize, 0));
@@ -848,7 +847,7 @@ public class SourcePlayer : MonoBehaviour {
         // Select whichever went furthest
         float stepMoveDist = (savePos.x - stepMove.x) * (savePos.x - stepMove.x) + (savePos.z - stepMove.z) * (savePos.z - stepMove.z);
         float groundMoveDist = (savePos.x - groundMove.x) * (savePos.x - groundMove.x) + (savePos.z - groundMove.z) * (savePos.z - groundMove.z);
-        if (stepMoveDist > groundMoveDist) {
+        if (stepMoveDist - groundMoveDist > 0.01f) { // We only select the step move if there's a meaningful difference, otherwise we oscillate on certain slopes.
             transform.position = savePos;
             ignoreCollisions = false;
             controller.Move (new Vector3 (0f, stepSize, 0f));

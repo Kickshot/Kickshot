@@ -40,6 +40,9 @@ public class GameManager : MonoBehaviour
 
         else if (instance != this)
             Destroy(gameObject);
+
+        GameObject m = new GameObject ();
+        m.AddComponent<MusicManager> ();
         
         DontDestroyOnLoad(gameObject);
 
