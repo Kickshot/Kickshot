@@ -92,12 +92,16 @@ public class SourcePlayer : MonoBehaviour {
         }
 
         controller = GetComponent<CharacterController> ();
-        controller.stepOffset = 0f; // We can climb up walls with this set to anything other than 0. Don't ask me why that happens. I have my own step detection anyway.
         controller.detectCollisions = false; // The default collision resolution for character controller vs rigidbody is analogus to unstoppable infinite mass vs paper. We don't want that.
-        //controller.enableOverlapRecovery = false;
+        controller.enableOverlapRecovery = true;
+        controller.stepOffset = 0f; // We use our own step logic.
 
         originalHeight = controller.height;
         RepositionHitboxes ();
+        if ( stepSize > radius - 0.05f ) {
+            Debug.LogError( "Player step size can't be higher or equal to the radius of the capsule, automatically reducing...");
+            stepSize = radius - 0.05f;
+        }
         // We use this layer to quickly do collision tests with singular objects.
         TemporaryLayerIndex = LayerMask.NameToLayer (TemporaryLayer);
         originalBodyPosition = body.localPosition;
@@ -569,10 +573,13 @@ public class SourcePlayer : MonoBehaviour {
     }
     // Try to keep ourselves on the ground
     private void StayOnGround () {
-        if (Physics.Raycast (transform.position, -transform.up, distToGround + stepSize + 0.1f, layerMask, QueryTriggerInteraction.Ignore)) {
-            ignoreCollisions = true;
-            controller.Move (new Vector3 (0, -stepSize, 0));
-            ignoreCollisions = false;
+        Vector3 savePos = transform.position;
+        ignoreCollisions = true;
+        controller.Move (new Vector3 (0, -(stepSize+0.1f), 0));
+        ignoreCollisions = false;
+        RaycastHit outhit;
+        if ( !RaycastForGround( out outhit) ) { // If we slid into the air, discard the move.
+            transform.position = savePos;
         }
     }
     // Movement for when on the ground walking/running.
@@ -611,7 +618,6 @@ public class SourcePlayer : MonoBehaviour {
         velocity += groundVelocity;
 
         StepMove ();
-        //controller.Move (velocity * Time.deltaTime);
 
         // Now pull the base velocity back out.   Base velocity is set if you are on a moving object, like a conveyor (or maybe another monster?)
         velocity -= groundVelocity;
@@ -711,8 +717,8 @@ public class SourcePlayer : MonoBehaviour {
             //Debug.Log ("Ignoring collsion because we're ignorin."+Time.time);
             return;
         }
-        if (ignoreFootCollisions && (transform.position.y - distToGround + stepSize) >= hitPos.y+0.01f) {
-            //Debug.Log ("Ignoring collsion because its feet."+hitPos.y + " " + (transform.position.y - distToGround + stepSize));
+        if (ignoreFootCollisions && (transform.position.y - distToGround + stepSize) >= hitPos.y) {
+            //Debug.Log ("Ignoring collsion because its feet."+hitPos.y+0.01f + " " + (transform.position.y - distToGround + stepSize));
             return;
         }
         if ((layerMask & (1 << obj.layer)) == 0) {
@@ -723,6 +729,7 @@ public class SourcePlayer : MonoBehaviour {
             //Debug.Log ("Ignoring collsion because it's valid ground."+Time.time);
             return;
         }
+        //Helper.DrawLine(hitPos,hitPos+hitNormal, Color.red, 10f);
         float mag = velocity.magnitude;
         velocity = ClipVelocity (velocity, hitNormal);
         Movable check = obj.GetComponent<Movable> ();
@@ -816,7 +823,7 @@ public class SourcePlayer : MonoBehaviour {
         //Temporarily ignore collisions.
         ignoreCollisions = true;
         ignoreFootCollisions = true;
-        // Try sliding forward both on ground and up 16 pixels
+        // Try sliding forward both on ground and slide forward after being offset by stepSize
         //  take the move that goes farthest
         Vector3 savePos = transform.position;
         // Move normally, then save that position.
@@ -827,15 +834,19 @@ public class SourcePlayer : MonoBehaviour {
         // Move straight up,
         controller.Move (new Vector3 (0f, stepSize, 0f));
         // Then move normally.
-        controller.Move (velocity * Time.deltaTime);
-        // Then try to snap back down
+        controller.Move ( velocity * Time.deltaTime );
+        // Snap back to the ground
         controller.Move (new Vector3 (0f, -stepSize, 0f));
         // Save this position
         Vector3 stepMove = transform.position;
         RaycastHit hit;
         // If we step-moved onto unstable ground, or into the air.. use the original move.
         // Or if we managed to move backwards from the step move. (possible because the top of our capsule head can push us out from under stuff...)
-        if (!RaycastForGround (out hit) || Vector3.Dot( stepMove-savePos, velocity ) < 0 ) {
+        // Or if we managed to step higher than we want. (possible because the bottom of our capsule can slide up..)
+        // Actually now the capsule shouldn't slide up, I cap the stepSize to be .05f less than the radius of the
+        // bottom of the capsule, which will keep it from sliding up.
+        // I'm going to keep the check for sanity's sake though.
+        if (!RaycastForGround (out hit) || Vector3.Dot( stepMove-savePos, velocity ) < 0 || Mathf.Abs(savePos.y-stepMove.y) > stepSize) {
             // Move normally
             transform.position = savePos;
             ignoreCollisions = false;
@@ -847,11 +858,17 @@ public class SourcePlayer : MonoBehaviour {
         // Select whichever went furthest
         float stepMoveDist = (savePos.x - stepMove.x) * (savePos.x - stepMove.x) + (savePos.z - stepMove.z) * (savePos.z - stepMove.z);
         float groundMoveDist = (savePos.x - groundMove.x) * (savePos.x - groundMove.x) + (savePos.z - groundMove.z) * (savePos.z - groundMove.z);
-        if (stepMoveDist - groundMoveDist > 0.01f) { // We only select the step move if there's a meaningful difference, otherwise we oscillate on certain slopes.
+        // We make sure there's a significant difference for taking the stepMove.
+        // This prevents oscillations on certain slopes, and keeps the player from walking up
+        // stairs whos height is greater than stepSize (not sure why)
+        // This also causes the player to be incapable of climbing stairs at really low speeds.
+        // but it's worth it given the benefits.
+        if (stepMoveDist - groundMoveDist > 0.001f) {
+            // Redo the step move, now register collisions.
             transform.position = savePos;
             ignoreCollisions = false;
             controller.Move (new Vector3 (0f, stepSize, 0f));
-            controller.Move (velocity * Time.deltaTime);
+            controller.Move ( velocity * Time.deltaTime );
             controller.Move (new Vector3 (0f, -stepSize, 0f));
         } else {
             // Move normally

@@ -14,8 +14,8 @@ public static class Helper {
         lr.material = new Material(Shader.Find("Particles/Alpha Blended Premultiply"));
         lr.startColor = color;
         lr.endColor = color;
-        lr.startWidth = 1;
-        lr.endWidth = 1;
+        lr.startWidth = 0.1f;
+        lr.endWidth = 0.1f;
         lr.SetPosition(0, start);
         lr.SetPosition(1, end);
         GameObject.Destroy(myLine, duration);
@@ -56,6 +56,10 @@ public static class Helper {
             return null;
         }
         if (mesh.subMeshCount == 1) {
+            return r.material;
+        }
+        if ( !mesh.isReadable ) {
+            Debug.LogError("Couldn't read mesh because it has a Static flag enabled. Returning base material.");
             return r.material;
         }
         if (hit.collider is MeshCollider) {
