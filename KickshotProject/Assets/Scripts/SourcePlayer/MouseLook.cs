@@ -28,11 +28,14 @@ public class MouseLook : MonoBehaviour {
         rotY = 0f;
         offset = r;
     }
-    void Start() {
+    void Start()
+    {
+        view = view ?? Camera.main.transform;
         viewOffset = view.localPosition;
-        SetRotation (transform.rotation);
+        SetRotation(view.rotation);
     }
-    void Update () {
+    void Update ()
+    {
         if (Cursor.lockState == CursorLockMode.None) {
             if (Input.GetMouseButtonDown (0)) {
                 Cursor.lockState = CursorLockMode.Locked;
