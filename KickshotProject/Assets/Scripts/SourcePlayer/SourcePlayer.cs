@@ -669,7 +669,7 @@ public class SourcePlayer : MonoBehaviour {
             } else {
                 Accelerate (wishdir, airAccelerate, flySpeed);
             }
-        } else if (Mathf.Abs (command.z) == 0f && Mathf.Abs (command.x) != 0f && Mathf.Abs (check) < 0.75f) { // Trying to air-strafe.
+        } else if (Mathf.Abs (command.z) == 0f && Mathf.Abs (command.x) != 0f && Mathf.Abs(check) < 0.75f) { // Trying to air-strafe.
             // Apply air breaks, this keeps our turning really REALLY **REALLY** sharp.
             // It also basically enables or disables surfing. Turning it off makes it feel really bad.
             float airbreak = 1f / Time.deltaTime;
@@ -685,25 +685,35 @@ public class SourcePlayer : MonoBehaviour {
             float wishStrafeSpeed = Mathf.Abs (check);
             Accelerate (wishdir, airStrafe, wishStrafeSpeed * flySpeed);
             // If they're turning at the right speeds, give them a speed bonus!
-            if (wishStrafeSpeed > 0.008f) {
-                float bonus = (wishStrafeSpeed - 0.008f) / 0.992f;
-                float bonusSpeed = airSpeedBonus * (1 - bonus);
-                float punishSpeed = 0f;
-                if (wishStrafeSpeed > 0.09f) { // Turning too fast, punish!
-                    float punish = (wishStrafeSpeed - 0.09f) / 0.91f;
-                    punishSpeed = airSpeedPunish * punish;
+            float fcheck = Mathf.Abs (check);
+
+            Vector3 pvel = velocity;
+            pvel.y = 0f;
+            // Give the player a speed bonus based on how they move a mouse.
+            if ( fcheck > 0.01f && pvel.magnitude > 0.1f) { // Only give the speed bonus if we're moving, otherwise we oscillate like crazy.
+                fcheck -= 0.01f;
+                fcheck /= 0.99f;
+                fcheck *= 4f;
+                float speedFunc;
+                // Use a disjointed function to check how much speed to gain.
+                if (fcheck > 0 && fcheck <= 0.1f) { // Exponentially scales up
+                    speedFunc = (fcheck * 10f) * (fcheck * 10f);
+                } else { // Logarithmically scales down
+                    speedFunc = -Mathf.Log (fcheck);
                 }
-                Vector3 pvel = velocity;
-                pvel.y = 0f;
-                if (pvel.magnitude > 0.9f) { // Only give the speed bonus if we're moving, otherwise we oscillate like crazy.
-                    float yvel = velocity.y;
-                    velocity = Vector3.Normalize (pvel) * (pvel.magnitude + bonusSpeed - punishSpeed);
-                    velocity.y = yvel;
-                }
+                float bonusSpeed = airSpeedBonus * speedFunc;
+                float yvel = velocity.y;
+                velocity = Vector3.Normalize (pvel) * (pvel.magnitude + bonusSpeed);
+                velocity.y = yvel;
             }
-        } else { // Pressing a/d but not actually trying to airstrafe.
-            Accelerate (wishdir, airAccelerate, flySpeed);
+        } else { // Strafing in the air, but without trying to air-strafe.
+            if (check < -0.9f) { // Give an acceleration bonus based on if they're trying to stop.
+                Accelerate (wishdir, airAccelerate * airBreak, flySpeed);
+            } else {
+                Accelerate (wishdir, airAccelerate, flySpeed/3f);
+            }
         }
+
 
         // Add in any base velocity to the current velocity.
         velocity += groundVelocity;
