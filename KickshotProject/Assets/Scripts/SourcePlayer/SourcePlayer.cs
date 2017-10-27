@@ -39,9 +39,6 @@ public class SourcePlayer : MonoBehaviour {
     public bool autoBhop = false;
     // Time in seconds it takes to crouch
 
-    private Vector3 wallNormal = new Vector3 (0f, 0f, 0f);
-    private Vector3 wallHitPoint = new Vector3 (0f, 0f, 0f);
-
     // Accessible because it's useful
     [HideInInspector]
     public bool justJumped = false;
@@ -63,6 +60,9 @@ public class SourcePlayer : MonoBehaviour {
 
 
     // Shouldn't need to access these, probably
+    private List<ContactPoint> contacts;
+    private Vector3 wallNormal = new Vector3 (0f, 0f, 0f);
+    private Vector3 wallHitPoint = new Vector3 (0f, 0f, 0f);
     private bool queueHop = false;
     private float crouchTimer = 0f;
     private bool changedSpeed = false;
@@ -94,6 +94,7 @@ public class SourcePlayer : MonoBehaviour {
 
     void Awake () {
         // Not sure how audio is supposed to work in unity, I just have a list of them on the player to have the jump, pain, and break sounds.
+        contacts = new List<ContactPoint>();
         var aSources = GetComponents<AudioSource> ();
         jumpGrunt = aSources [0];
         painGrunt = aSources [1];
@@ -282,6 +283,10 @@ public class SourcePlayer : MonoBehaviour {
         // assume we also haven't hit the ground.
         justJumped = false;
         justTookFallDamage = false;
+        // assume we aren't touching anything
+        // TODO: Joey, you'd probably check if we hit a wall last frame here.
+        // since contacts currently contains what we hit in the last frame.
+        contacts.Clear();
         bool hitGround = false;
         // We only check for ground under us if we're moving downwards.
         if (velocity.y <= 0) {
@@ -780,6 +785,7 @@ public class SourcePlayer : MonoBehaviour {
             //Debug.Log ("Ignoring collsion of object with " + obj.layer);
             return;
         }
+        contacts.Add( new ContactPoint( obj, hitNormal, hitPos ) );
         if (Vector3.Angle (hitNormal, Vector3.up) < controller.slopeLimit) {
             //Debug.Log ("Ignoring collsion because it's valid ground."+Time.time);
             return;
@@ -972,6 +978,17 @@ public class SourcePlayer : MonoBehaviour {
             // Instantiate(deathSpawn, transform.position, Quaternion.identity);
             GameManager.instance.Died ();
         }
+    }
+}
+
+public class ContactPoint {
+    public Vector3 point;
+    public Vector3 hitNormal;
+    public GameObject obj;
+    public ContactPoint( GameObject o, Vector3 p, Vector3 hitNormal ) {
+        this.obj = o;
+        this.point = p;
+        this.hitNormal = hitNormal;
     }
 }
 
