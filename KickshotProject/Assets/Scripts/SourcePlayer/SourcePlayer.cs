@@ -18,7 +18,9 @@ public class SourcePlayer : MonoBehaviour {
     public float airAccelerate = 2f; // How much the player can influence increasing speed in the air, mesured in meters/sec^2.
     public float airStrafeAccelerate = 10f; // How much the player can influence speed in the air while air-strafing, mesured in meters/sec^2.
     public float wallAccelerate = 1.0f;
+    [HideInInspector]
     public float airSpeedBonus = 0.08f; // How much the player is rewarded for strafe-jumping. Great way to gain speed.
+    [HideInInspector]
     public float airSpeedPunish = 1f;// How much we decelerate the player for trying to take turns too quickly while strafe jumping.
     public float airBreak = 3f;// Acceleration multiplier for trying to stop with the backwards key. (typically S).
     public float walkSpeed = 16f;// We stop applying standard acceleration when the player is this speed on the ground.
@@ -37,6 +39,7 @@ public class SourcePlayer : MonoBehaviour {
     public float stepSize = 0.5f;
     public float crouchTime = 0.3f;
     public bool autoBhop = false;
+    public float crouchAcceleration = 8f;
     // Time in seconds it takes to crouch
 
     // Accessible because it's useful
@@ -90,7 +93,7 @@ public class SourcePlayer : MonoBehaviour {
     private AudioSource jumpGrunt;
     private AudioSource painGrunt;
     private AudioSource hardLand;
-    private CapsuleCollider collider;
+    new private CapsuleCollider collider;
 
     void Awake () {
         // Not sure how audio is supposed to work in unity, I just have a list of them on the player to have the jump, pain, and break sounds.
@@ -135,29 +138,41 @@ public class SourcePlayer : MonoBehaviour {
     }
 
     private bool RaycastForGround (out RaycastHit resultHit) {
-        // Loop through everything in our spherecast, checking for if there's a ground below us.
-        foreach (RaycastHit hit in Physics.BoxCastAll(transform.position, new Vector3(radius, 0.1f, radius), -transform.up, transform.rotation, distToGround + 0.1f, layerMask, QueryTriggerInteraction.Ignore)) {
-            // This means that our initial sphere is already colliding with something
-            // if our initial sphere is colliding with something, we don't get any useful information...
-            // A corner case this solves is if we're pressed up into the corner of the inside of a mesh box, it wouldn't detect ground
-            // because the box is detected as a wall and promptly added to the ignore list, keeping it from detecting the floor.
-            if (hit.distance == 0) {
-                // We have to do another separate raycast, this takes care of a corner case (literally).
-                RaycastHit newHit;
-                if (Physics.Raycast (transform.position, -transform.up, out newHit, distToGround + 0.1f, layerMask, QueryTriggerInteraction.Ignore)) {
-                    if (newHit.normal.y > 0.7) {
-                        resultHit = newHit;
-                        return true;
-                    }
+        // Loop through everything in our make-shift cylinder cast, checking for if there's a ground below us.
+        Vector3 castPos = transform.position;
+        float castLength = distToGround+stepSize/2f;
+        Vector3 halfExtents = new Vector3 (radius, 0.1f, radius);
+        for ( float i = 0; i < radius; i += radius/4f ) { // Since we can hit something under us, but have it report as outside of our "cylinder" randomly, we have to try multiple times with different radiuses.
+            foreach (RaycastHit hit in Physics.BoxCastAll(castPos, halfExtents, -transform.up, transform.rotation, castLength, layerMask, QueryTriggerInteraction.Ignore)) {
+                // This means that our initial box is already colliding with something
+                // If our initial cast position is colliding with something, we don't get any useful information, so we skip it!
+                // TODO: This would also indicate that the player is "stuck" inside of something. But this should be impossible since we actively teleport the player outside of geometry.
+                if (hit.distance == 0) {
+                    continue;
                 }
-                continue;
+                // Get the distance (ignoring the y axis) of the hit point and our "cylinder", if it's outside of our cylinder we ignore it.
+                float flathitDist = Mathf.Sqrt ((transform.position.x - hit.point.x) * (transform.position.x - hit.point.x) + (transform.position.z - hit.point.z) * (transform.position.z - hit.point.z));
+                if (flathitDist > radius) {
+                    continue;
+                }
+                // A hit was found of valid ground! woo!
+                if (hit.normal.y > 0.7) {
+                    resultHit = hit;
+                    return true;
+                }
             }
-            if (hit.normal.y > 0.7) {
-                resultHit = hit;
+            // Reduce our radius and try again...
+            halfExtents = new Vector3 (radius-i, 0.1f, radius-i);
+        }
+        // Last ditch effort to find some ground, essentially a "cylinder" with a radius of 0.
+        RaycastHit newHit;
+        if (Physics.Raycast (castPos, -transform.up, out newHit, castLength, layerMask, QueryTriggerInteraction.Ignore)) {
+            if (newHit.normal.y > 0.7) {
+                resultHit = newHit;
                 return true;
             }
         }
-        resultHit = new RaycastHit ();
+        resultHit = newHit;
         return false;
     }
 
@@ -293,7 +308,7 @@ public class SourcePlayer : MonoBehaviour {
             RaycastHit hit;
             hitGround = RaycastForGround (out hit);
             if (hitGround) {
-                CalculateGround (hit);
+                hitGround = CalculateGround (hit);
             }
         }
 
@@ -373,7 +388,7 @@ public class SourcePlayer : MonoBehaviour {
             if (vels.magnitude > velocity.magnitude) {
                 velocity = vels;
             }
-            // Play a grunt sound, but oMultipliernly so often.
+            // Play a grunt sound, but only so often.
             if (Time.time - lastGrunt > 0.3) {
                 jumpGrunt.Play ();
                 lastGrunt = Time.time;
@@ -590,11 +605,11 @@ public class SourcePlayer : MonoBehaviour {
             velocity.y = wallGravity * Time.deltaTime; 
         }
     }
-    // Smoothly transform our velocity into wishdir*wishspeed at the speed of accel
+    // Smoothly transform our velocity into wishdir*max_velocity at the speed of accel
     private void Accelerate (Vector3 wishdir, float accel, float max_velocity) {
         float addspeed, accelspeed, currentspeed;
         // Determine veer amount
-        currentspeed = Vector3.Dot (new Vector3 (velocity.x, 0, velocity.z), wishdir);
+        currentspeed = Vector3.Dot (velocity, wishdir);
 
         // See how much to add
         addspeed = max_velocity - currentspeed;
@@ -618,7 +633,7 @@ public class SourcePlayer : MonoBehaviour {
     private void StayOnGround () {
         Vector3 savePos = transform.position;
         ignoreCollisions = true;
-        controller.Move (new Vector3 (0, -(stepSize + 0.1f), 0));
+        controller.Move (new Vector3 (0, -(stepSize+0.1f), 0));
         ignoreCollisions = false;
         RaycastHit outhit;
         if (!RaycastForGround (out outhit)) { // If we slid into the air, discard the move.
@@ -655,11 +670,12 @@ public class SourcePlayer : MonoBehaviour {
         wishDir.y = 0;             // Zero out z part of velocity
 
         // Set pmove velocity
-        Accelerate (wishDir, groundAccelerate, crouched ? crouchSpeed : walkSpeed);
+        Accelerate (wishDir, crouched ? crouchAcceleration : groundAccelerate, crouched ? crouchSpeed : walkSpeed);
 
         // Add in any base velocity to the current velocity.
         velocity += groundVelocity;
 
+        //controller.Move(velocity*Time.deltaTime
         StepMove ();
 
         // Now pull the base velocity back out.   Base velocity is set if you are on a moving object, like a conveyor (or maybe another monster?)
@@ -704,7 +720,7 @@ public class SourcePlayer : MonoBehaviour {
         Vector3 flatvel = new Vector3 (velocity.x, 0, velocity.z);
         float check = Vector3.Dot (Vector3.Normalize (flatvel), wishdir);
 
-        if (Mathf.Abs (check) < 0.75f) { // Trying to air-strafe.
+        if (Mathf.Abs (check) < 0.75f) { // Trying to air-strafe, do air-strafey stuff.
             // Apply air breaks, this keeps our turning really REALLY **REALLY** sharp.
             // It also basically enables or disables surfing. Turning it off makes it feel really bad.
             float airbreak = 1f / Time.deltaTime;
@@ -717,12 +733,15 @@ public class SourcePlayer : MonoBehaviour {
             // Then calculate how much we should air-strafe.
             float airStrafe = (1f - Mathf.Abs (check)) * airStrafeAccelerate;
             // We don't want to accelerate just because they pressed A or D, we need them to move their mouse a little also.
-            float wishStrafeSpeed = Mathf.Abs (check);
+            float wishStrafeSpeed = (Mathf.Abs (check) + 0.25f) / 1.25f;
             Accelerate (wishdir, airStrafe, wishStrafeSpeed * flySpeed);
-            // If they're turning at the right speeds, give them a speed bonus!
-            float fcheck = Mathf.Abs (check);
 
-            Vector3 pvel = velocity;
+            // The stuff commented out here is used to cheat and give the player speed if they airstrafe
+            // The player already recieves speed, but that bonus decreases naturally as you hit a certain threshold.
+            // This eliminates that threshold and continues to accelerate the player regardless of what speed they're at.
+            // That's not really something we want so, it's gone now.
+            //float fcheck = Mathf.Abs (check);
+            /*Vector3 pvel = velocity;
             pvel.y = 0f;
             // Give the player a speed bonus based on how they move a mouse.
             if (fcheck > 0.001f && pvel.magnitude > 0.1f) { // Only give the speed bonus if we're moving, otherwise we oscillate like crazy.
@@ -736,15 +755,14 @@ public class SourcePlayer : MonoBehaviour {
                 } else { // Logarithmically scales down
                     speedFunc = -Mathf.Log (fcheck);
                 }
-                Debug.Log (fcheck + " " + speedFunc);
                 float bonusSpeed = airSpeedBonus * speedFunc;
                 float yvel = velocity.y;
                 velocity = Vector3.Normalize (pvel) * (pvel.magnitude + bonusSpeed);
                 velocity.y = yvel;
-            }
-        } else if ( check < -0.9f ) { // Give an acceleration bonus based on if they're trying to stop.
+            }*/
+        } else if ( check < -0.75f ) { // Give an acceleration bonus based on if they're trying to stop.
             Accelerate (wishdir, airAccelerate * airBreak, flySpeed);
-        } else {
+        } else { // Just trying to move forward, accelerate normally.
             Accelerate (wishdir, airAccelerate, flySpeed);
         }
 
@@ -777,17 +795,16 @@ public class SourcePlayer : MonoBehaviour {
             //Debug.Log ("Ignoring collsion because we're ignorin."+Time.time);
             return;
         }
-        if (ignoreFootCollisions && (transform.position.y - distToGround + stepSize) >= hitPos.y) {
-            //Debug.Log ("Ignoring collsion because its feet."+hitPos.y+0.01f + " " + (transform.position.y - distToGround + stepSize));
-            return;
-        }
         if ((layerMask & (1 << obj.layer)) == 0) {
             //Debug.Log ("Ignoring collsion of object with " + obj.layer);
             return;
         }
+        if (ignoreFootCollisions && hitPos.y-stepSize < transform.position.y - distToGround) {
+            //Debug.Log ("Ignoring collsion because its feet."+hitPos.y+0.01f + " " + (transform.position.y - distToGround + stepSize));
+            return;
+        }
         contacts.Add( new ContactPoint( obj, hitNormal, hitPos ) );
-        if (Vector3.Angle (hitNormal, Vector3.up) < controller.slopeLimit) {
-            //Debug.Log ("Ignoring collsion because it's valid ground."+Time.time);
+        if (hitNormal.y > 0.7) { // We ignore collisions of valid ground.
             return;
         }
         //Helper.DrawLine(hitPos,hitPos+hitNormal, Color.red, 10f);
@@ -938,27 +955,12 @@ public class SourcePlayer : MonoBehaviour {
             return;
         }
 
-        // Select whichever went furthest
-        float stepMoveDist = (savePos.x - stepMove.x) * (savePos.x - stepMove.x) + (savePos.z - stepMove.z) * (savePos.z - stepMove.z);
-        float groundMoveDist = (savePos.x - groundMove.x) * (savePos.x - groundMove.x) + (savePos.z - groundMove.z) * (savePos.z - groundMove.z);
-        // We make sure there's a significant difference for taking the stepMove.
-        // This prevents oscillations on certain slopes, and keeps the player from walking up
-        // stairs whos height is greater than stepSize (not sure why)
-        // This also causes the player to be incapable of climbing stairs at really low speeds.
-        // but it's worth it given the benefits.
-        if (stepMoveDist - groundMoveDist > 0.001f) {
-            // Redo the step move, now register collisions.
-            transform.position = savePos;
-            ignoreCollisions = false;
-            controller.Move (new Vector3 (0f, stepSize, 0f));
-            controller.Move (velocity * Time.deltaTime);
-            controller.Move (new Vector3 (0f, -stepSize, 0f));
-        } else {
-            // Move normally
-            transform.position = savePos;
-            ignoreCollisions = false;
-            controller.Move (velocity * Time.deltaTime);
-        }
+        // Redo the step move, this time registering collisions.
+        transform.position = savePos;
+        ignoreCollisions = false;
+        controller.Move (new Vector3 (0f, stepSize, 0f));
+        controller.Move (velocity * Time.deltaTime);
+        controller.Move (new Vector3 (0f, -stepSize, 0f));
         // Enable collisions
         ignoreCollisions = false;
         ignoreFootCollisions = false;
