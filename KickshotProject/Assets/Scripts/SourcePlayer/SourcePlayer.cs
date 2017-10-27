@@ -37,6 +37,7 @@ public class SourcePlayer : MonoBehaviour {
     public float stepSize = 0.5f;
     public float crouchTime = 0.3f;
     public bool autoBhop = false;
+	public bool canWallRun = false;
     // Time in seconds it takes to crouch
 
     // Accessible because it's useful
@@ -286,7 +287,9 @@ public class SourcePlayer : MonoBehaviour {
         // assume we aren't touching anything
         // TODO: Joey, you'd probably check if we hit a wall last frame here.
         // since contacts currently contains what we hit in the last frame.
+		HandleWallRunCollision ();
         contacts.Clear();
+
         bool hitGround = false;
         // We only check for ground under us if we're moving downwards.
         if (velocity.y <= 0) {
@@ -315,8 +318,10 @@ public class SourcePlayer : MonoBehaviour {
 
         // Push ourselves out of nearby objects.
         RecursivePushback (0, MaxPushbackIterations);
-        HandleWallRunCollision ();
+
         PlayerMove ();
+		wallEntity = null;
+
     }
     // Slide off of impacting surface
     // This is just projecting a vector onto a plane (our velocity), check wikipedia or purple math if you want to confirm.
@@ -537,6 +542,8 @@ public class SourcePlayer : MonoBehaviour {
     }
     // Detect which movement code we should run, and set up our parameters for it.
     private void PlayerMove () {
+
+
         CheckFalling ();
         // If we are not on ground, store off how fast we are moving down
         if (groundEntity == null) {
@@ -585,9 +592,9 @@ public class SourcePlayer : MonoBehaviour {
             velocity.y = 0;
         }
 
-        if (wallEntity != null && wallRunning == true) {
+        if (wallRunning == true) {
             // Wall Running Gravity
-            velocity.y = wallGravity * Time.deltaTime; 
+            velocity.y = 0; 
         }
     }
     // Smoothly transform our velocity into wishdir*wishspeed at the speed of accel
@@ -736,7 +743,7 @@ public class SourcePlayer : MonoBehaviour {
                 } else { // Logarithmically scales down
                     speedFunc = -Mathf.Log (fcheck);
                 }
-                Debug.Log (fcheck + " " + speedFunc);
+                //Debug.Log (fcheck + " " + speedFunc);
                 float bonusSpeed = airSpeedBonus * speedFunc;
                 float yvel = velocity.y;
                 velocity = Vector3.Normalize (pvel) * (pvel.magnitude + bonusSpeed);
@@ -760,9 +767,9 @@ public class SourcePlayer : MonoBehaviour {
     private void WallMove () {
         Vector3 tempVel = velocity;
         tempVel.y = 0;
-        if (Input.GetKey (KeyCode.LeftShift) && wallEntity != null && (tempVel.magnitude > 0 || tempVel.magnitude < 0)) {
+		if (Input.GetKey (KeyCode.LeftShift)) {
             velocity = ClipVelocity (velocity, wallNormal);
-            Accelerate (velocity, wallAccelerate, wallSpeed);
+            Accelerate (velocity, 10, 20);
             controller.Move (velocity * Time.deltaTime);
             wallRunning = true;
         } else {
@@ -826,8 +833,22 @@ public class SourcePlayer : MonoBehaviour {
     }
 
     void HandleWallRunCollision () {
+
+		if (contacts.Count == 0)
+			Debug.Log ("NO POINTS");
+			
+		foreach(ContactPoint point in contacts) {
+
+				wallEntity = point.obj;
+				wallNormal = point.hitNormal;
+			Debug.Log (wallNormal);
+
+
+		}
+
+
         //TODO Find better way to do this.
-        RaycastHit hitInfo;
+        /*RaycastHit hitInfo;
         if (Physics.SphereCast (this.transform.position, 0.2f, transform.right, out hitInfo, 0.45f, layerMask)) {
             if (hitInfo.normal.y < 0.7) {
                 wallEntity = hitInfo.collider.gameObject;
@@ -842,7 +863,7 @@ public class SourcePlayer : MonoBehaviour {
                 wallEntity = null;
         } else {
             wallEntity = null;
-        }
+        }*/
 
     }
     
@@ -985,7 +1006,7 @@ public class ContactPoint {
     public Vector3 point;
     public Vector3 hitNormal;
     public GameObject obj;
-    public ContactPoint( GameObject o, Vector3 p, Vector3 hitNormal ) {
+	public ContactPoint( GameObject o, Vector3 hitNormal, Vector3 p ) {
         this.obj = o;
         this.point = p;
         this.hitNormal = hitNormal;
