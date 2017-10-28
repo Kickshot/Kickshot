@@ -66,10 +66,8 @@ public class SourcePlayer : MonoBehaviour {
     // Shouldn't need to access these, probably
     private List<ContactPoint> contacts;
     private Vector3 wallNormal = new Vector3 (0f, 0f, 0f);
-    private Vector3 wallHitPoint = new Vector3 (0f, 0f, 0f);
     private bool queueHop = false;
     private float crouchTimer = 0f;
-    private bool changedSpeed = false;
     private Vector3 originalBodyPosition;
     private float originalHeight;
     private CollisionSphere[] spheres;
@@ -141,7 +139,10 @@ public class SourcePlayer : MonoBehaviour {
     private bool RaycastForGround (out RaycastHit resultHit) {
         // Loop through everything in our make-shift cylinder cast, checking for if there's a ground below us.
         Vector3 castPos = transform.position;
-        float castLength = distToGround+stepSize/2f;
+        float castLength = distToGround;
+        if (controller.isGrounded) { // This keeps us attached better to stairs, and other similarly complex geometry near the feet.
+            castLength += stepSize / 2f;
+        }
         Vector3 halfExtents = new Vector3 (radius, 0.1f, radius);
         for ( float i = 0; i < radius; i += radius/4f ) { // Since we can hit something under us, but have it report as outside of our "cylinder" randomly, we have to try multiple times with different radiuses.
             foreach (RaycastHit hit in Physics.BoxCastAll(castPos, halfExtents, -transform.up, transform.rotation, castLength, layerMask, QueryTriggerInteraction.Ignore)) {
@@ -165,7 +166,7 @@ public class SourcePlayer : MonoBehaviour {
             // Reduce our radius and try again...
             halfExtents = new Vector3 (radius-i, 0.1f, radius-i);
         }
-        // Last ditch effort to find some ground, essentially a "cylinder" with a radius of 0.
+        // Last ditch effort to find some ground, essentially a "cylinder" with a radius of 0, and an extended range.
         RaycastHit newHit;
         if (Physics.Raycast (castPos, -transform.up, out newHit, castLength, layerMask, QueryTriggerInteraction.Ignore)) {
             if (newHit.normal.y > 0.7) {
@@ -587,7 +588,7 @@ public class SourcePlayer : MonoBehaviour {
 		if (groundEntity != null) {
 			WalkMove ();
 		} else if (wallEntity != null) {
-			WallMove ();  // Take into account movement when in air.
+			WallMove ();
 		} else {
 			AirMove ();
 		}
@@ -638,7 +639,7 @@ public class SourcePlayer : MonoBehaviour {
     private void StayOnGround () {
         Vector3 savePos = transform.position;
         ignoreCollisions = true;
-        controller.Move (new Vector3 (0, -(stepSize+0.1f), 0));
+        controller.Move (new Vector3 (0, -(stepSize), 0));
         ignoreCollisions = false;
         RaycastHit outhit;
         if (!RaycastForGround (out outhit)) { // If we slid into the air, discard the move.
@@ -917,8 +918,11 @@ public class SourcePlayer : MonoBehaviour {
 
 		foreach(ContactPoint point in contacts) {
 			// TODO Mutiple collision points.
-			wallEntity = point.obj;
-			wallNormal = point.hitNormal;
+            Debug.Log( point.hitNormal );
+            if (point.hitNormal.y == 0f) {
+                wallEntity = point.obj;
+                wallNormal = point.hitNormal;
+            }
 		}
 
     }
