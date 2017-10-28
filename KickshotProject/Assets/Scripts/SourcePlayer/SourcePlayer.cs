@@ -10,7 +10,7 @@ public class SourcePlayer : MonoBehaviour {
     public GameObject deathSpawn;
     public Vector3 velocity;
     public Vector3 gravity = new Vector3 (0, -24f, 0); // gravity in meters per second per second.
-    public float wallGravity = -100; // Gravity is weird on wall runs because of clip velocity.
+    public float wallGravity = -12; // Gravity is weird on wall runs because of clip velocity.
     public float baseFriction = 6f; // A friction multiplier, higher means more friction.
     public float maxSpeed = 100f; // The maximum speed the player can move at. (CURRENTLY UNUSED)
     public float groundAccelerate = 5f; // How fast we accelerate while on solid ground.
@@ -95,6 +95,8 @@ public class SourcePlayer : MonoBehaviour {
     private AudioSource painGrunt;
     private AudioSource hardLand;
     new private CapsuleCollider collider;
+	private Vector3 oldVelocity;
+
 
     void Awake () {
         // Not sure how audio is supposed to work in unity, I just have a list of them on the player to have the jump, pain, and break sounds.
@@ -606,17 +608,17 @@ public class SourcePlayer : MonoBehaviour {
         // Make sure velocity is still valid.
         CheckVelocity ();
 
-        Gravity ();
+		if(!wallRunning)
+        	Gravity ();
+		else
+			velocity.y += wallGravity * Time.deltaTime;
+
 
         // If we are on ground, no downward velocity.
-        if (groundEntity != null) {
+		if (groundEntity != null) {
             velocity.y = 0;
         }
-
-        if (wallRunning == true) {
-            // Wall Running Gravity
-			velocity.y = wallGravity * Time.deltaTime;
-        }
+			
     }
     // Smoothly transform our velocity into wishdir*max_velocity at the speed of accel
     private void Accelerate (Vector3 wishdir, float accel, float max_velocity) {
@@ -792,43 +794,51 @@ public class SourcePlayer : MonoBehaviour {
     private void WallMove () {
 
 		if (Input.GetKey (KeyCode.Space) && wallEntity != null) {
-
+			
 			Vector3 adjustedVelocity = velocity;
+			Vector3 adjustedOldVelocity = oldVelocity;
 			adjustedVelocity.y = 0;
+			adjustedOldVelocity.y = 0;
 
-			if(adjustedVelocity.magnitude <= 4.0f &&  adjustedVelocity.magnitude >= 0.0f)
-			{
+			//Debug.Log (Vector3.Dot (oldVelocity.normalized, adjustedVelocity.normalized));
+			// Check if new velocity is trying to get off the wall.
+			if (Vector3.Dot (adjustedOldVelocity.normalized, adjustedVelocity.normalized) < 0.98f && wallRunning) {
+				EndWallRun ();
+				return;
+			}
+				
+			adjustedVelocity = velocity;
+			// The player is going to slow stop wall running.
+			if(adjustedVelocity.magnitude <= 2.0f &&  adjustedVelocity.magnitude >= 0.0f) {
 				EndWallRun ();
 				return;
 			}
 
 			Vector3 wishdir;
-			float fmove, smove;
-			Vector3 forward, right;
+			float fmove;
+			Vector3 forward;
 
 			Vector3 command = GetCommandVelocity();
 			fmove = command.z; // Forward/backward
-			smove = command.x; // Left/right
 
 			// Determine movement angles
 			forward = transform.forward;
-			right = transform.right;
 
 			// Zero out up/down components of movement vectors
 			forward.y = 0;
-			right.y = 0;
 			Vector3.Normalize(forward);  // Normalize remainder of vectors
-			Vector3.Normalize(right);    //
 
-			wishdir = forward * fmove + right * smove;
+			wishdir = forward * fmove;
 			wishdir.y = 0;             // Zero out up/down part of velocity
 
 			float wallBreakMag = -Vector3.Dot (wishdir, velocity);
 
             velocity = ClipVelocity (velocity, wallNormal);
-			Accelerate (wishdir, 10, wallBreakMag);
-            controller.Move (velocity * Time.deltaTime);
 
+			Accelerate (wishdir, 10, wallBreakMag);
+
+            controller.Move (velocity * Time.deltaTime);
+			oldVelocity = velocity;
             wallRunning = true;
         } else {
             wallRunning = false;
@@ -921,25 +931,19 @@ public class SourcePlayer : MonoBehaviour {
 				EndWallRun ();
 			}
         }
-
-
+			
 		foreach(ContactPoint point in contacts) {
 			// TODO Mutiple collision points.
-			//Debug.Log (point.hitNormal.y);
 			if (point.hitNormal.y < 0.1f && point.hitNormal.y > -0.1f) {
-				
-                wallEntity = point.obj;
-                wallNormal = point.hitNormal;
-            }
+				wallEntity = point.obj;
+				wallNormal = point.hitNormal;
+			}
 		}
-
-		//Debug.Log (Vector3.Dot (wallNormal, transform.forward));
+			
 		if (Vector3.Dot (wallNormal, transform.forward) < -.75 && !wallRunning)
 		{
 			wallEntity = null;
 		}
-			
-
     }
 
     // This function makes sure we don't phase through other colliders. (Since character controller doesn't provide this functionality lmao).
