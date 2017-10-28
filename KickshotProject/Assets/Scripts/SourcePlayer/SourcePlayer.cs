@@ -23,6 +23,7 @@ public class SourcePlayer : MonoBehaviour {
     public float airSpeedBonus = 0.08f; // How much the player is rewarded for strafe-jumping. Great way to gain speed.
     [HideInInspector]
     public float airSpeedPunish = 1f;// How much we decelerate the player for trying to take turns too quickly while strafe jumping.
+    public float airStrafePercentage = 0.1f; // How much the player actually accelerates while air strafing without moving the mouse.
     public float airBreak = 3f;// Acceleration multiplier for trying to stop with the backwards key. (typically S).
     public float walkSpeed = 16f;// We stop applying standard acceleration when the player is this speed on the ground.
     public float flySpeed = 12f;// We stop applying standard acceleration when the player is this speed in the air.
@@ -40,6 +41,7 @@ public class SourcePlayer : MonoBehaviour {
     public float stepSize = 0.5f;
     public float crouchTime = 0.3f;
     public bool autoBhop = false;
+    public float jumpBufferTime = 0.1f; // How long a jump will be "queued" for, if the player presses jump too early.
     public float crouchAcceleration = 8f;
     // Time in seconds it takes to crouch
 
@@ -64,9 +66,9 @@ public class SourcePlayer : MonoBehaviour {
 
 
     // Shouldn't need to access these, probably
+    private float jumpBufferTimer;
     private List<ContactPoint> contacts;
     private Vector3 wallNormal = new Vector3 (0f, 0f, 0f);
-    private bool queueHop = false;
     private float crouchTimer = 0f;
     private Vector3 originalBodyPosition;
     private float originalHeight;
@@ -131,9 +133,14 @@ public class SourcePlayer : MonoBehaviour {
 
     private bool TryJump(bool Jumping = false) {
         if (!autoBhop && Input.GetButtonDown ("Jump")) {
-            queueHop = true;
+            jumpBufferTimer = jumpBufferTime;
         }
-        return (autoBhop && Input.GetButton ("Jump")) || queueHop;
+        if (jumpBufferTimer > 0f) {
+            jumpBufferTimer -= Time.deltaTime;
+        } else {
+            jumpBufferTimer = 0f;
+        }
+        return (autoBhop && Input.GetButton ("Jump")) || jumpBufferTimer != 0f;
     }
 
     private bool RaycastForGround (out RaycastHit resultHit) {
@@ -386,7 +393,7 @@ public class SourcePlayer : MonoBehaviour {
     private void CheckJump () {
         // Check to make sure we have a ground under us, and that it's stable ground.
         if (TryJump() && groundEntity && groundNormal.y > 0.7f) {
-            queueHop = false;
+            jumpBufferTimer = 0f;
             // Right before we jump, lets clip our velocity real quick. That way if we're jumping down a sloped surface, we go faster!
             Vector3 vels = new Vector3 (velocity.x, 0, velocity.z);
             velocity = ClipVelocity (velocity, groundNormal);
@@ -741,7 +748,7 @@ public class SourcePlayer : MonoBehaviour {
             // Then calculate how much we should air-strafe.
             float airStrafe = (1f - Mathf.Abs(check)) * airStrafeAccelerate;
             // We don't want to accelerate just because they pressed A or D, we need them to move their mouse a little also.
-            float wishStrafeSpeed = (Mathf.Abs(check) + 0.2f) / 1.2f;
+            float wishStrafeSpeed = (Mathf.Abs(check) + airStrafePercentage) / (1f + airStrafePercentage);
             Accelerate(wishdir, airStrafe, wishStrafeSpeed * flySpeed);
 
             // The stuff commented out here is used to cheat and give the player speed if they airstrafe
