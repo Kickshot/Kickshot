@@ -741,7 +741,7 @@ public class SourcePlayer : MonoBehaviour {
             // Then calculate how much we should air-strafe.
             float airStrafe = (1f - Mathf.Abs(check)) * airStrafeAccelerate;
             // We don't want to accelerate just because they pressed A or D, we need them to move their mouse a little also.
-            float wishStrafeSpeed = (Mathf.Abs(check) + 0.25f) / 1.25f;
+            float wishStrafeSpeed = (Mathf.Abs(check) + 0.2f) / 1.2f;
             Accelerate(wishdir, airStrafe, wishStrafeSpeed * flySpeed);
 
             // The stuff commented out here is used to cheat and give the player speed if they airstrafe
