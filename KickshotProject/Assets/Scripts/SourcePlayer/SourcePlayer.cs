@@ -40,7 +40,6 @@ public class SourcePlayer : MonoBehaviour {
     public float stepSize = 0.5f;
     public float crouchTime = 0.3f;
     public bool autoBhop = false;
-	public bool canWallRun = false;
     public float crouchAcceleration = 8f;
     // Time in seconds it takes to crouch
 
@@ -573,7 +572,7 @@ public class SourcePlayer : MonoBehaviour {
         if (Vector3.Angle (groundNormal, new Vector3 (0f, 1f, 0f)) > controller.slopeLimit) {
             groundEntity = null;
         }
-        // Friction is handled before we add in any base velocity. That way, if we are on a conveyor, 
+        // Friction is handled before we add in any base velocity. That way, if we are on a conveyor,
         //  we don't slow when standing still, relative to the conveyor.
         if (groundEntity != null) {
             velocity.y = 0;
@@ -583,8 +582,8 @@ public class SourcePlayer : MonoBehaviour {
         // Make sure velocity is valid.
         CheckVelocity ();
 
-        // Make sure we are not doing any other type of movement while 
-        // wall running 
+        // Make sure we are not doing any other type of movement while
+        // wall running
 		if (groundEntity != null) {
 			WalkMove ();
 		} else if (wallEntity != null) {
@@ -608,7 +607,7 @@ public class SourcePlayer : MonoBehaviour {
 
         if (wallRunning == true) {
             // Wall Running Gravity
-			velocity.y = wallGravity * Time.deltaTime; 
+			velocity.y = wallGravity * Time.deltaTime;
         }
     }
     // Smoothly transform our velocity into wishdir*max_velocity at the speed of accel
@@ -669,7 +668,7 @@ public class SourcePlayer : MonoBehaviour {
         right.y = 0;
 
         forward = Vector3.Normalize (forward);  // Normalize remainder of vectors.
-        right = Vector3.Normalize (right);    // 
+        right = Vector3.Normalize (right);    //
 
         // Determine x and y parts of velocity
         wishDir = forward * fmove + right * smove;
@@ -710,7 +709,7 @@ public class SourcePlayer : MonoBehaviour {
         forward.y = 0;
         right.y = 0;
         Vector3.Normalize(forward);  // Normalize remainder of vectors
-        Vector3.Normalize(right);    // 
+        Vector3.Normalize(right);    //
 
         wishdir = forward * fmove + right * smove;
         wishdir.y = 0;             // Zero out up/down part of velocity
@@ -727,8 +726,12 @@ public class SourcePlayer : MonoBehaviour {
         Vector3 flatvel = new Vector3(velocity.x, 0, velocity.z);
         float check = Vector3.Dot(Vector3.Normalize(flatvel), wishdir);
 
+<<<<<<< HEAD
         if (Mathf.Abs(check) < 0.75f)
         { // Trying to air-strafe, do air-strafey stuff.
+=======
+        if (Mathf.Abs (check) < 0.75f) { // Trying to air-strafe, do air-strafey stuff.
+>>>>>>> e7e2db9e93f0aebe5d28cd3e63a076c504477657
             // Apply air breaks, this keeps our turning really REALLY **REALLY** sharp.
             // It also basically enables or disables surfing. Turning it off makes it feel really bad.
             float airbreak = 1f / Time.deltaTime;
@@ -741,8 +744,13 @@ public class SourcePlayer : MonoBehaviour {
             // Then calculate how much we should air-strafe.
             float airStrafe = (1f - Mathf.Abs(check)) * airStrafeAccelerate;
             // We don't want to accelerate just because they pressed A or D, we need them to move their mouse a little also.
+<<<<<<< HEAD
             float wishStrafeSpeed = (Mathf.Abs(check) + 0.25f) / 1.25f;
             Accelerate(wishdir, airStrafe, wishStrafeSpeed * flySpeed);
+=======
+            float wishStrafeSpeed = (Mathf.Abs (check) + 0.25f) / 1.25f;
+            Accelerate (wishdir, airStrafe, wishStrafeSpeed * flySpeed);
+>>>>>>> e7e2db9e93f0aebe5d28cd3e63a076c504477657
 
             // The stuff commented out here is used to cheat and give the player speed if they airstrafe
             // The player already recieves speed, but that bonus decreases naturally as you hit a certain threshold.
@@ -768,14 +776,10 @@ public class SourcePlayer : MonoBehaviour {
                 velocity = Vector3.Normalize (pvel) * (pvel.magnitude + bonusSpeed);
                 velocity.y = yvel;
             }*/
-        }
-        else if (check < -0.75f)
-        { // Give an acceleration bonus based on if they're trying to stop.
-            Accelerate(wishdir, airAccelerate * airBreak, flySpeed);
-        }
-        else
-        { // Just trying to move forward, accelerate normally.
-            Accelerate(wishdir, airAccelerate, flySpeed);
+        } else if ( check < -0.75f ) { // Give an acceleration bonus based on if they're trying to stop.
+            Accelerate (wishdir, airAccelerate * airBreak, flySpeed);
+        } else { // Just trying to move forward, accelerate normally.
+            Accelerate (wishdir, airAccelerate, flySpeed);
         }
 
 
@@ -787,7 +791,7 @@ public class SourcePlayer : MonoBehaviour {
     }
 
     private void WallMove () {
-       
+
 		if (Input.GetKey (KeyCode.Space) && wallEntity != null) {
 
 			Vector3 adjustedVelocity = velocity;
@@ -815,7 +819,7 @@ public class SourcePlayer : MonoBehaviour {
 			forward.y = 0;
 			right.y = 0;
 			Vector3.Normalize(forward);  // Normalize remainder of vectors
-			Vector3.Normalize(right);    // 
+			Vector3.Normalize(right);    //
 
 			wishdir = forward * fmove + right * smove;
 			wishdir.y = 0;             // Zero out up/down part of velocity
@@ -885,7 +889,7 @@ public class SourcePlayer : MonoBehaviour {
     void OnControllerColliderHit (ControllerColliderHit hit) {
         HandleCollision (hit.gameObject, hit.normal, hit.point);
     }
-		
+
 
 	void EndWallRun()
 	{
@@ -900,7 +904,7 @@ public class SourcePlayer : MonoBehaviour {
 		if (contacts.Count == 0 && wallRunning)
         {
             RaycastHit hitInfo;
-           
+
             Vector3 p1 = transform.position + controller.center + Vector3.up * -controller.height * 0.5F;
             Vector3 p2 = p1 + Vector3.up * controller.height;
 
@@ -918,8 +922,8 @@ public class SourcePlayer : MonoBehaviour {
 				EndWallRun ();
 			}
         }
- 
-			
+
+
 		foreach(ContactPoint point in contacts) {
 			// TODO Mutiple collision points.
 			wallEntity = point.obj;
@@ -927,7 +931,7 @@ public class SourcePlayer : MonoBehaviour {
 		}
 
     }
-    
+
     // This function makes sure we don't phase through other colliders. (Since character controller doesn't provide this functionality lmao).
     // I copied it from https://github.com/IronWarrior/SuperCharacterController
     // I changed it a bit, but SuperCharacterController is under the MIT license, meaning we can't use it without making our game also under the MIT license.
