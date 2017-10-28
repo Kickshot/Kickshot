@@ -1,0 +1,1279 @@
+fileFormatVersion: 2
+guid: c47fb4e9e924b8c448f8d6659879f6d4
+timeCreated: 1509166604
+licenseType: Free
+ModelImporter:
+  serializedVersion: 22
+  fileIDToRecycleName:
+    100000: ambient_generic
+    100002: ambient_generic 1
+    100004: ambient_generic 2
+    100006: ambient_generic 3
+    100008: entities
+    100010: entity_func_breakable_17
+    100012: entity_func_brush_24
+    100014: entity_func_brush_25
+    100016: entity_func_brush_26
+    100018: entity_func_brush_30
+    100020: entity_func_brush_31
+    100022: entity_func_brush_32
+    100024: entity_func_brush_33
+    100026: entity_func_brush_37
+    100028: entity_func_brush_38
+    100030: entity_func_brush_39
+    100032: entity_func_brush_40
+    100034: entity_func_brush_41
+    100036: entity_func_brush_42
+    100038: entity_func_brush_43
+    100040: entity_func_brush_44
+    100042: entity_func_brush_45
+    100044: entity_func_brush_46
+    100046: entity_func_brush_47
+    100048: entity_func_brush_48
+    100050: entity_func_brush_49
+    100052: entity_func_brush_59
+    100054: entity_func_brush_60
+    100056: entity_func_button_16
+    100058: entity_func_button_20
+    100060: entity_func_button_23
+    100062: entity_func_button_4
+    100064: entity_func_button_50
+    100066: entity_func_button_51
+    100068: entity_func_button_64
+    100070: entity_func_button_65
+    100072: entity_func_button_9
+    100074: entity_func_detail_68
+    100076: entity_func_detail_69
+    100078: entity_func_detail_70
+    100080: entity_func_ladder_71
+    100082: entity_func_ladder_72
+    100084: entity_func_ladder_73
+    100086: entity_func_ladder_74
+    100088: entity_func_ladder_75
+    100090: entity_func_ladder_76
+    100092: entity_func_ladder_77
+    100094: entity_func_ladder_78
+    100096: entity_func_ladder_79
+    100098: entity_func_ladder_80
+    100100: entity_func_ladder_81
+    100102: entity_func_ladder_82
+    100104: entity_func_ladder_83
+    100106: entity_func_ladder_84
+    100108: entity_func_ladder_85
+    100110: entity_func_ladder_86
+    100112: entity_func_movelinear_15
+    100114: entity_func_movelinear_2
+    100116: entity_func_movelinear_28
+    100118: entity_func_movelinear_34
+    100120: entity_func_movelinear_35
+    100122: entity_func_movelinear_58
+    100124: entity_func_rotating_22
+    100126: entity_func_rotating_36
+    100128: entity_func_rotating_54
+    100130: entity_func_rotating_56
+    100132: entity_func_rotating_57
+    100134: entity_func_rotating_66
+    100136: entity_func_water_analog_1
+    100138: entity_func_water_analog_10
+    100140: entity_func_water_analog_11
+    100142: entity_func_water_analog_12
+    100144: entity_func_water_analog_13
+    100146: entity_func_water_analog_29
+    100148: entity_func_water_analog_52
+    100150: entity_func_water_analog_63
+    100152: entity_func_water_analog_7
+    100154: entity_func_water_analog_8
+    100156: env_hudhint
+    100158: func_breakable
+    100160: func_brush
+    100162: func_brush 1
+    100164: func_brush 10
+    100166: func_brush 11
+    100168: func_brush 12
+    100170: func_brush 13
+    100172: func_brush 14
+    100174: func_brush 15
+    100176: func_brush 16
+    100178: func_brush 17
+    100180: func_brush 18
+    100182: func_brush 19
+    100184: func_brush 2
+    100186: func_brush 20
+    100188: func_brush 21
+    100190: func_brush 3
+    100192: func_brush 4
+    100194: func_brush 5
+    100196: func_brush 6
+    100198: func_brush 7
+    100200: func_brush 8
+    100202: func_brush 9
+    100204: func_button
+    100206: func_button 1
+    100208: func_button 2
+    100210: func_button 3
+    100212: func_button 4
+    100214: func_button 5
+    100216: func_button 6
+    100218: func_button 7
+    100220: func_button 8
+    100222: func_detail
+    100224: func_detail 1
+    100226: func_detail 2
+    100228: func_ladder
+    100230: func_ladder 1
+    100232: func_ladder 10
+    100234: func_ladder 11
+    100236: func_ladder 12
+    100238: func_ladder 13
+    100240: func_ladder 14
+    100242: func_ladder 15
+    100244: func_ladder 2
+    100246: func_ladder 3
+    100248: func_ladder 4
+    100250: func_ladder 5
+    100252: func_ladder 6
+    100254: func_ladder 7
+    100256: func_ladder 8
+    100258: func_ladder 9
+    100260: func_movelinear
+    100262: func_movelinear 1
+    100264: func_movelinear 2
+    100266: func_movelinear 3
+    100268: func_movelinear 4
+    100270: func_movelinear 5
+    100272: func_rotating
+    100274: func_rotating 1
+    100276: func_rotating 2
+    100278: func_rotating 3
+    100280: func_rotating 4
+    100282: func_rotating 5
+    100284: func_water_analog
+    100286: func_water_analog 1
+    100288: func_water_analog 2
+    100290: func_water_analog 3
+    100292: func_water_analog 4
+    100294: func_water_analog 5
+    100296: func_water_analog 6
+    100298: func_water_analog 7
+    100300: func_water_analog 8
+    100302: func_water_analog 9
+    100304: info_player_counterterrorist
+    100306: info_player_counterterrorist 1
+    100308: info_player_counterterrorist 10
+    100310: info_player_counterterrorist 11
+    100312: info_player_counterterrorist 12
+    100314: info_player_counterterrorist 13
+    100316: info_player_counterterrorist 14
+    100318: info_player_counterterrorist 15
+    100320: info_player_counterterrorist 16
+    100322: info_player_counterterrorist 17
+    100324: info_player_counterterrorist 18
+    100326: info_player_counterterrorist 19
+    100328: info_player_counterterrorist 2
+    100330: info_player_counterterrorist 20
+    100332: info_player_counterterrorist 3
+    100334: info_player_counterterrorist 4
+    100336: info_player_counterterrorist 5
+    100338: info_player_counterterrorist 6
+    100340: info_player_counterterrorist 7
+    100342: info_player_counterterrorist 8
+    100344: info_player_counterterrorist 9
+    100346: info_player_terrorist
+    100348: info_player_terrorist 1
+    100350: info_player_terrorist 10
+    100352: info_player_terrorist 11
+    100354: info_player_terrorist 12
+    100356: info_player_terrorist 13
+    100358: info_player_terrorist 14
+    100360: info_player_terrorist 15
+    100362: info_player_terrorist 16
+    100364: info_player_terrorist 17
+    100366: info_player_terrorist 18
+    100368: info_player_terrorist 19
+    100370: info_player_terrorist 2
+    100372: info_player_terrorist 20
+    100374: info_player_terrorist 3
+    100376: info_player_terrorist 4
+    100378: info_player_terrorist 5
+    100380: info_player_terrorist 6
+    100382: info_player_terrorist 7
+    100384: info_player_terrorist 8
+    100386: info_player_terrorist 9
+    100388: info_teleport_destination
+    100390: info_teleport_destination 1
+    100392: info_teleport_destination 2
+    100394: info_teleport_destination 3
+    100396: info_teleport_destination 4
+    100398: infodecal
+    100400: infodecal 1
+    100402: infodecal 2
+    100404: infodecal 3
+    100406: infodecal 4
+    100408: infodecal 5
+    100410: infodecal 6
+    100412: infodecal 7
+    100414: infodecal 8
+    100416: infodecal 9
+    100418: light
+    100420: light 1
+    100422: light 10
+    100424: light 11
+    100426: light 12
+    100428: light 13
+    100430: light 14
+    100432: light 15
+    100434: light 16
+    100436: light 17
+    100438: light 18
+    100440: light 19
+    100442: light 2
+    100444: light 20
+    100446: light 21
+    100448: light 3
+    100450: light 4
+    100452: light 5
+    100454: light 6
+    100456: light 7
+    100458: light 8
+    100460: light 9
+    100462: light_environment
+    100464: logic_auto
+    100466: logic_timer
+    100468: math_counter
+    100470: prop_physics
+    100472: prop_physics 1
+    100474: prop_physics 2
+    100476: prop_physics 3
+    100478: prop_physics 4
+    100480: prop_physics 5
+    100482: prop_static
+    100484: prop_static 1
+    100486: prop_static 10
+    100488: prop_static 11
+    100490: prop_static 12
+    100492: prop_static 13
+    100494: prop_static 14
+    100496: prop_static 15
+    100498: prop_static 16
+    100500: prop_static 17
+    100502: prop_static 18
+    100504: prop_static 19
+    100506: prop_static 2
+    100508: prop_static 20
+    100510: prop_static 21
+    100512: prop_static 22
+    100514: prop_static 23
+    100516: prop_static 24
+    100518: prop_static 25
+    100520: prop_static 26
+    100522: prop_static 3
+    100524: prop_static 4
+    100526: prop_static 5
+    100528: prop_static 6
+    100530: prop_static 7
+    100532: prop_static 8
+    100534: prop_static 9
+    100536: sky_camera
+    100538: trigger_hurt
+    100540: trigger_hurt 1
+    100542: trigger_multiple
+    100544: trigger_multiple 1
+    100546: trigger_multiple 2
+    100548: trigger_multiple 3
+    100550: trigger_teleport
+    100552: trigger_teleport 1
+    100554: trigger_teleport 2
+    100556: trigger_teleport 3
+    100558: trigger_teleport 4
+    100560: trigger_teleport 5
+    100562: trigger_teleport 6
+    100564: water_lod_control
+    100566: world
+    100568: worldbrushes
+    100570: //RootNode
+    400000: ambient_generic
+    400002: ambient_generic 1
+    400004: ambient_generic 2
+    400006: ambient_generic 3
+    400008: entities
+    400010: entity_func_breakable_17
+    400012: entity_func_brush_24
+    400014: entity_func_brush_25
+    400016: entity_func_brush_26
+    400018: entity_func_brush_30
+    400020: entity_func_brush_31
+    400022: entity_func_brush_32
+    400024: entity_func_brush_33
+    400026: entity_func_brush_37
+    400028: entity_func_brush_38
+    400030: entity_func_brush_39
+    400032: entity_func_brush_40
+    400034: entity_func_brush_41
+    400036: entity_func_brush_42
+    400038: entity_func_brush_43
+    400040: entity_func_brush_44
+    400042: entity_func_brush_45
+    400044: entity_func_brush_46
+    400046: entity_func_brush_47
+    400048: entity_func_brush_48
+    400050: entity_func_brush_49
+    400052: entity_func_brush_59
+    400054: entity_func_brush_60
+    400056: entity_func_button_16
+    400058: entity_func_button_20
+    400060: entity_func_button_23
+    400062: entity_func_button_4
+    400064: entity_func_button_50
+    400066: entity_func_button_51
+    400068: entity_func_button_64
+    400070: entity_func_button_65
+    400072: entity_func_button_9
+    400074: entity_func_detail_68
+    400076: entity_func_detail_69
+    400078: entity_func_detail_70
+    400080: entity_func_ladder_71
+    400082: entity_func_ladder_72
+    400084: entity_func_ladder_73
+    400086: entity_func_ladder_74
+    400088: entity_func_ladder_75
+    400090: entity_func_ladder_76
+    400092: entity_func_ladder_77
+    400094: entity_func_ladder_78
+    400096: entity_func_ladder_79
+    400098: entity_func_ladder_80
+    400100: entity_func_ladder_81
+    400102: entity_func_ladder_82
+    400104: entity_func_ladder_83
+    400106: entity_func_ladder_84
+    400108: entity_func_ladder_85
+    400110: entity_func_ladder_86
+    400112: entity_func_movelinear_15
+    400114: entity_func_movelinear_2
+    400116: entity_func_movelinear_28
+    400118: entity_func_movelinear_34
+    400120: entity_func_movelinear_35
+    400122: entity_func_movelinear_58
+    400124: entity_func_rotating_22
+    400126: entity_func_rotating_36
+    400128: entity_func_rotating_54
+    400130: entity_func_rotating_56
+    400132: entity_func_rotating_57
+    400134: entity_func_rotating_66
+    400136: entity_func_water_analog_1
+    400138: entity_func_water_analog_10
+    400140: entity_func_water_analog_11
+    400142: entity_func_water_analog_12
+    400144: entity_func_water_analog_13
+    400146: entity_func_water_analog_29
+    400148: entity_func_water_analog_52
+    400150: entity_func_water_analog_63
+    400152: entity_func_water_analog_7
+    400154: entity_func_water_analog_8
+    400156: env_hudhint
+    400158: func_breakable
+    400160: func_brush
+    400162: func_brush 1
+    400164: func_brush 10
+    400166: func_brush 11
+    400168: func_brush 12
+    400170: func_brush 13
+    400172: func_brush 14
+    400174: func_brush 15
+    400176: func_brush 16
+    400178: func_brush 17
+    400180: func_brush 18
+    400182: func_brush 19
+    400184: func_brush 2
+    400186: func_brush 20
+    400188: func_brush 21
+    400190: func_brush 3
+    400192: func_brush 4
+    400194: func_brush 5
+    400196: func_brush 6
+    400198: func_brush 7
+    400200: func_brush 8
+    400202: func_brush 9
+    400204: func_button
+    400206: func_button 1
+    400208: func_button 2
+    400210: func_button 3
+    400212: func_button 4
+    400214: func_button 5
+    400216: func_button 6
+    400218: func_button 7
+    400220: func_button 8
+    400222: func_detail
+    400224: func_detail 1
+    400226: func_detail 2
+    400228: func_ladder
+    400230: func_ladder 1
+    400232: func_ladder 10
+    400234: func_ladder 11
+    400236: func_ladder 12
+    400238: func_ladder 13
+    400240: func_ladder 14
+    400242: func_ladder 15
+    400244: func_ladder 2
+    400246: func_ladder 3
+    400248: func_ladder 4
+    400250: func_ladder 5
+    400252: func_ladder 6
+    400254: func_ladder 7
+    400256: func_ladder 8
+    400258: func_ladder 9
+    400260: func_movelinear
+    400262: func_movelinear 1
+    400264: func_movelinear 2
+    400266: func_movelinear 3
+    400268: func_movelinear 4
+    400270: func_movelinear 5
+    400272: func_rotating
+    400274: func_rotating 1
+    400276: func_rotating 2
+    400278: func_rotating 3
+    400280: func_rotating 4
+    400282: func_rotating 5
+    400284: func_water_analog
+    400286: func_water_analog 1
+    400288: func_water_analog 2
+    400290: func_water_analog 3
+    400292: func_water_analog 4
+    400294: func_water_analog 5
+    400296: func_water_analog 6
+    400298: func_water_analog 7
+    400300: func_water_analog 8
+    400302: func_water_analog 9
+    400304: info_player_counterterrorist
+    400306: info_player_counterterrorist 1
+    400308: info_player_counterterrorist 10
+    400310: info_player_counterterrorist 11
+    400312: info_player_counterterrorist 12
+    400314: info_player_counterterrorist 13
+    400316: info_player_counterterrorist 14
+    400318: info_player_counterterrorist 15
+    400320: info_player_counterterrorist 16
+    400322: info_player_counterterrorist 17
+    400324: info_player_counterterrorist 18
+    400326: info_player_counterterrorist 19
+    400328: info_player_counterterrorist 2
+    400330: info_player_counterterrorist 20
+    400332: info_player_counterterrorist 3
+    400334: info_player_counterterrorist 4
+    400336: info_player_counterterrorist 5
+    400338: info_player_counterterrorist 6
+    400340: info_player_counterterrorist 7
+    400342: info_player_counterterrorist 8
+    400344: info_player_counterterrorist 9
+    400346: info_player_terrorist
+    400348: info_player_terrorist 1
+    400350: info_player_terrorist 10
+    400352: info_player_terrorist 11
+    400354: info_player_terrorist 12
+    400356: info_player_terrorist 13
+    400358: info_player_terrorist 14
+    400360: info_player_terrorist 15
+    400362: info_player_terrorist 16
+    400364: info_player_terrorist 17
+    400366: info_player_terrorist 18
+    400368: info_player_terrorist 19
+    400370: info_player_terrorist 2
+    400372: info_player_terrorist 20
+    400374: info_player_terrorist 3
+    400376: info_player_terrorist 4
+    400378: info_player_terrorist 5
+    400380: info_player_terrorist 6
+    400382: info_player_terrorist 7
+    400384: info_player_terrorist 8
+    400386: info_player_terrorist 9
+    400388: info_teleport_destination
+    400390: info_teleport_destination 1
+    400392: info_teleport_destination 2
+    400394: info_teleport_destination 3
+    400396: info_teleport_destination 4
+    400398: infodecal
+    400400: infodecal 1
+    400402: infodecal 2
+    400404: infodecal 3
+    400406: infodecal 4
+    400408: infodecal 5
+    400410: infodecal 6
+    400412: infodecal 7
+    400414: infodecal 8
+    400416: infodecal 9
+    400418: light
+    400420: light 1
+    400422: light 10
+    400424: light 11
+    400426: light 12
+    400428: light 13
+    400430: light 14
+    400432: light 15
+    400434: light 16
+    400436: light 17
+    400438: light 18
+    400440: light 19
+    400442: light 2
+    400444: light 20
+    400446: light 21
+    400448: light 3
+    400450: light 4
+    400452: light 5
+    400454: light 6
+    400456: light 7
+    400458: light 8
+    400460: light 9
+    400462: light_environment
+    400464: logic_auto
+    400466: logic_timer
+    400468: math_counter
+    400470: prop_physics
+    400472: prop_physics 1
+    400474: prop_physics 2
+    400476: prop_physics 3
+    400478: prop_physics 4
+    400480: prop_physics 5
+    400482: prop_static
+    400484: prop_static 1
+    400486: prop_static 10
+    400488: prop_static 11
+    400490: prop_static 12
+    400492: prop_static 13
+    400494: prop_static 14
+    400496: prop_static 15
+    400498: prop_static 16
+    400500: prop_static 17
+    400502: prop_static 18
+    400504: prop_static 19
+    400506: prop_static 2
+    400508: prop_static 20
+    400510: prop_static 21
+    400512: prop_static 22
+    400514: prop_static 23
+    400516: prop_static 24
+    400518: prop_static 25
+    400520: prop_static 26
+    400522: prop_static 3
+    400524: prop_static 4
+    400526: prop_static 5
+    400528: prop_static 6
+    400530: prop_static 7
+    400532: prop_static 8
+    400534: prop_static 9
+    400536: sky_camera
+    400538: trigger_hurt
+    400540: trigger_hurt 1
+    400542: trigger_multiple
+    400544: trigger_multiple 1
+    400546: trigger_multiple 2
+    400548: trigger_multiple 3
+    400550: trigger_teleport
+    400552: trigger_teleport 1
+    400554: trigger_teleport 2
+    400556: trigger_teleport 3
+    400558: trigger_teleport 4
+    400560: trigger_teleport 5
+    400562: trigger_teleport 6
+    400564: water_lod_control
+    400566: world
+    400568: worldbrushes
+    400570: //RootNode
+    2300000: entity_func_breakable_17
+    2300002: entity_func_brush_24
+    2300004: entity_func_brush_25
+    2300006: entity_func_brush_26
+    2300008: entity_func_brush_30
+    2300010: entity_func_brush_31
+    2300012: entity_func_brush_32
+    2300014: entity_func_brush_33
+    2300016: entity_func_brush_37
+    2300018: entity_func_brush_38
+    2300020: entity_func_brush_39
+    2300022: entity_func_brush_40
+    2300024: entity_func_brush_41
+    2300026: entity_func_brush_42
+    2300028: entity_func_brush_43
+    2300030: entity_func_brush_44
+    2300032: entity_func_brush_45
+    2300034: entity_func_brush_46
+    2300036: entity_func_brush_47
+    2300038: entity_func_brush_48
+    2300040: entity_func_brush_49
+    2300042: entity_func_brush_59
+    2300044: entity_func_brush_60
+    2300046: entity_func_button_16
+    2300048: entity_func_button_20
+    2300050: entity_func_button_23
+    2300052: entity_func_button_4
+    2300054: entity_func_button_50
+    2300056: entity_func_button_51
+    2300058: entity_func_button_64
+    2300060: entity_func_button_65
+    2300062: entity_func_button_9
+    2300064: entity_func_detail_68
+    2300066: entity_func_detail_69
+    2300068: entity_func_detail_70
+    2300070: entity_func_ladder_71
+    2300072: entity_func_ladder_72
+    2300074: entity_func_ladder_73
+    2300076: entity_func_ladder_74
+    2300078: entity_func_ladder_75
+    2300080: entity_func_ladder_76
+    2300082: entity_func_ladder_77
+    2300084: entity_func_ladder_78
+    2300086: entity_func_ladder_79
+    2300088: entity_func_ladder_80
+    2300090: entity_func_ladder_81
+    2300092: entity_func_ladder_82
+    2300094: entity_func_ladder_83
+    2300096: entity_func_ladder_84
+    2300098: entity_func_ladder_85
+    2300100: entity_func_ladder_86
+    2300102: entity_func_movelinear_15
+    2300104: entity_func_movelinear_2
+    2300106: entity_func_movelinear_28
+    2300108: entity_func_movelinear_34
+    2300110: entity_func_movelinear_35
+    2300112: entity_func_movelinear_58
+    2300114: entity_func_rotating_22
+    2300116: entity_func_rotating_36
+    2300118: entity_func_rotating_54
+    2300120: entity_func_rotating_56
+    2300122: entity_func_rotating_57
+    2300124: entity_func_rotating_66
+    2300126: entity_func_water_analog_1
+    2300128: entity_func_water_analog_10
+    2300130: entity_func_water_analog_11
+    2300132: entity_func_water_analog_12
+    2300134: entity_func_water_analog_13
+    2300136: entity_func_water_analog_29
+    2300138: entity_func_water_analog_52
+    2300140: entity_func_water_analog_63
+    2300142: entity_func_water_analog_7
+    2300144: entity_func_water_analog_8
+    2300146: worldbrushes
+    3300000: entity_func_breakable_17
+    3300002: entity_func_brush_24
+    3300004: entity_func_brush_25
+    3300006: entity_func_brush_26
+    3300008: entity_func_brush_30
+    3300010: entity_func_brush_31
+    3300012: entity_func_brush_32
+    3300014: entity_func_brush_33
+    3300016: entity_func_brush_37
+    3300018: entity_func_brush_38
+    3300020: entity_func_brush_39
+    3300022: entity_func_brush_40
+    3300024: entity_func_brush_41
+    3300026: entity_func_brush_42
+    3300028: entity_func_brush_43
+    3300030: entity_func_brush_44
+    3300032: entity_func_brush_45
+    3300034: entity_func_brush_46
+    3300036: entity_func_brush_47
+    3300038: entity_func_brush_48
+    3300040: entity_func_brush_49
+    3300042: entity_func_brush_59
+    3300044: entity_func_brush_60
+    3300046: entity_func_button_16
+    3300048: entity_func_button_20
+    3300050: entity_func_button_23
+    3300052: entity_func_button_4
+    3300054: entity_func_button_50
+    3300056: entity_func_button_51
+    3300058: entity_func_button_64
+    3300060: entity_func_button_65
+    3300062: entity_func_button_9
+    3300064: entity_func_detail_68
+    3300066: entity_func_detail_69
+    3300068: entity_func_detail_70
+    3300070: entity_func_ladder_71
+    3300072: entity_func_ladder_72
+    3300074: entity_func_ladder_73
+    3300076: entity_func_ladder_74
+    3300078: entity_func_ladder_75
+    3300080: entity_func_ladder_76
+    3300082: entity_func_ladder_77
+    3300084: entity_func_ladder_78
+    3300086: entity_func_ladder_79
+    3300088: entity_func_ladder_80
+    3300090: entity_func_ladder_81
+    3300092: entity_func_ladder_82
+    3300094: entity_func_ladder_83
+    3300096: entity_func_ladder_84
+    3300098: entity_func_ladder_85
+    3300100: entity_func_ladder_86
+    3300102: entity_func_movelinear_15
+    3300104: entity_func_movelinear_2
+    3300106: entity_func_movelinear_28
+    3300108: entity_func_movelinear_34
+    3300110: entity_func_movelinear_35
+    3300112: entity_func_movelinear_58
+    3300114: entity_func_rotating_22
+    3300116: entity_func_rotating_36
+    3300118: entity_func_rotating_54
+    3300120: entity_func_rotating_56
+    3300122: entity_func_rotating_57
+    3300124: entity_func_rotating_66
+    3300126: entity_func_water_analog_1
+    3300128: entity_func_water_analog_10
+    3300130: entity_func_water_analog_11
+    3300132: entity_func_water_analog_12
+    3300134: entity_func_water_analog_13
+    3300136: entity_func_water_analog_29
+    3300138: entity_func_water_analog_52
+    3300140: entity_func_water_analog_63
+    3300142: entity_func_water_analog_7
+    3300144: entity_func_water_analog_8
+    3300146: worldbrushes
+    4300000: worldbrushes
+    4300002: entity_func_water_analog_1
+    4300004: entity_func_movelinear_2
+    4300006: entity_func_button_4
+    4300008: entity_func_water_analog_7
+    4300010: entity_func_water_analog_8
+    4300012: entity_func_button_9
+    4300014: entity_func_water_analog_10
+    4300016: entity_func_water_analog_11
+    4300018: entity_func_water_analog_12
+    4300020: entity_func_water_analog_13
+    4300022: entity_func_movelinear_15
+    4300024: entity_func_button_16
+    4300026: entity_func_breakable_17
+    4300028: entity_func_button_20
+    4300030: entity_func_rotating_22
+    4300032: entity_func_button_23
+    4300034: entity_func_brush_24
+    4300036: entity_func_brush_25
+    4300038: entity_func_brush_26
+    4300040: entity_func_movelinear_28
+    4300042: entity_func_water_analog_29
+    4300044: entity_func_brush_30
+    4300046: entity_func_brush_31
+    4300048: entity_func_brush_32
+    4300050: entity_func_brush_33
+    4300052: entity_func_movelinear_34
+    4300054: entity_func_movelinear_35
+    4300056: entity_func_rotating_36
+    4300058: entity_func_brush_37
+    4300060: entity_func_brush_38
+    4300062: entity_func_brush_39
+    4300064: entity_func_brush_40
+    4300066: entity_func_brush_41
+    4300068: entity_func_brush_42
+    4300070: entity_func_brush_43
+    4300072: entity_func_brush_44
+    4300074: entity_func_brush_45
+    4300076: entity_func_brush_46
+    4300078: entity_func_brush_47
+    4300080: entity_func_brush_48
+    4300082: entity_func_brush_49
+    4300084: entity_func_button_50
+    4300086: entity_func_button_51
+    4300088: entity_func_water_analog_52
+    4300090: entity_func_rotating_54
+    4300092: entity_func_rotating_56
+    4300094: entity_func_rotating_57
+    4300096: entity_func_movelinear_58
+    4300098: entity_func_brush_59
+    4300100: entity_func_brush_60
+    4300102: entity_func_water_analog_63
+    4300104: entity_func_button_64
+    4300106: entity_func_button_65
+    4300108: entity_func_rotating_66
+    4300110: entity_func_detail_68
+    4300112: entity_func_detail_69
+    4300114: entity_func_detail_70
+    4300116: entity_func_ladder_71
+    4300118: entity_func_ladder_72
+    4300120: entity_func_ladder_73
+    4300122: entity_func_ladder_74
+    4300124: entity_func_ladder_75
+    4300126: entity_func_ladder_76
+    4300128: entity_func_ladder_77
+    4300130: entity_func_ladder_78
+    4300132: entity_func_ladder_79
+    4300134: entity_func_ladder_80
+    4300136: entity_func_ladder_81
+    4300138: entity_func_ladder_82
+    4300140: entity_func_ladder_83
+    4300142: entity_func_ladder_84
+    4300144: entity_func_ladder_85
+    4300146: entity_func_ladder_86
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: No Name
+    second: {fileID: 2100000, guid: 1605b7f4c66b9cc4084894bd543fcc3a, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: brick_brickfloor001a
+    second: {fileID: 2100000, guid: 916b2f685711e304b8a5c6e02d6aecd7, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: brick_brickwall014e
+    second: {fileID: 2100000, guid: f364ea2d63ac90844b089d06c4953b3c, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: brick_brickwall014f
+    second: {fileID: 2100000, guid: d69591a4ff5c00b418114014b09341d7, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: brick_brickwall031b
+    second: {fileID: 2100000, guid: 9784204d10eb0d94f9161773fd995a53, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: brick_brickwall045c
+    second: {fileID: 2100000, guid: 83f823604b195554ebc37e7982db252e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: brick_brickwall045k
+    second: {fileID: 2100000, guid: 758e089517ced6f469fc5330e584cde0, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: brick_brickwall048b
+    second: {fileID: 2100000, guid: 51bfc9c2d76ed2b41a5ac9212e35ab44, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: building_template_roof_template001a
+    second: {fileID: 2100000, guid: 8c39310630bb99046ae923221ad69bcf, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: carpet_offflra
+    second: {fileID: 2100000, guid: 0f08230ab23cbe240b9c7b66cca9ae71, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: carpet_offflrb
+    second: {fileID: 2100000, guid: 84e96feb246f6554a9739e344adf6e87, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: concrete_blendconcretegravel001a
+    second: {fileID: 2100000, guid: ffe06aeac3cdb6245b6c899763033e58, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: concrete_concreteceiling003a
+    second: {fileID: 2100000, guid: 5d440eb97b9e9a54cbff37ebcaa72d96, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: concrete_concretefloor001a
+    second: {fileID: 2100000, guid: 5d6cdcf79f270c64ba71e1f354440808, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: concrete_concretefloor005a
+    second: {fileID: 2100000, guid: 2a4ac15942af0374ca1ae522d4044bd9, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: concrete_concretefloor008a
+    second: {fileID: 2100000, guid: 615ebbce369e8c24baa1eb21cf2d4a61, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: concrete_concretefloor011a
+    second: {fileID: 2100000, guid: 6f8ecfd9f2aa8b84a899bbae3720be22, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: concrete_concretefloor011a_c17
+    second: {fileID: 2100000, guid: 6f8ecfd9f2aa8b84a899bbae3720be22, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: concrete_concretefloor014a
+    second: {fileID: 2100000, guid: aa1c06c30d14a2946ae811a7ce9a0596, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: concrete_concretefloor015a
+    second: {fileID: 2100000, guid: cfc8900ebc4bd7649ba92a3eb805eb56, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: concrete_concretefloor031a
+    second: {fileID: 2100000, guid: f4badf98241bf104aa48bd7fd879d486, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: concrete_concretefloor033k_c17
+    second: {fileID: 2100000, guid: 63fcfe3d545ff8a43a979c2187255642, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: concrete_concretefloor033y
+    second: {fileID: 2100000, guid: b5c7a808db92fc24a80f70f5496db537, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: concrete_concretewall013b
+    second: {fileID: 2100000, guid: 7c2af5854144cb742b3292919152f9dc, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: concrete_concretewall026a
+    second: {fileID: 2100000, guid: c4c627d234938004e92f99f407a0e569, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: concrete_concretewall026b
+    second: {fileID: 2100000, guid: 083c7a02a57b03b4bb057b5991966fcb, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: concrete_concretewall026c
+    second: {fileID: 2100000, guid: 979e5b37906ba414e8253285b9b7fa38, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: concrete_concretewall026e
+    second: {fileID: 2100000, guid: cf3dc550f0cea94428dc9bf140339f5a, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: concrete_concretewall046c
+    second: {fileID: 2100000, guid: 192a23a097e480e4aa2786cac5e12cdb, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: concrete_milgrate001
+    second: {fileID: 2100000, guid: a9ec4c4764ffa0540911ab7c2e851baf, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: cs_havana_ceiling02
+    second: {fileID: 2100000, guid: 4b2d204c0b48c5c4fb14a60e0db3c164, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: cs_havana_ground01grass
+    second: {fileID: 2100000, guid: bff4bf03beafc0f4ba37dad293765a1d, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: cs_havana_metal02
+    second: {fileID: 2100000, guid: 20eb6b2239f37b846a876c2e26af0132, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: cs_havana_woodm
+    second: {fileID: 2100000, guid: 53b6f38826225f24a8a3b30fc7b1b76e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: cs_italy_carpet-sn03
+    second: {fileID: 2100000, guid: 85916ffda897eb4478cb329a1de8d193, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: cs_italy_ceiling01
+    second: {fileID: 2100000, guid: 2d9c85a91c7413a458711d513cc36770, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: cs_italy_pwood1
+    second: {fileID: 2100000, guid: 3df458f6b0f839848bda6f6da323bde1, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: cs_italy_stonewall01
+    second: {fileID: 2100000, guid: 44ae060650f2f8f40a865060d1ed833b, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: cs_italy_wallpaper02a
+    second: {fileID: 2100000, guid: 89625303f22c0c74bb3ee36310032641, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: cs_italy_wallpaper1
+    second: {fileID: 2100000, guid: d4b6e56ea577af044ba19953e4359b85, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: de_chateau_woodm
+    second: {fileID: 2100000, guid: 53b6f38826225f24a8a3b30fc7b1b76e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: de_nuke_nuke_metalfloor_01
+    second: {fileID: 2100000, guid: e1b414234af8e3747b1a28116d05d1a7, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: de_nuke_nuke_metalgrate_01
+    second: {fileID: 2100000, guid: 37a4694188f45e04b953dedd79f14020, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: de_nuke_nukwater_movingplane_dx70
+    second: {fileID: 2100000, guid: 1d88968aec2dbf740b64714bc2477293, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: de_piranesi_pi_road
+    second: {fileID: 2100000, guid: 2d918dbaae7e5ec4da07fb97d0d65207, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: de_prodigy_metal02
+    second: {fileID: 2100000, guid: 20eb6b2239f37b846a876c2e26af0132, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: de_tides_tides_dirt
+    second: {fileID: 2100000, guid: d4d9e38e52b6ab446baa8e9b54bf017e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: de_train_train_metalceiling_01
+    second: {fileID: 2100000, guid: 65dde0f18c4d4ae4cb7da6bab83bd913, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: de_train_train_security_decal_01
+    second: {fileID: 2100000, guid: e19cc2e179859bf46a2a7b2b9739d0c8, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: dev_dev_brickwall012e
+    second: {fileID: 2100000, guid: 4763cbf09bb8fbe4f9e56f1b0734675c, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: dev_dev_hazzardstripe01a
+    second: {fileID: 2100000, guid: 17753f234961df44e9d88cf3a3a747b7, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: effects_black
+    second: {fileID: 2100000, guid: 02261f689890fe348aab619a845aa7e1, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: glass_combineglass001a
+    second: {fileID: 2100000, guid: 47b5b61c14105944eb370e5e92689333, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: halflife_black
+    second: {fileID: 2100000, guid: 02261f689890fe348aab619a845aa7e1, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: halflife_drkmtlt_ceil01b
+    second: {fileID: 2100000, guid: 418bded462d461e439723c2678a69930, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: halflife_{grate2
+    second: {fileID: 2100000, guid: 7687a9c8838144a4197325f948efb339, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: lights_white001
+    second: {fileID: 2100000, guid: 1953d11604c543644a8d5ca6c511ea6d, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: liquids_aztecwater
+    second: {fileID: 2100000, guid: fccdc0917a645c34bb63bfd689c9184f, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: metal_metaldoor032c
+    second: {fileID: 2100000, guid: 33c36fdae8221ee40b33d1797d7ba284, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: metal_metaldoor046a
+    second: {fileID: 2100000, guid: 86c5860f6a2671e419ffeaa1a1a1487d, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: metal_metalgrate013b
+    second: {fileID: 2100000, guid: 63c78f6842953af42b6baac056d86ff8, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: metal_metalladder001a
+    second: {fileID: 2100000, guid: 9900bcce79c55014180119173b708ceb, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: metal_metalroof006a
+    second: {fileID: 2100000, guid: 296e1d33d5a83be40ac6919ab56ecdc4, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: models_props_c17_metaltruss012b
+    second: {fileID: 2100000, guid: e1d3bd2fcdbf523459e2e4f3b47e5363, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: nature_gravelfloor004a_c17
+    second: {fileID: 2100000, guid: ca79625e7767a02458a4452b88103461, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: plaster_plasterwall013d
+    second: {fileID: 2100000, guid: b06ca1300fe98c0429d2077f96395fe8, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: plaster_plasterwall036b
+    second: {fileID: 2100000, guid: 3276d6a4de0b1424da0860f2cc5008b0, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: props_acousticceiling002a
+    second: {fileID: 2100000, guid: c622b96eb3fde9a4e890e7de8108b98b, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: props_carpetfloor001a
+    second: {fileID: 2100000, guid: e8613bad46e582940965c259fb6ef9a0, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: props_carpetfloor003a
+    second: {fileID: 2100000, guid: 6e283d7bd656410439a9033400f09d41, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: props_doorbutton002a
+    second: {fileID: 2100000, guid: fb82c10b8b851984ab1e68b51fb58f5c, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: props_metalcrate002d
+    second: {fileID: 2100000, guid: e36c6c1353d70f74ea3b135582ff6272, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: props_metalduct003a
+    second: {fileID: 2100000, guid: 389ba0c00b9308142ac2ca7a69470eb6, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: props_metalstainless01
+    second: {fileID: 2100000, guid: cc5136caa1127a1438b5c77df9309ef3, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: props_plasticexitsign001b
+    second: {fileID: 2100000, guid: 4021bd526d80252459be36532e3ac58f, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: props_rubberfloor004a
+    second: {fileID: 2100000, guid: 8543bf0d39a04b34f8a47dbbccdef01a, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: stone_stonecolumn001a
+    second: {fileID: 2100000, guid: cea9d1db3a0266745ba7bb843da67fc5, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: tile_tilefloor021a
+    second: {fileID: 2100000, guid: 937aee815084777439596a46e83051eb, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: tools_toolsblack
+    second: {fileID: 2100000, guid: 45c0be9515b287242a34a1e41d46a52c, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: vehicle_metaltrain001c
+    second: {fileID: 2100000, guid: c5ab80bceb2df5d45a2834dbe588577d, type: 2}
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 0
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 0
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
