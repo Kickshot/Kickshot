@@ -726,12 +726,8 @@ public class SourcePlayer : MonoBehaviour {
         Vector3 flatvel = new Vector3(velocity.x, 0, velocity.z);
         float check = Vector3.Dot(Vector3.Normalize(flatvel), wishdir);
 
-<<<<<<< HEAD
-        if (Mathf.Abs(check) < 0.75f)
-        { // Trying to air-strafe, do air-strafey stuff.
-=======
+
         if (Mathf.Abs (check) < 0.75f) { // Trying to air-strafe, do air-strafey stuff.
->>>>>>> e7e2db9e93f0aebe5d28cd3e63a076c504477657
             // Apply air breaks, this keeps our turning really REALLY **REALLY** sharp.
             // It also basically enables or disables surfing. Turning it off makes it feel really bad.
             float airbreak = 1f / Time.deltaTime;
@@ -744,13 +740,8 @@ public class SourcePlayer : MonoBehaviour {
             // Then calculate how much we should air-strafe.
             float airStrafe = (1f - Mathf.Abs(check)) * airStrafeAccelerate;
             // We don't want to accelerate just because they pressed A or D, we need them to move their mouse a little also.
-<<<<<<< HEAD
             float wishStrafeSpeed = (Mathf.Abs(check) + 0.25f) / 1.25f;
             Accelerate(wishdir, airStrafe, wishStrafeSpeed * flySpeed);
-=======
-            float wishStrafeSpeed = (Mathf.Abs (check) + 0.25f) / 1.25f;
-            Accelerate (wishdir, airStrafe, wishStrafeSpeed * flySpeed);
->>>>>>> e7e2db9e93f0aebe5d28cd3e63a076c504477657
 
             // The stuff commented out here is used to cheat and give the player speed if they airstrafe
             // The player already recieves speed, but that bonus decreases naturally as you hit a certain threshold.
