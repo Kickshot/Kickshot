@@ -918,12 +918,15 @@ public class SourcePlayer : MonoBehaviour {
 
 		foreach(ContactPoint point in contacts) {
 			// TODO Mutiple collision points.
-            if (point.hitNormal.y == 0f) {
+			Debug.Log (point.hitNormal.y);
+			if (point.hitNormal.y < 0.1f && point.hitNormal.y > -0.1f) {
+				
                 wallEntity = point.obj;
                 wallNormal = point.hitNormal;
             }
 		}
 
+		//Debug.Log (Vector3.Dot (wallNormal, transform.forward));
 		if (Vector3.Dot (wallNormal, transform.forward) < -.75 && !wallRunning)
 		{
 			wallEntity = null;
