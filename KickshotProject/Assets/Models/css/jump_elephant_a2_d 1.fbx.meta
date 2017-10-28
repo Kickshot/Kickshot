@@ -1,0 +1,1808 @@
+fileFormatVersion: 2
+guid: f085027adb376ea42858ea591f7d5fb1
+timeCreated: 1509226511
+licenseType: Free
+ModelImporter:
+  serializedVersion: 22
+  fileIDToRecycleName:
+    100000: entities
+    100002: entity_func_areaportal_130
+    100004: entity_func_areaportal_131
+    100006: entity_func_areaportal_132
+    100008: entity_func_areaportal_136
+    100010: entity_func_areaportal_137
+    100012: entity_func_areaportal_186
+    100014: entity_func_areaportal_187
+    100016: entity_func_brush_1
+    100018: entity_func_brush_10
+    100020: entity_func_brush_100
+    100022: entity_func_brush_11
+    100024: entity_func_brush_12
+    100026: entity_func_brush_13
+    100028: entity_func_brush_14
+    100030: entity_func_brush_15
+    100032: entity_func_brush_16
+    100034: entity_func_brush_17
+    100036: entity_func_brush_18
+    100038: entity_func_brush_19
+    100040: entity_func_brush_2
+    100042: entity_func_brush_20
+    100044: entity_func_brush_21
+    100046: entity_func_brush_22
+    100048: entity_func_brush_23
+    100050: entity_func_brush_24
+    100052: entity_func_brush_25
+    100054: entity_func_brush_26
+    100056: entity_func_brush_27
+    100058: entity_func_brush_28
+    100060: entity_func_brush_29
+    100062: entity_func_brush_3
+    100064: entity_func_brush_30
+    100066: entity_func_brush_31
+    100068: entity_func_brush_32
+    100070: entity_func_brush_33
+    100072: entity_func_brush_34
+    100074: entity_func_brush_35
+    100076: entity_func_brush_36
+    100078: entity_func_brush_37
+    100080: entity_func_brush_38
+    100082: entity_func_brush_39
+    100084: entity_func_brush_4
+    100086: entity_func_brush_40
+    100088: entity_func_brush_41
+    100090: entity_func_brush_42
+    100092: entity_func_brush_43
+    100094: entity_func_brush_44
+    100096: entity_func_brush_45
+    100098: entity_func_brush_46
+    100100: entity_func_brush_47
+    100102: entity_func_brush_48
+    100104: entity_func_brush_49
+    100106: entity_func_brush_5
+    100108: entity_func_brush_50
+    100110: entity_func_brush_51
+    100112: entity_func_brush_52
+    100114: entity_func_brush_53
+    100116: entity_func_brush_54
+    100118: entity_func_brush_55
+    100120: entity_func_brush_56
+    100122: entity_func_brush_57
+    100124: entity_func_brush_58
+    100126: entity_func_brush_59
+    100128: entity_func_brush_6
+    100130: entity_func_brush_60
+    100132: entity_func_brush_61
+    100134: entity_func_brush_62
+    100136: entity_func_brush_63
+    100138: entity_func_brush_64
+    100140: entity_func_brush_65
+    100142: entity_func_brush_66
+    100144: entity_func_brush_67
+    100146: entity_func_brush_68
+    100148: entity_func_brush_69
+    100150: entity_func_brush_7
+    100152: entity_func_brush_70
+    100154: entity_func_brush_71
+    100156: entity_func_brush_72
+    100158: entity_func_brush_73
+    100160: entity_func_brush_74
+    100162: entity_func_brush_75
+    100164: entity_func_brush_76
+    100166: entity_func_brush_77
+    100168: entity_func_brush_78
+    100170: entity_func_brush_79
+    100172: entity_func_brush_8
+    100174: entity_func_brush_80
+    100176: entity_func_brush_81
+    100178: entity_func_brush_82
+    100180: entity_func_brush_83
+    100182: entity_func_brush_84
+    100184: entity_func_brush_85
+    100186: entity_func_brush_86
+    100188: entity_func_brush_87
+    100190: entity_func_brush_88
+    100192: entity_func_brush_89
+    100194: entity_func_brush_9
+    100196: entity_func_brush_90
+    100198: entity_func_brush_91
+    100200: entity_func_brush_92
+    100202: entity_func_brush_93
+    100204: entity_func_brush_94
+    100206: entity_func_brush_95
+    100208: entity_func_brush_96
+    100210: entity_func_brush_97
+    100212: entity_func_brush_98
+    100214: entity_func_brush_99
+    100216: entity_func_detail_189
+    100218: entity_func_detail_190
+    100220: entity_func_detail_191
+    100222: entity_func_detail_192
+    100224: entity_func_detail_193
+    100226: entity_func_detail_194
+    100228: entity_func_detail_195
+    100230: entity_func_detail_196
+    100232: entity_func_detail_197
+    100234: entity_func_detail_198
+    100236: entity_func_detail_199
+    100238: entity_func_detail_200
+    100240: entity_func_detail_201
+    100242: entity_func_detail_202
+    100244: entity_func_detail_203
+    100246: entity_func_detail_204
+    100248: entity_func_detail_205
+    100250: entity_func_detail_206
+    100252: entity_func_detail_207
+    100254: entity_func_detail_208
+    100256: entity_func_detail_209
+    100258: entity_func_detail_210
+    100260: entity_func_detail_211
+    100262: entity_func_detail_212
+    100264: entity_func_detail_213
+    100266: entity_func_illusionary_101
+    100268: entity_func_ladder_214
+    100270: entity_func_ladder_215
+    100272: entity_func_ladder_216
+    100274: entity_func_ladder_217
+    100276: entity_func_ladder_218
+    100278: entity_func_ladder_219
+    100280: entity_func_ladder_220
+    100282: entity_func_ladder_221
+    100284: entity_func_ladder_222
+    100286: entity_func_ladder_223
+    100288: entity_func_ladder_224
+    100290: entity_func_ladder_225
+    100292: entity_func_ladder_226
+    100294: entity_func_ladder_227
+    100296: entity_func_ladder_228
+    100298: entity_func_ladder_229
+    100300: entity_func_ladder_230
+    100302: entity_func_ladder_231
+    100304: entity_func_ladder_232
+    100306: entity_trigger_teleport_184
+    100308: env_fog_controller
+    100310: env_sun
+    100312: env_tonemap_controller
+    100314: func_areaportal
+    100316: func_areaportal 1
+    100318: func_areaportal 2
+    100320: func_areaportal 3
+    100322: func_areaportal 4
+    100324: func_areaportal 5
+    100326: func_areaportal 6
+    100328: func_brush
+    100330: func_brush 1
+    100332: func_brush 10
+    100334: func_brush 11
+    100336: func_brush 12
+    100338: func_brush 13
+    100340: func_brush 14
+    100342: func_brush 15
+    100344: func_brush 16
+    100346: func_brush 17
+    100348: func_brush 18
+    100350: func_brush 19
+    100352: func_brush 2
+    100354: func_brush 20
+    100356: func_brush 21
+    100358: func_brush 22
+    100360: func_brush 23
+    100362: func_brush 24
+    100364: func_brush 25
+    100366: func_brush 26
+    100368: func_brush 27
+    100370: func_brush 28
+    100372: func_brush 29
+    100374: func_brush 3
+    100376: func_brush 30
+    100378: func_brush 31
+    100380: func_brush 32
+    100382: func_brush 33
+    100384: func_brush 34
+    100386: func_brush 35
+    100388: func_brush 36
+    100390: func_brush 37
+    100392: func_brush 38
+    100394: func_brush 39
+    100396: func_brush 4
+    100398: func_brush 40
+    100400: func_brush 41
+    100402: func_brush 42
+    100404: func_brush 43
+    100406: func_brush 44
+    100408: func_brush 45
+    100410: func_brush 46
+    100412: func_brush 47
+    100414: func_brush 48
+    100416: func_brush 49
+    100418: func_brush 5
+    100420: func_brush 50
+    100422: func_brush 51
+    100424: func_brush 52
+    100426: func_brush 53
+    100428: func_brush 54
+    100430: func_brush 55
+    100432: func_brush 56
+    100434: func_brush 57
+    100436: func_brush 58
+    100438: func_brush 59
+    100440: func_brush 6
+    100442: func_brush 60
+    100444: func_brush 61
+    100446: func_brush 62
+    100448: func_brush 63
+    100450: func_brush 64
+    100452: func_brush 65
+    100454: func_brush 66
+    100456: func_brush 67
+    100458: func_brush 68
+    100460: func_brush 69
+    100462: func_brush 7
+    100464: func_brush 70
+    100466: func_brush 71
+    100468: func_brush 72
+    100470: func_brush 73
+    100472: func_brush 74
+    100474: func_brush 75
+    100476: func_brush 76
+    100478: func_brush 77
+    100480: func_brush 78
+    100482: func_brush 79
+    100484: func_brush 8
+    100486: func_brush 80
+    100488: func_brush 81
+    100490: func_brush 82
+    100492: func_brush 83
+    100494: func_brush 84
+    100496: func_brush 85
+    100498: func_brush 86
+    100500: func_brush 87
+    100502: func_brush 88
+    100504: func_brush 89
+    100506: func_brush 9
+    100508: func_brush 90
+    100510: func_brush 91
+    100512: func_brush 92
+    100514: func_brush 93
+    100516: func_brush 94
+    100518: func_brush 95
+    100520: func_brush 96
+    100522: func_brush 97
+    100524: func_brush 98
+    100526: func_brush 99
+    100528: func_detail
+    100530: func_detail 1
+    100532: func_detail 10
+    100534: func_detail 11
+    100536: func_detail 12
+    100538: func_detail 13
+    100540: func_detail 14
+    100542: func_detail 15
+    100544: func_detail 16
+    100546: func_detail 17
+    100548: func_detail 18
+    100550: func_detail 19
+    100552: func_detail 2
+    100554: func_detail 20
+    100556: func_detail 21
+    100558: func_detail 22
+    100560: func_detail 23
+    100562: func_detail 24
+    100564: func_detail 3
+    100566: func_detail 4
+    100568: func_detail 5
+    100570: func_detail 6
+    100572: func_detail 7
+    100574: func_detail 8
+    100576: func_detail 9
+    100578: func_dustmotes
+    100580: func_dustmotes 1
+    100582: func_dustmotes 2
+    100584: func_dustmotes 3
+    100586: func_dustmotes 4
+    100588: func_dustmotes 5
+    100590: func_dustmotes 6
+    100592: func_illusionary
+    100594: func_ladder
+    100596: func_ladder 1
+    100598: func_ladder 10
+    100600: func_ladder 11
+    100602: func_ladder 12
+    100604: func_ladder 13
+    100606: func_ladder 14
+    100608: func_ladder 15
+    100610: func_ladder 16
+    100612: func_ladder 17
+    100614: func_ladder 18
+    100616: func_ladder 2
+    100618: func_ladder 3
+    100620: func_ladder 4
+    100622: func_ladder 5
+    100624: func_ladder 6
+    100626: func_ladder 7
+    100628: func_ladder 8
+    100630: func_ladder 9
+    100632: func_nogrenades
+    100634: func_nogrenades 1
+    100636: func_nogrenades 10
+    100638: func_nogrenades 11
+    100640: func_nogrenades 12
+    100642: func_nogrenades 13
+    100644: func_nogrenades 14
+    100646: func_nogrenades 15
+    100648: func_nogrenades 16
+    100650: func_nogrenades 17
+    100652: func_nogrenades 18
+    100654: func_nogrenades 19
+    100656: func_nogrenades 2
+    100658: func_nogrenades 3
+    100660: func_nogrenades 4
+    100662: func_nogrenades 5
+    100664: func_nogrenades 6
+    100666: func_nogrenades 7
+    100668: func_nogrenades 8
+    100670: func_nogrenades 9
+    100672: func_regenerate
+    100674: game_text
+    100676: game_text 1
+    100678: info_observer_point
+    100680: info_player_teamspawn
+    100682: info_teleport_destination
+    100684: info_teleport_destination 1
+    100686: info_teleport_destination 10
+    100688: info_teleport_destination 11
+    100690: info_teleport_destination 12
+    100692: info_teleport_destination 13
+    100694: info_teleport_destination 2
+    100696: info_teleport_destination 3
+    100698: info_teleport_destination 4
+    100700: info_teleport_destination 5
+    100702: info_teleport_destination 6
+    100704: info_teleport_destination 7
+    100706: info_teleport_destination 8
+    100708: info_teleport_destination 9
+    100710: //RootNode
+    100712: light
+    100714: light 1
+    100716: light 10
+    100718: light 11
+    100720: light 12
+    100722: light 13
+    100724: light 14
+    100726: light 15
+    100728: light 16
+    100730: light 17
+    100732: light 18
+    100734: light 19
+    100736: light 2
+    100738: light 20
+    100740: light 21
+    100742: light 22
+    100744: light 3
+    100746: light 4
+    100748: light 5
+    100750: light 6
+    100752: light 7
+    100754: light 8
+    100756: light 9
+    100758: light_environment
+    100760: logic_auto
+    100762: logic_case
+    100764: logic_case 1
+    100766: logic_case 2
+    100768: logic_case 3
+    100770: logic_case 4
+    100772: logic_relay
+    100774: logic_relay 1
+    100776: logic_relay 2
+    100778: logic_relay 3
+    100780: logic_relay 4
+    100782: logic_relay 5
+    100784: logic_relay 6
+    100786: logic_relay 7
+    100788: logic_timer
+    100790: logic_timer 1
+    100792: logic_timer 2
+    100794: logic_timer 3
+    100796: math_counter
+    100798: math_counter 1
+    100800: math_counter 2
+    100802: math_counter 3
+    100804: math_counter 4
+    100806: prop_dynamic
+    100808: prop_dynamic 1
+    100810: prop_dynamic 2
+    100812: prop_dynamic 3
+    100814: prop_static
+    100816: prop_static 1
+    100818: prop_static 10
+    100820: prop_static 11
+    100822: prop_static 12
+    100824: prop_static 13
+    100826: prop_static 14
+    100828: prop_static 15
+    100830: prop_static 16
+    100832: prop_static 17
+    100834: prop_static 18
+    100836: prop_static 19
+    100838: prop_static 2
+    100840: prop_static 20
+    100842: prop_static 21
+    100844: prop_static 22
+    100846: prop_static 23
+    100848: prop_static 24
+    100850: prop_static 25
+    100852: prop_static 26
+    100854: prop_static 27
+    100856: prop_static 28
+    100858: prop_static 29
+    100860: prop_static 3
+    100862: prop_static 30
+    100864: prop_static 31
+    100866: prop_static 32
+    100868: prop_static 33
+    100870: prop_static 34
+    100872: prop_static 35
+    100874: prop_static 36
+    100876: prop_static 37
+    100878: prop_static 38
+    100880: prop_static 39
+    100882: prop_static 4
+    100884: prop_static 40
+    100886: prop_static 41
+    100888: prop_static 42
+    100890: prop_static 43
+    100892: prop_static 44
+    100894: prop_static 45
+    100896: prop_static 46
+    100898: prop_static 47
+    100900: prop_static 48
+    100902: prop_static 49
+    100904: prop_static 5
+    100906: prop_static 50
+    100908: prop_static 51
+    100910: prop_static 52
+    100912: prop_static 6
+    100914: prop_static 7
+    100916: prop_static 8
+    100918: prop_static 9
+    100920: shadow_control
+    100922: team_control_point
+    100924: team_control_point_master
+    100926: trigger_capture_area
+    100928: trigger_hurt
+    100930: trigger_multiple
+    100932: trigger_multiple 1
+    100934: trigger_multiple 2
+    100936: trigger_multiple 3
+    100938: trigger_multiple 4
+    100940: trigger_teleport
+    100942: trigger_teleport 1
+    100944: trigger_teleport 10
+    100946: trigger_teleport 11
+    100948: trigger_teleport 12
+    100950: trigger_teleport 13
+    100952: trigger_teleport 14
+    100954: trigger_teleport 15
+    100956: trigger_teleport 16
+    100958: trigger_teleport 17
+    100960: trigger_teleport 18
+    100962: trigger_teleport 19
+    100964: trigger_teleport 2
+    100966: trigger_teleport 20
+    100968: trigger_teleport 21
+    100970: trigger_teleport 22
+    100972: trigger_teleport 23
+    100974: trigger_teleport 24
+    100976: trigger_teleport 25
+    100978: trigger_teleport 26
+    100980: trigger_teleport 27
+    100982: trigger_teleport 28
+    100984: trigger_teleport 29
+    100986: trigger_teleport 3
+    100988: trigger_teleport 30
+    100990: trigger_teleport 31
+    100992: trigger_teleport 32
+    100994: trigger_teleport 33
+    100996: trigger_teleport 34
+    100998: trigger_teleport 35
+    101000: trigger_teleport 36
+    101002: trigger_teleport 37
+    101004: trigger_teleport 38
+    101006: trigger_teleport 39
+    101008: trigger_teleport 4
+    101010: trigger_teleport 40
+    101012: trigger_teleport 41
+    101014: trigger_teleport 42
+    101016: trigger_teleport 43
+    101018: trigger_teleport 44
+    101020: trigger_teleport 5
+    101022: trigger_teleport 6
+    101024: trigger_teleport 7
+    101026: trigger_teleport 8
+    101028: trigger_teleport 9
+    101030: water_lod_control
+    101032: world
+    101034: worldbrushes
+    400000: entities
+    400002: entity_func_areaportal_130
+    400004: entity_func_areaportal_131
+    400006: entity_func_areaportal_132
+    400008: entity_func_areaportal_136
+    400010: entity_func_areaportal_137
+    400012: entity_func_areaportal_186
+    400014: entity_func_areaportal_187
+    400016: entity_func_brush_1
+    400018: entity_func_brush_10
+    400020: entity_func_brush_100
+    400022: entity_func_brush_11
+    400024: entity_func_brush_12
+    400026: entity_func_brush_13
+    400028: entity_func_brush_14
+    400030: entity_func_brush_15
+    400032: entity_func_brush_16
+    400034: entity_func_brush_17
+    400036: entity_func_brush_18
+    400038: entity_func_brush_19
+    400040: entity_func_brush_2
+    400042: entity_func_brush_20
+    400044: entity_func_brush_21
+    400046: entity_func_brush_22
+    400048: entity_func_brush_23
+    400050: entity_func_brush_24
+    400052: entity_func_brush_25
+    400054: entity_func_brush_26
+    400056: entity_func_brush_27
+    400058: entity_func_brush_28
+    400060: entity_func_brush_29
+    400062: entity_func_brush_3
+    400064: entity_func_brush_30
+    400066: entity_func_brush_31
+    400068: entity_func_brush_32
+    400070: entity_func_brush_33
+    400072: entity_func_brush_34
+    400074: entity_func_brush_35
+    400076: entity_func_brush_36
+    400078: entity_func_brush_37
+    400080: entity_func_brush_38
+    400082: entity_func_brush_39
+    400084: entity_func_brush_4
+    400086: entity_func_brush_40
+    400088: entity_func_brush_41
+    400090: entity_func_brush_42
+    400092: entity_func_brush_43
+    400094: entity_func_brush_44
+    400096: entity_func_brush_45
+    400098: entity_func_brush_46
+    400100: entity_func_brush_47
+    400102: entity_func_brush_48
+    400104: entity_func_brush_49
+    400106: entity_func_brush_5
+    400108: entity_func_brush_50
+    400110: entity_func_brush_51
+    400112: entity_func_brush_52
+    400114: entity_func_brush_53
+    400116: entity_func_brush_54
+    400118: entity_func_brush_55
+    400120: entity_func_brush_56
+    400122: entity_func_brush_57
+    400124: entity_func_brush_58
+    400126: entity_func_brush_59
+    400128: entity_func_brush_6
+    400130: entity_func_brush_60
+    400132: entity_func_brush_61
+    400134: entity_func_brush_62
+    400136: entity_func_brush_63
+    400138: entity_func_brush_64
+    400140: entity_func_brush_65
+    400142: entity_func_brush_66
+    400144: entity_func_brush_67
+    400146: entity_func_brush_68
+    400148: entity_func_brush_69
+    400150: entity_func_brush_7
+    400152: entity_func_brush_70
+    400154: entity_func_brush_71
+    400156: entity_func_brush_72
+    400158: entity_func_brush_73
+    400160: entity_func_brush_74
+    400162: entity_func_brush_75
+    400164: entity_func_brush_76
+    400166: entity_func_brush_77
+    400168: entity_func_brush_78
+    400170: entity_func_brush_79
+    400172: entity_func_brush_8
+    400174: entity_func_brush_80
+    400176: entity_func_brush_81
+    400178: entity_func_brush_82
+    400180: entity_func_brush_83
+    400182: entity_func_brush_84
+    400184: entity_func_brush_85
+    400186: entity_func_brush_86
+    400188: entity_func_brush_87
+    400190: entity_func_brush_88
+    400192: entity_func_brush_89
+    400194: entity_func_brush_9
+    400196: entity_func_brush_90
+    400198: entity_func_brush_91
+    400200: entity_func_brush_92
+    400202: entity_func_brush_93
+    400204: entity_func_brush_94
+    400206: entity_func_brush_95
+    400208: entity_func_brush_96
+    400210: entity_func_brush_97
+    400212: entity_func_brush_98
+    400214: entity_func_brush_99
+    400216: entity_func_detail_189
+    400218: entity_func_detail_190
+    400220: entity_func_detail_191
+    400222: entity_func_detail_192
+    400224: entity_func_detail_193
+    400226: entity_func_detail_194
+    400228: entity_func_detail_195
+    400230: entity_func_detail_196
+    400232: entity_func_detail_197
+    400234: entity_func_detail_198
+    400236: entity_func_detail_199
+    400238: entity_func_detail_200
+    400240: entity_func_detail_201
+    400242: entity_func_detail_202
+    400244: entity_func_detail_203
+    400246: entity_func_detail_204
+    400248: entity_func_detail_205
+    400250: entity_func_detail_206
+    400252: entity_func_detail_207
+    400254: entity_func_detail_208
+    400256: entity_func_detail_209
+    400258: entity_func_detail_210
+    400260: entity_func_detail_211
+    400262: entity_func_detail_212
+    400264: entity_func_detail_213
+    400266: entity_func_illusionary_101
+    400268: entity_func_ladder_214
+    400270: entity_func_ladder_215
+    400272: entity_func_ladder_216
+    400274: entity_func_ladder_217
+    400276: entity_func_ladder_218
+    400278: entity_func_ladder_219
+    400280: entity_func_ladder_220
+    400282: entity_func_ladder_221
+    400284: entity_func_ladder_222
+    400286: entity_func_ladder_223
+    400288: entity_func_ladder_224
+    400290: entity_func_ladder_225
+    400292: entity_func_ladder_226
+    400294: entity_func_ladder_227
+    400296: entity_func_ladder_228
+    400298: entity_func_ladder_229
+    400300: entity_func_ladder_230
+    400302: entity_func_ladder_231
+    400304: entity_func_ladder_232
+    400306: entity_trigger_teleport_184
+    400308: env_fog_controller
+    400310: env_sun
+    400312: env_tonemap_controller
+    400314: func_areaportal
+    400316: func_areaportal 1
+    400318: func_areaportal 2
+    400320: func_areaportal 3
+    400322: func_areaportal 4
+    400324: func_areaportal 5
+    400326: func_areaportal 6
+    400328: func_brush
+    400330: func_brush 1
+    400332: func_brush 10
+    400334: func_brush 11
+    400336: func_brush 12
+    400338: func_brush 13
+    400340: func_brush 14
+    400342: func_brush 15
+    400344: func_brush 16
+    400346: func_brush 17
+    400348: func_brush 18
+    400350: func_brush 19
+    400352: func_brush 2
+    400354: func_brush 20
+    400356: func_brush 21
+    400358: func_brush 22
+    400360: func_brush 23
+    400362: func_brush 24
+    400364: func_brush 25
+    400366: func_brush 26
+    400368: func_brush 27
+    400370: func_brush 28
+    400372: func_brush 29
+    400374: func_brush 3
+    400376: func_brush 30
+    400378: func_brush 31
+    400380: func_brush 32
+    400382: func_brush 33
+    400384: func_brush 34
+    400386: func_brush 35
+    400388: func_brush 36
+    400390: func_brush 37
+    400392: func_brush 38
+    400394: func_brush 39
+    400396: func_brush 4
+    400398: func_brush 40
+    400400: func_brush 41
+    400402: func_brush 42
+    400404: func_brush 43
+    400406: func_brush 44
+    400408: func_brush 45
+    400410: func_brush 46
+    400412: func_brush 47
+    400414: func_brush 48
+    400416: func_brush 49
+    400418: func_brush 5
+    400420: func_brush 50
+    400422: func_brush 51
+    400424: func_brush 52
+    400426: func_brush 53
+    400428: func_brush 54
+    400430: func_brush 55
+    400432: func_brush 56
+    400434: func_brush 57
+    400436: func_brush 58
+    400438: func_brush 59
+    400440: func_brush 6
+    400442: func_brush 60
+    400444: func_brush 61
+    400446: func_brush 62
+    400448: func_brush 63
+    400450: func_brush 64
+    400452: func_brush 65
+    400454: func_brush 66
+    400456: func_brush 67
+    400458: func_brush 68
+    400460: func_brush 69
+    400462: func_brush 7
+    400464: func_brush 70
+    400466: func_brush 71
+    400468: func_brush 72
+    400470: func_brush 73
+    400472: func_brush 74
+    400474: func_brush 75
+    400476: func_brush 76
+    400478: func_brush 77
+    400480: func_brush 78
+    400482: func_brush 79
+    400484: func_brush 8
+    400486: func_brush 80
+    400488: func_brush 81
+    400490: func_brush 82
+    400492: func_brush 83
+    400494: func_brush 84
+    400496: func_brush 85
+    400498: func_brush 86
+    400500: func_brush 87
+    400502: func_brush 88
+    400504: func_brush 89
+    400506: func_brush 9
+    400508: func_brush 90
+    400510: func_brush 91
+    400512: func_brush 92
+    400514: func_brush 93
+    400516: func_brush 94
+    400518: func_brush 95
+    400520: func_brush 96
+    400522: func_brush 97
+    400524: func_brush 98
+    400526: func_brush 99
+    400528: func_detail
+    400530: func_detail 1
+    400532: func_detail 10
+    400534: func_detail 11
+    400536: func_detail 12
+    400538: func_detail 13
+    400540: func_detail 14
+    400542: func_detail 15
+    400544: func_detail 16
+    400546: func_detail 17
+    400548: func_detail 18
+    400550: func_detail 19
+    400552: func_detail 2
+    400554: func_detail 20
+    400556: func_detail 21
+    400558: func_detail 22
+    400560: func_detail 23
+    400562: func_detail 24
+    400564: func_detail 3
+    400566: func_detail 4
+    400568: func_detail 5
+    400570: func_detail 6
+    400572: func_detail 7
+    400574: func_detail 8
+    400576: func_detail 9
+    400578: func_dustmotes
+    400580: func_dustmotes 1
+    400582: func_dustmotes 2
+    400584: func_dustmotes 3
+    400586: func_dustmotes 4
+    400588: func_dustmotes 5
+    400590: func_dustmotes 6
+    400592: func_illusionary
+    400594: func_ladder
+    400596: func_ladder 1
+    400598: func_ladder 10
+    400600: func_ladder 11
+    400602: func_ladder 12
+    400604: func_ladder 13
+    400606: func_ladder 14
+    400608: func_ladder 15
+    400610: func_ladder 16
+    400612: func_ladder 17
+    400614: func_ladder 18
+    400616: func_ladder 2
+    400618: func_ladder 3
+    400620: func_ladder 4
+    400622: func_ladder 5
+    400624: func_ladder 6
+    400626: func_ladder 7
+    400628: func_ladder 8
+    400630: func_ladder 9
+    400632: func_nogrenades
+    400634: func_nogrenades 1
+    400636: func_nogrenades 10
+    400638: func_nogrenades 11
+    400640: func_nogrenades 12
+    400642: func_nogrenades 13
+    400644: func_nogrenades 14
+    400646: func_nogrenades 15
+    400648: func_nogrenades 16
+    400650: func_nogrenades 17
+    400652: func_nogrenades 18
+    400654: func_nogrenades 19
+    400656: func_nogrenades 2
+    400658: func_nogrenades 3
+    400660: func_nogrenades 4
+    400662: func_nogrenades 5
+    400664: func_nogrenades 6
+    400666: func_nogrenades 7
+    400668: func_nogrenades 8
+    400670: func_nogrenades 9
+    400672: func_regenerate
+    400674: game_text
+    400676: game_text 1
+    400678: info_observer_point
+    400680: info_player_teamspawn
+    400682: info_teleport_destination
+    400684: info_teleport_destination 1
+    400686: info_teleport_destination 10
+    400688: info_teleport_destination 11
+    400690: info_teleport_destination 12
+    400692: info_teleport_destination 13
+    400694: info_teleport_destination 2
+    400696: info_teleport_destination 3
+    400698: info_teleport_destination 4
+    400700: info_teleport_destination 5
+    400702: info_teleport_destination 6
+    400704: info_teleport_destination 7
+    400706: info_teleport_destination 8
+    400708: info_teleport_destination 9
+    400710: //RootNode
+    400712: light
+    400714: light 1
+    400716: light 10
+    400718: light 11
+    400720: light 12
+    400722: light 13
+    400724: light 14
+    400726: light 15
+    400728: light 16
+    400730: light 17
+    400732: light 18
+    400734: light 19
+    400736: light 2
+    400738: light 20
+    400740: light 21
+    400742: light 22
+    400744: light 3
+    400746: light 4
+    400748: light 5
+    400750: light 6
+    400752: light 7
+    400754: light 8
+    400756: light 9
+    400758: light_environment
+    400760: logic_auto
+    400762: logic_case
+    400764: logic_case 1
+    400766: logic_case 2
+    400768: logic_case 3
+    400770: logic_case 4
+    400772: logic_relay
+    400774: logic_relay 1
+    400776: logic_relay 2
+    400778: logic_relay 3
+    400780: logic_relay 4
+    400782: logic_relay 5
+    400784: logic_relay 6
+    400786: logic_relay 7
+    400788: logic_timer
+    400790: logic_timer 1
+    400792: logic_timer 2
+    400794: logic_timer 3
+    400796: math_counter
+    400798: math_counter 1
+    400800: math_counter 2
+    400802: math_counter 3
+    400804: math_counter 4
+    400806: prop_dynamic
+    400808: prop_dynamic 1
+    400810: prop_dynamic 2
+    400812: prop_dynamic 3
+    400814: prop_static
+    400816: prop_static 1
+    400818: prop_static 10
+    400820: prop_static 11
+    400822: prop_static 12
+    400824: prop_static 13
+    400826: prop_static 14
+    400828: prop_static 15
+    400830: prop_static 16
+    400832: prop_static 17
+    400834: prop_static 18
+    400836: prop_static 19
+    400838: prop_static 2
+    400840: prop_static 20
+    400842: prop_static 21
+    400844: prop_static 22
+    400846: prop_static 23
+    400848: prop_static 24
+    400850: prop_static 25
+    400852: prop_static 26
+    400854: prop_static 27
+    400856: prop_static 28
+    400858: prop_static 29
+    400860: prop_static 3
+    400862: prop_static 30
+    400864: prop_static 31
+    400866: prop_static 32
+    400868: prop_static 33
+    400870: prop_static 34
+    400872: prop_static 35
+    400874: prop_static 36
+    400876: prop_static 37
+    400878: prop_static 38
+    400880: prop_static 39
+    400882: prop_static 4
+    400884: prop_static 40
+    400886: prop_static 41
+    400888: prop_static 42
+    400890: prop_static 43
+    400892: prop_static 44
+    400894: prop_static 45
+    400896: prop_static 46
+    400898: prop_static 47
+    400900: prop_static 48
+    400902: prop_static 49
+    400904: prop_static 5
+    400906: prop_static 50
+    400908: prop_static 51
+    400910: prop_static 52
+    400912: prop_static 6
+    400914: prop_static 7
+    400916: prop_static 8
+    400918: prop_static 9
+    400920: shadow_control
+    400922: team_control_point
+    400924: team_control_point_master
+    400926: trigger_capture_area
+    400928: trigger_hurt
+    400930: trigger_multiple
+    400932: trigger_multiple 1
+    400934: trigger_multiple 2
+    400936: trigger_multiple 3
+    400938: trigger_multiple 4
+    400940: trigger_teleport
+    400942: trigger_teleport 1
+    400944: trigger_teleport 10
+    400946: trigger_teleport 11
+    400948: trigger_teleport 12
+    400950: trigger_teleport 13
+    400952: trigger_teleport 14
+    400954: trigger_teleport 15
+    400956: trigger_teleport 16
+    400958: trigger_teleport 17
+    400960: trigger_teleport 18
+    400962: trigger_teleport 19
+    400964: trigger_teleport 2
+    400966: trigger_teleport 20
+    400968: trigger_teleport 21
+    400970: trigger_teleport 22
+    400972: trigger_teleport 23
+    400974: trigger_teleport 24
+    400976: trigger_teleport 25
+    400978: trigger_teleport 26
+    400980: trigger_teleport 27
+    400982: trigger_teleport 28
+    400984: trigger_teleport 29
+    400986: trigger_teleport 3
+    400988: trigger_teleport 30
+    400990: trigger_teleport 31
+    400992: trigger_teleport 32
+    400994: trigger_teleport 33
+    400996: trigger_teleport 34
+    400998: trigger_teleport 35
+    401000: trigger_teleport 36
+    401002: trigger_teleport 37
+    401004: trigger_teleport 38
+    401006: trigger_teleport 39
+    401008: trigger_teleport 4
+    401010: trigger_teleport 40
+    401012: trigger_teleport 41
+    401014: trigger_teleport 42
+    401016: trigger_teleport 43
+    401018: trigger_teleport 44
+    401020: trigger_teleport 5
+    401022: trigger_teleport 6
+    401024: trigger_teleport 7
+    401026: trigger_teleport 8
+    401028: trigger_teleport 9
+    401030: water_lod_control
+    401032: world
+    401034: worldbrushes
+    2300000: entity_func_areaportal_130
+    2300002: entity_func_areaportal_131
+    2300004: entity_func_areaportal_132
+    2300006: entity_func_areaportal_136
+    2300008: entity_func_areaportal_137
+    2300010: entity_func_areaportal_186
+    2300012: entity_func_areaportal_187
+    2300014: entity_func_brush_1
+    2300016: entity_func_brush_10
+    2300018: entity_func_brush_100
+    2300020: entity_func_brush_11
+    2300022: entity_func_brush_12
+    2300024: entity_func_brush_13
+    2300026: entity_func_brush_14
+    2300028: entity_func_brush_15
+    2300030: entity_func_brush_16
+    2300032: entity_func_brush_17
+    2300034: entity_func_brush_18
+    2300036: entity_func_brush_19
+    2300038: entity_func_brush_2
+    2300040: entity_func_brush_20
+    2300042: entity_func_brush_21
+    2300044: entity_func_brush_22
+    2300046: entity_func_brush_23
+    2300048: entity_func_brush_24
+    2300050: entity_func_brush_25
+    2300052: entity_func_brush_26
+    2300054: entity_func_brush_27
+    2300056: entity_func_brush_28
+    2300058: entity_func_brush_29
+    2300060: entity_func_brush_3
+    2300062: entity_func_brush_30
+    2300064: entity_func_brush_31
+    2300066: entity_func_brush_32
+    2300068: entity_func_brush_33
+    2300070: entity_func_brush_34
+    2300072: entity_func_brush_35
+    2300074: entity_func_brush_36
+    2300076: entity_func_brush_37
+    2300078: entity_func_brush_38
+    2300080: entity_func_brush_39
+    2300082: entity_func_brush_4
+    2300084: entity_func_brush_40
+    2300086: entity_func_brush_41
+    2300088: entity_func_brush_42
+    2300090: entity_func_brush_43
+    2300092: entity_func_brush_44
+    2300094: entity_func_brush_45
+    2300096: entity_func_brush_46
+    2300098: entity_func_brush_47
+    2300100: entity_func_brush_48
+    2300102: entity_func_brush_49
+    2300104: entity_func_brush_5
+    2300106: entity_func_brush_50
+    2300108: entity_func_brush_51
+    2300110: entity_func_brush_52
+    2300112: entity_func_brush_53
+    2300114: entity_func_brush_54
+    2300116: entity_func_brush_55
+    2300118: entity_func_brush_56
+    2300120: entity_func_brush_57
+    2300122: entity_func_brush_58
+    2300124: entity_func_brush_59
+    2300126: entity_func_brush_6
+    2300128: entity_func_brush_60
+    2300130: entity_func_brush_61
+    2300132: entity_func_brush_62
+    2300134: entity_func_brush_63
+    2300136: entity_func_brush_64
+    2300138: entity_func_brush_65
+    2300140: entity_func_brush_66
+    2300142: entity_func_brush_67
+    2300144: entity_func_brush_68
+    2300146: entity_func_brush_69
+    2300148: entity_func_brush_7
+    2300150: entity_func_brush_70
+    2300152: entity_func_brush_71
+    2300154: entity_func_brush_72
+    2300156: entity_func_brush_73
+    2300158: entity_func_brush_74
+    2300160: entity_func_brush_75
+    2300162: entity_func_brush_76
+    2300164: entity_func_brush_77
+    2300166: entity_func_brush_78
+    2300168: entity_func_brush_79
+    2300170: entity_func_brush_8
+    2300172: entity_func_brush_80
+    2300174: entity_func_brush_81
+    2300176: entity_func_brush_82
+    2300178: entity_func_brush_83
+    2300180: entity_func_brush_84
+    2300182: entity_func_brush_85
+    2300184: entity_func_brush_86
+    2300186: entity_func_brush_87
+    2300188: entity_func_brush_88
+    2300190: entity_func_brush_89
+    2300192: entity_func_brush_9
+    2300194: entity_func_brush_90
+    2300196: entity_func_brush_91
+    2300198: entity_func_brush_92
+    2300200: entity_func_brush_93
+    2300202: entity_func_brush_94
+    2300204: entity_func_brush_95
+    2300206: entity_func_brush_96
+    2300208: entity_func_brush_97
+    2300210: entity_func_brush_98
+    2300212: entity_func_brush_99
+    2300214: entity_func_detail_189
+    2300216: entity_func_detail_190
+    2300218: entity_func_detail_191
+    2300220: entity_func_detail_192
+    2300222: entity_func_detail_193
+    2300224: entity_func_detail_194
+    2300226: entity_func_detail_195
+    2300228: entity_func_detail_196
+    2300230: entity_func_detail_197
+    2300232: entity_func_detail_198
+    2300234: entity_func_detail_199
+    2300236: entity_func_detail_200
+    2300238: entity_func_detail_201
+    2300240: entity_func_detail_202
+    2300242: entity_func_detail_203
+    2300244: entity_func_detail_204
+    2300246: entity_func_detail_205
+    2300248: entity_func_detail_206
+    2300250: entity_func_detail_207
+    2300252: entity_func_detail_208
+    2300254: entity_func_detail_209
+    2300256: entity_func_detail_210
+    2300258: entity_func_detail_211
+    2300260: entity_func_detail_212
+    2300262: entity_func_detail_213
+    2300264: entity_func_illusionary_101
+    2300266: entity_func_ladder_214
+    2300268: entity_func_ladder_215
+    2300270: entity_func_ladder_216
+    2300272: entity_func_ladder_217
+    2300274: entity_func_ladder_218
+    2300276: entity_func_ladder_219
+    2300278: entity_func_ladder_220
+    2300280: entity_func_ladder_221
+    2300282: entity_func_ladder_222
+    2300284: entity_func_ladder_223
+    2300286: entity_func_ladder_224
+    2300288: entity_func_ladder_225
+    2300290: entity_func_ladder_226
+    2300292: entity_func_ladder_227
+    2300294: entity_func_ladder_228
+    2300296: entity_func_ladder_229
+    2300298: entity_func_ladder_230
+    2300300: entity_func_ladder_231
+    2300302: entity_func_ladder_232
+    2300304: entity_trigger_teleport_184
+    2300306: worldbrushes
+    3300000: entity_func_areaportal_130
+    3300002: entity_func_areaportal_131
+    3300004: entity_func_areaportal_132
+    3300006: entity_func_areaportal_136
+    3300008: entity_func_areaportal_137
+    3300010: entity_func_areaportal_186
+    3300012: entity_func_areaportal_187
+    3300014: entity_func_brush_1
+    3300016: entity_func_brush_10
+    3300018: entity_func_brush_100
+    3300020: entity_func_brush_11
+    3300022: entity_func_brush_12
+    3300024: entity_func_brush_13
+    3300026: entity_func_brush_14
+    3300028: entity_func_brush_15
+    3300030: entity_func_brush_16
+    3300032: entity_func_brush_17
+    3300034: entity_func_brush_18
+    3300036: entity_func_brush_19
+    3300038: entity_func_brush_2
+    3300040: entity_func_brush_20
+    3300042: entity_func_brush_21
+    3300044: entity_func_brush_22
+    3300046: entity_func_brush_23
+    3300048: entity_func_brush_24
+    3300050: entity_func_brush_25
+    3300052: entity_func_brush_26
+    3300054: entity_func_brush_27
+    3300056: entity_func_brush_28
+    3300058: entity_func_brush_29
+    3300060: entity_func_brush_3
+    3300062: entity_func_brush_30
+    3300064: entity_func_brush_31
+    3300066: entity_func_brush_32
+    3300068: entity_func_brush_33
+    3300070: entity_func_brush_34
+    3300072: entity_func_brush_35
+    3300074: entity_func_brush_36
+    3300076: entity_func_brush_37
+    3300078: entity_func_brush_38
+    3300080: entity_func_brush_39
+    3300082: entity_func_brush_4
+    3300084: entity_func_brush_40
+    3300086: entity_func_brush_41
+    3300088: entity_func_brush_42
+    3300090: entity_func_brush_43
+    3300092: entity_func_brush_44
+    3300094: entity_func_brush_45
+    3300096: entity_func_brush_46
+    3300098: entity_func_brush_47
+    3300100: entity_func_brush_48
+    3300102: entity_func_brush_49
+    3300104: entity_func_brush_5
+    3300106: entity_func_brush_50
+    3300108: entity_func_brush_51
+    3300110: entity_func_brush_52
+    3300112: entity_func_brush_53
+    3300114: entity_func_brush_54
+    3300116: entity_func_brush_55
+    3300118: entity_func_brush_56
+    3300120: entity_func_brush_57
+    3300122: entity_func_brush_58
+    3300124: entity_func_brush_59
+    3300126: entity_func_brush_6
+    3300128: entity_func_brush_60
+    3300130: entity_func_brush_61
+    3300132: entity_func_brush_62
+    3300134: entity_func_brush_63
+    3300136: entity_func_brush_64
+    3300138: entity_func_brush_65
+    3300140: entity_func_brush_66
+    3300142: entity_func_brush_67
+    3300144: entity_func_brush_68
+    3300146: entity_func_brush_69
+    3300148: entity_func_brush_7
+    3300150: entity_func_brush_70
+    3300152: entity_func_brush_71
+    3300154: entity_func_brush_72
+    3300156: entity_func_brush_73
+    3300158: entity_func_brush_74
+    3300160: entity_func_brush_75
+    3300162: entity_func_brush_76
+    3300164: entity_func_brush_77
+    3300166: entity_func_brush_78
+    3300168: entity_func_brush_79
+    3300170: entity_func_brush_8
+    3300172: entity_func_brush_80
+    3300174: entity_func_brush_81
+    3300176: entity_func_brush_82
+    3300178: entity_func_brush_83
+    3300180: entity_func_brush_84
+    3300182: entity_func_brush_85
+    3300184: entity_func_brush_86
+    3300186: entity_func_brush_87
+    3300188: entity_func_brush_88
+    3300190: entity_func_brush_89
+    3300192: entity_func_brush_9
+    3300194: entity_func_brush_90
+    3300196: entity_func_brush_91
+    3300198: entity_func_brush_92
+    3300200: entity_func_brush_93
+    3300202: entity_func_brush_94
+    3300204: entity_func_brush_95
+    3300206: entity_func_brush_96
+    3300208: entity_func_brush_97
+    3300210: entity_func_brush_98
+    3300212: entity_func_brush_99
+    3300214: entity_func_detail_189
+    3300216: entity_func_detail_190
+    3300218: entity_func_detail_191
+    3300220: entity_func_detail_192
+    3300222: entity_func_detail_193
+    3300224: entity_func_detail_194
+    3300226: entity_func_detail_195
+    3300228: entity_func_detail_196
+    3300230: entity_func_detail_197
+    3300232: entity_func_detail_198
+    3300234: entity_func_detail_199
+    3300236: entity_func_detail_200
+    3300238: entity_func_detail_201
+    3300240: entity_func_detail_202
+    3300242: entity_func_detail_203
+    3300244: entity_func_detail_204
+    3300246: entity_func_detail_205
+    3300248: entity_func_detail_206
+    3300250: entity_func_detail_207
+    3300252: entity_func_detail_208
+    3300254: entity_func_detail_209
+    3300256: entity_func_detail_210
+    3300258: entity_func_detail_211
+    3300260: entity_func_detail_212
+    3300262: entity_func_detail_213
+    3300264: entity_func_illusionary_101
+    3300266: entity_func_ladder_214
+    3300268: entity_func_ladder_215
+    3300270: entity_func_ladder_216
+    3300272: entity_func_ladder_217
+    3300274: entity_func_ladder_218
+    3300276: entity_func_ladder_219
+    3300278: entity_func_ladder_220
+    3300280: entity_func_ladder_221
+    3300282: entity_func_ladder_222
+    3300284: entity_func_ladder_223
+    3300286: entity_func_ladder_224
+    3300288: entity_func_ladder_225
+    3300290: entity_func_ladder_226
+    3300292: entity_func_ladder_227
+    3300294: entity_func_ladder_228
+    3300296: entity_func_ladder_229
+    3300298: entity_func_ladder_230
+    3300300: entity_func_ladder_231
+    3300302: entity_func_ladder_232
+    3300304: entity_trigger_teleport_184
+    3300306: worldbrushes
+    4300000: worldbrushes
+    4300002: entity_func_brush_1
+    4300004: entity_func_brush_2
+    4300006: entity_func_brush_3
+    4300008: entity_func_brush_4
+    4300010: entity_func_brush_5
+    4300012: entity_func_brush_6
+    4300014: entity_func_brush_7
+    4300016: entity_func_brush_8
+    4300018: entity_func_brush_9
+    4300020: entity_func_brush_10
+    4300022: entity_func_brush_11
+    4300024: entity_func_brush_12
+    4300026: entity_func_brush_13
+    4300028: entity_func_brush_14
+    4300030: entity_func_brush_15
+    4300032: entity_func_brush_16
+    4300034: entity_func_brush_17
+    4300036: entity_func_brush_18
+    4300038: entity_func_brush_19
+    4300040: entity_func_brush_20
+    4300042: entity_func_brush_21
+    4300044: entity_func_brush_22
+    4300046: entity_func_brush_23
+    4300048: entity_func_brush_24
+    4300050: entity_func_brush_25
+    4300052: entity_func_brush_26
+    4300054: entity_func_brush_27
+    4300056: entity_func_brush_28
+    4300058: entity_func_brush_29
+    4300060: entity_func_brush_30
+    4300062: entity_func_brush_31
+    4300064: entity_func_brush_32
+    4300066: entity_func_brush_33
+    4300068: entity_func_brush_34
+    4300070: entity_func_brush_35
+    4300072: entity_func_brush_36
+    4300074: entity_func_brush_37
+    4300076: entity_func_brush_38
+    4300078: entity_func_brush_39
+    4300080: entity_func_brush_40
+    4300082: entity_func_brush_41
+    4300084: entity_func_brush_42
+    4300086: entity_func_brush_43
+    4300088: entity_func_brush_44
+    4300090: entity_func_brush_45
+    4300092: entity_func_brush_46
+    4300094: entity_func_brush_47
+    4300096: entity_func_brush_48
+    4300098: entity_func_brush_49
+    4300100: entity_func_brush_50
+    4300102: entity_func_brush_51
+    4300104: entity_func_brush_52
+    4300106: entity_func_brush_53
+    4300108: entity_func_brush_54
+    4300110: entity_func_brush_55
+    4300112: entity_func_brush_56
+    4300114: entity_func_brush_57
+    4300116: entity_func_brush_58
+    4300118: entity_func_brush_59
+    4300120: entity_func_brush_60
+    4300122: entity_func_brush_61
+    4300124: entity_func_brush_62
+    4300126: entity_func_brush_63
+    4300128: entity_func_brush_64
+    4300130: entity_func_brush_65
+    4300132: entity_func_brush_66
+    4300134: entity_func_brush_67
+    4300136: entity_func_brush_68
+    4300138: entity_func_brush_69
+    4300140: entity_func_brush_70
+    4300142: entity_func_brush_71
+    4300144: entity_func_brush_72
+    4300146: entity_func_brush_73
+    4300148: entity_func_brush_74
+    4300150: entity_func_brush_75
+    4300152: entity_func_brush_76
+    4300154: entity_func_brush_77
+    4300156: entity_func_brush_78
+    4300158: entity_func_brush_79
+    4300160: entity_func_brush_80
+    4300162: entity_func_brush_81
+    4300164: entity_func_brush_82
+    4300166: entity_func_brush_83
+    4300168: entity_func_brush_84
+    4300170: entity_func_brush_85
+    4300172: entity_func_brush_86
+    4300174: entity_func_brush_87
+    4300176: entity_func_brush_88
+    4300178: entity_func_brush_89
+    4300180: entity_func_brush_90
+    4300182: entity_func_brush_91
+    4300184: entity_func_brush_92
+    4300186: entity_func_brush_93
+    4300188: entity_func_brush_94
+    4300190: entity_func_brush_95
+    4300192: entity_func_brush_96
+    4300194: entity_func_brush_97
+    4300196: entity_func_brush_98
+    4300198: entity_func_brush_99
+    4300200: entity_func_brush_100
+    4300202: entity_func_illusionary_101
+    4300204: entity_func_areaportal_130
+    4300206: entity_func_areaportal_131
+    4300208: entity_func_areaportal_132
+    4300210: entity_func_areaportal_136
+    4300212: entity_func_areaportal_137
+    4300214: entity_trigger_teleport_184
+    4300216: entity_func_areaportal_186
+    4300218: entity_func_areaportal_187
+    4300220: entity_func_detail_189
+    4300222: entity_func_detail_190
+    4300224: entity_func_detail_191
+    4300226: entity_func_detail_192
+    4300228: entity_func_detail_193
+    4300230: entity_func_detail_194
+    4300232: entity_func_detail_195
+    4300234: entity_func_detail_196
+    4300236: entity_func_detail_197
+    4300238: entity_func_detail_198
+    4300240: entity_func_detail_199
+    4300242: entity_func_detail_200
+    4300244: entity_func_detail_201
+    4300246: entity_func_detail_202
+    4300248: entity_func_detail_203
+    4300250: entity_func_detail_204
+    4300252: entity_func_detail_205
+    4300254: entity_func_detail_206
+    4300256: entity_func_detail_207
+    4300258: entity_func_detail_208
+    4300260: entity_func_detail_209
+    4300262: entity_func_detail_210
+    4300264: entity_func_detail_211
+    4300266: entity_func_detail_212
+    4300268: entity_func_detail_213
+    4300270: entity_func_ladder_214
+    4300272: entity_func_ladder_215
+    4300274: entity_func_ladder_216
+    4300276: entity_func_ladder_217
+    4300278: entity_func_ladder_218
+    4300280: entity_func_ladder_219
+    4300282: entity_func_ladder_220
+    4300284: entity_func_ladder_221
+    4300286: entity_func_ladder_222
+    4300288: entity_func_ladder_223
+    4300290: entity_func_ladder_224
+    4300292: entity_func_ladder_225
+    4300294: entity_func_ladder_226
+    4300296: entity_func_ladder_227
+    4300298: entity_func_ladder_228
+    4300300: entity_func_ladder_229
+    4300302: entity_func_ladder_230
+    4300304: entity_func_ladder_231
+    4300306: entity_func_ladder_232
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: No Name
+    second: {fileID: 2100000, guid: 1605b7f4c66b9cc4084894bd543fcc3a, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: coalmines_blendgroundtograss_coalmines2
+    second: {fileID: 2100000, guid: 4c8a84342dc3a8e40b629e3d7b7370cf, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: concrete_concretefloor006a
+    second: {fileID: 2100000, guid: 8daea5d78d0353a4ca33a8e75ce619a4, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: concrete_concretefloor007
+    second: {fileID: 2100000, guid: 7dd5051501855884baa0eccd3ca334ee, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: concrete_concretefloor007b
+    second: {fileID: 2100000, guid: e49672e0b6a3c364ea1ea818cfdb6775, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: cp_manor_wood_floor01
+    second: {fileID: 2100000, guid: c2aab25ce72d77f4da145d59936bb21c, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: cp_mountainlab_nature_blendrocktograss002
+    second: {fileID: 2100000, guid: c5a223b098e6e4d4699ff02d7d86f450, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: customdev_dev_measuregeneric01blu
+    second: {fileID: 2100000, guid: f4d48d6fe41351a4fb99f8826bbcd663, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: customdev_dev_measurewall01blu
+    second: {fileID: 2100000, guid: df7ec7c6cf278c64a91f158a85b0c5fa, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: dev_dev_blendmeasure2
+    second: {fileID: 2100000, guid: 5c39592da91b52945afc18e1505d06e6, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: dev_dev_measurewall01a
+    second: {fileID: 2100000, guid: 73582a01ce13f9947b6cf5caddfab0e4, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: dev_dev_measurewall01d
+    second: {fileID: 2100000, guid: 5c39592da91b52945afc18e1505d06e6, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: egypt_bumpy_wall_01
+    second: {fileID: 2100000, guid: 953601c6ce2ebb9418b26d7649102ed5, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: egypt_flat_wall_02
+    second: {fileID: 2100000, guid: 4b881780c22886f429fd9e66b34f9146, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: egypt_flat_wall_skinny_01
+    second: {fileID: 2100000, guid: 48e6d0c08233ab64092c238d996ef5dd, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: egypt_flat_wall_skinny_02
+    second: {fileID: 2100000, guid: d820d42a6f3578846a84263d70613217, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: egypt_hyro_03
+    second: {fileID: 2100000, guid: c383d095a5d798047955ee179e981014, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: egypt_hyro_border_bump_new
+    second: {fileID: 2100000, guid: 64d4492bb7ceb6d4c9f24c421834c560, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: egypt_sand_cliff_blend_01
+    second: {fileID: 2100000, guid: 7c1215a5e950dec4ea9737f63d1cd2a4, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: egypt_sand_floor_blend_03
+    second: {fileID: 2100000, guid: 08e1b960ec883a447bd48f85ee821dee, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: egypt_sand_floor_blend_04
+    second: {fileID: 2100000, guid: 08e1b960ec883a447bd48f85ee821dee, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: egypt_sand_floor_blend_04_with_grass
+    second: {fileID: 2100000, guid: 08e1b960ec883a447bd48f85ee821dee, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: egypt_smaller_flat_edge_border_01
+    second: {fileID: 2100000, guid: ba94228e104cf034c86862e8d95ee287, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: egypt_stone_floor_01
+    second: {fileID: 2100000, guid: 7ca6d780a0f264d4c817c7a1dd756c9a, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: glass_glasswindow001a
+    second: {fileID: 2100000, guid: 6c92523da68af6c4187b5eecb3aa0c49, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: lights_white001
+    second: {fileID: 2100000, guid: 1953d11604c543644a8d5ca6c511ea6d, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: medieval_woodtrim001
+    second: {fileID: 2100000, guid: ff44f8f38b9e382438502ec763605edd, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: metal_metalfence004a
+    second: {fileID: 2100000, guid: 6891b4ced767eaf489b348e27de35bf3, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: metal_metalroof008a_c17
+    second: {fileID: 2100000, guid: 734b1f8957eb88542b7313063e580bef, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: nature_blendgroundtograss003
+    second: {fileID: 2100000, guid: 3ab0792adf21f3149954d5280ff01e91, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: nature_blendrockgroundwall002
+    second: {fileID: 2100000, guid: f41219a8b2716754b887dc05c8a52302, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: nature_blendrockgroundwall003
+    second: {fileID: 2100000, guid: c5a223b098e6e4d4699ff02d7d86f450, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: nature_rockwall006
+    second: {fileID: 2100000, guid: f194c8aa002be8b458dd4e0aa7b54ac4, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: pl_barnblitz_woodwall_brownslats001
+    second: {fileID: 2100000, guid: f0afe304683169a499050cd3f6e2c638, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: pl_barnblitz_woodwall_darkbrown001
+    second: {fileID: 2100000, guid: 441332cd0a866444a83edaabcc3c9afb, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: tools_toolsareaportal
+    second: {fileID: 2100000, guid: dac1c5df784771c499464536c00cfd10, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: tools_toolsblack
+    second: {fileID: 2100000, guid: 45c0be9515b287242a34a1e41d46a52c, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: water_water_well
+    second: {fileID: 2100000, guid: 4f9882dc7882fd5429bbeb312f9721e2, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: wood_grain_elevator_facade_05
+    second: {fileID: 2100000, guid: 12eb2281c10f7ed4f991d6b283747cf8, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: wood_grain_elevator_facade_06
+    second: {fileID: 2100000, guid: b1a8f32845c69a4478a6471650d1d90e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: wood_grain_elevator_facade_08
+    second: {fileID: 2100000, guid: 6796a5382259b8244898f9b0a4cdbeb2, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: wood_grain_elevator_facade_14a
+    second: {fileID: 2100000, guid: 96d71f9b99901db4d82c7fb942ccc07e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: wood_grain_elevator_facade_14b
+    second: {fileID: 2100000, guid: 216b2863f46c7ab46ac2b97f6d12c025, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: wood_wall007a
+    second: {fileID: 2100000, guid: dc1593d06a505264897175f2499bf699, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: wood_wood_wall004
+    second: {fileID: 2100000, guid: 10d4b84ebd8a98745860553a9c963df8, type: 2}
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 0
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 0
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
