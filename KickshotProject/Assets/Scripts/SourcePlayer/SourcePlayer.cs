@@ -250,10 +250,10 @@ public class SourcePlayer : MonoBehaviour {
         controller.height = newHeight;
         if (groundEntity != null) {
             // If we're on the ground, we pull our head down.
-            controller.Move (new Vector3 (0, diff / 2f, 0));
+            controller.Move (new Vector3 (0, diff / 6f, 0));
         } else {
             // If we're in the air, we pull our legs up
-            controller.Move (new Vector3 (0, -diff / 2f, 0));
+            controller.Move (new Vector3 (0, -diff / 6f, 0));
         }
         RepositionHitboxes ();
         return true;
