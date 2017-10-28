@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RecoilGun : GunBase {
+public class GroundReloadRecoilGun : GunBase {
     private AudioSource blam;
     public float strength;
     void Start() {
@@ -14,6 +14,11 @@ public class RecoilGun : GunBase {
             return;
         }
         transform.rotation = view.rotation;
+
+        // Super hacky workaround for testing purposes
+        if (player.groundEntity != null && !Input.GetButtonDown("Fire1") && !Input.GetButtonDown("Fire2"))
+            ammo = magSize;
+
     }
     public override void OnPrimaryFire() {
         blam.Play ();
