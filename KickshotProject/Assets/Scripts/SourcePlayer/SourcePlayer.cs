@@ -921,6 +921,12 @@ public class SourcePlayer : MonoBehaviour {
 			wallNormal = point.hitNormal;
 		}
 
+		if (Vector3.Dot (wallNormal, transform.forward) < -.75 && !wallRunning)
+		{
+			wallEntity = null;
+		}
+			
+
     }
 
     // This function makes sure we don't phase through other colliders. (Since character controller doesn't provide this functionality lmao).
