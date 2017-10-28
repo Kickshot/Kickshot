@@ -918,7 +918,6 @@ public class SourcePlayer : MonoBehaviour {
 
 		foreach(ContactPoint point in contacts) {
 			// TODO Mutiple collision points.
-            Debug.Log( point.hitNormal );
             if (point.hitNormal.y == 0f) {
                 wallEntity = point.obj;
                 wallNormal = point.hitNormal;
@@ -1016,7 +1015,13 @@ public class SourcePlayer : MonoBehaviour {
         // Actually now the capsule shouldn't slide up, I cap the stepSize to be .05f less than the radius of the
         // bottom of the capsule, which will keep it from sliding up.
         // I'm going to keep the check for sanity's sake though.
-        if (!RaycastForGround (out hit) || Vector3.Dot (stepMove - savePos, velocity) < 0 || Mathf.Abs (savePos.y - stepMove.y) > stepSize) {
+        Vector3 flatSavePos = new Vector3(savePos.x,0f,savePos.z);
+        Vector3 flatGroundMove = new Vector3(groundMove.x,0f,groundMove.z);
+        Vector3 flatStepMove = new Vector3(stepMove.x,0f,stepMove.z);
+        Vector3 flatVelocity = new Vector3(velocity.x,0f,velocity.z).normalized;
+
+        bool wentBackwards = Mathf.Abs (Vector3.Dot (Vector3.Normalize (flatStepMove - flatSavePos), flatVelocity)) < Mathf.Abs (Vector3.Dot (Vector3.Normalize (flatGroundMove - flatSavePos), flatVelocity));
+        if (!RaycastForGround (out hit) || wentBackwards || Mathf.Abs (savePos.y - stepMove.y) > stepSize) {
             // Move normally
             transform.position = savePos;
             ignoreCollisions = false;
@@ -1024,7 +1029,7 @@ public class SourcePlayer : MonoBehaviour {
             ignoreFootCollisions = false;
             return;
         }
-
+            
         // Redo the step move, this time registering collisions.
         transform.position = savePos;
         ignoreCollisions = false;
