@@ -97,6 +97,7 @@ public class SourcePlayer : MonoBehaviour {
     new private CapsuleCollider collider;
 	private Vector3 oldVelocity;
 	private bool wallRunStarted = false;
+	private Vector3 wallPoint;
 
 
     void Awake () {
@@ -823,7 +824,6 @@ public class SourcePlayer : MonoBehaviour {
 			adjustedVelocity.y = 0;
 			adjustedOldVelocity.y = 0;
 
-			//Debug.Log (Vector3.Dot (oldVelocity.normalized, adjustedVelocity.normalized));
 			// Check if new velocity is trying to get off the wall.
 			if (Vector3.Dot (adjustedOldVelocity.normalized, adjustedVelocity.normalized) < 0.98f && wallRunning) {
 				EndWallRun ();
@@ -856,15 +856,29 @@ public class SourcePlayer : MonoBehaviour {
 
 			float wallBreakMag = -Vector3.Dot (wishdir, velocity);
 
-            velocity = ClipVelocity (velocity, wallNormal);
+			velocity = ClipVelocity (velocity, wallNormal);
 
 			Accelerate (wishdir, 10, wallBreakMag);
 
+			// We need to see if we have a velocity now, in order for the player to stay on moving conveyors and stuff.
+			Vector3 wallVelocity = Vector3.zero;
+			// A movable just gives us a velocity. (most basic platforms, or conveyors should be movable)
+			Movable check = wallEntity.GetComponent<Movable> ();
+			if (check != null) {
+				wallVelocity = check.velocity;
+			}
+
+			Rigidbody cccheck = wallEntity.GetComponent<Rigidbody> ();
+			if (cccheck != null) {
+				wallVelocity = cccheck.GetPointVelocity (wallPoint);
+			}
+
+			velocity += wallVelocity;
             controller.Move (velocity * Time.deltaTime);
+			velocity -= wallVelocity;
+	
 			oldVelocity = velocity;
-
 			wallRunStarted = !wallRunning;
-
             wallRunning = true;
         } else {
             wallRunning = false;
@@ -952,6 +966,7 @@ public class SourcePlayer : MonoBehaviour {
 					// Continue wall running with new normal.
 					wallEntity = hitInfo.collider.gameObject;
 					wallNormal = hitInfo.normal;
+					wallPoint = hitInfo.point;
 				}
 			} else {
 				// We hit nothing end wall run.
@@ -964,6 +979,7 @@ public class SourcePlayer : MonoBehaviour {
 			if (point.hitNormal.y < 0.1f && point.hitNormal.y > -0.1f) {
 				wallEntity = point.obj;
 				wallNormal = point.hitNormal;
+				wallPoint = point.point;
 			}
 		}
 			
