@@ -1,0 +1,163 @@
+fileFormatVersion: 2
+guid: 1f091b181b4e6424a9a2f9413e608c08
+timeCreated: 1509314375
+licenseType: Free
+ModelImporter:
+  serializedVersion: 22
+  fileIDToRecycleName:
+    100000: //RootNode
+    100002: rocketlauncher:Box01
+    100004: rocketlauncher:Box02
+    100006: rocketlauncher:Box03
+    100008: rocketlauncher:Cylinder01
+    100010: rocketlauncher:Cylinder02
+    100012: rocketlauncher:Cylinder04
+    100014: rocketlauncher:Cylinder06
+    100016: rocketlauncher:Cylinder13
+    100018: rocketlauncher:Duplicate01
+    100020: rocketlauncher:Duplicate03
+    100022: rocketlauncher:Duplicate04
+    100024: rocketlauncher:Duplicate10
+    100026: rocketlauncher:Duplicate11
+    100028: rocketlauncher:Regroup00
+    400000: //RootNode
+    400002: rocketlauncher:Box01
+    400004: rocketlauncher:Box02
+    400006: rocketlauncher:Box03
+    400008: rocketlauncher:Cylinder01
+    400010: rocketlauncher:Cylinder02
+    400012: rocketlauncher:Cylinder04
+    400014: rocketlauncher:Cylinder06
+    400016: rocketlauncher:Cylinder13
+    400018: rocketlauncher:Duplicate01
+    400020: rocketlauncher:Duplicate03
+    400022: rocketlauncher:Duplicate04
+    400024: rocketlauncher:Duplicate10
+    400026: rocketlauncher:Duplicate11
+    400028: rocketlauncher:Regroup00
+    2300000: rocketlauncher:Box01
+    2300002: rocketlauncher:Box02
+    2300004: rocketlauncher:Box03
+    2300006: rocketlauncher:Cylinder01
+    2300008: rocketlauncher:Cylinder02
+    2300010: rocketlauncher:Cylinder04
+    2300012: rocketlauncher:Cylinder06
+    2300014: rocketlauncher:Cylinder13
+    2300016: rocketlauncher:Duplicate01
+    2300018: rocketlauncher:Duplicate03
+    2300020: rocketlauncher:Duplicate04
+    2300022: rocketlauncher:Duplicate10
+    2300024: rocketlauncher:Duplicate11
+    2300026: rocketlauncher:Regroup00
+    3300000: rocketlauncher:Box01
+    3300002: rocketlauncher:Box02
+    3300004: rocketlauncher:Box03
+    3300006: rocketlauncher:Cylinder01
+    3300008: rocketlauncher:Cylinder02
+    3300010: rocketlauncher:Cylinder04
+    3300012: rocketlauncher:Cylinder06
+    3300014: rocketlauncher:Cylinder13
+    3300016: rocketlauncher:Duplicate01
+    3300018: rocketlauncher:Duplicate03
+    3300020: rocketlauncher:Duplicate04
+    3300022: rocketlauncher:Duplicate10
+    3300024: rocketlauncher:Duplicate11
+    3300026: rocketlauncher:Regroup00
+    4300000: rocketlauncher:Cylinder01
+    4300002: rocketlauncher:Box01
+    4300004: rocketlauncher:Cylinder02
+    4300006: rocketlauncher:Cylinder04
+    4300008: rocketlauncher:Regroup00
+    4300010: rocketlauncher:Duplicate10
+    4300012: rocketlauncher:Duplicate11
+    4300014: rocketlauncher:Cylinder06
+    4300016: rocketlauncher:Box02
+    4300018: rocketlauncher:Cylinder13
+    4300020: rocketlauncher:Box03
+    4300022: rocketlauncher:Duplicate01
+    4300024: rocketlauncher:Duplicate03
+    4300026: rocketlauncher:Duplicate04
+    9500000: //RootNode
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: lambert2
+    second: {fileID: 2100000, guid: 147a71b90d283fe449899a327ac87b6a, type: 2}
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 0
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

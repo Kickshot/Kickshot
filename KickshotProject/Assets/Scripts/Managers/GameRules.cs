@@ -23,7 +23,11 @@ public static class GameRules {
         foreach ( Collider other in Physics.OverlapSphere( vecSrc, radius ) ) {
 
             // radius damage can only be blocked by the world
-            vecSpot = other.ClosestPointOnBounds( vecSrc );
+            if (other is CapsuleCollider || other is BoxCollider || other is SphereCollider) {
+                vecSpot = other.ClosestPoint (vecSrc);
+            } else {
+                vecSpot = other.ClosestPointOnBounds (vecSrc);
+            }
 
             bool bHit = false;
 

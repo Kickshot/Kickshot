@@ -18,9 +18,15 @@ public class Rocket : MonoBehaviour {
         //body.velocity = (inheritedVel*inheritPercentage + transform.forward * speed);
     }
     void OnCollisionEnter( Collision other ) {
+        RaycastHit hit;
+        Vector3 explosionPos;
+        if (Physics.Raycast (transform.position, transform.forward, out hit, 2f)) {
+            explosionPos = hit.point;
+        } else {
+            explosionPos = other.contacts [0].point;
+        }
         int rand = (int)Random.Range (0, explosions.Count);
-        Instantiate (explosions [rand], transform.position, Quaternion.identity);//Quaternion.LookRotation(other.contacts[0].normal));
-        Vector3 explosionPos = other.contacts[0].point;
+        Instantiate (explosions [rand], explosionPos, Quaternion.identity);//Quaternion.LookRotation(other.contacts[0].normal));
         Destroy(gameObject);
         GameRules.RadiusDamage (100f, power, explosionPos, radius, true);
     }
