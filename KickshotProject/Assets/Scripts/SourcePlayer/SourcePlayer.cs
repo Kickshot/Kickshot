@@ -96,6 +96,7 @@ public class SourcePlayer : MonoBehaviour {
     private AudioSource hardLand;
     new private CapsuleCollider collider;
 	private Vector3 oldVelocity;
+	private bool wallRunStarted = false;
 
 
     void Awake () {
@@ -391,6 +392,12 @@ public class SourcePlayer : MonoBehaviour {
         velocity += gravity * Time.deltaTime;
     }
 
+	private void WallGravity() {
+		if (wallRunStarted && velocity.y < 0)
+			velocity.y = 0;
+		velocity.y += wallGravity * Time.deltaTime;
+	}
+
     // Checks if we pressed the jump button, oh also checks if you are suddenly launched into the air.
     private void CheckJump () {
         // Check to make sure we have a ground under us, and that it's stable ground.
@@ -608,10 +615,10 @@ public class SourcePlayer : MonoBehaviour {
         // Make sure velocity is still valid.
         CheckVelocity ();
 
-		if(!wallRunning)
-        	Gravity ();
+		if (!wallRunning)
+			Gravity ();
 		else
-			velocity.y += wallGravity * Time.deltaTime;
+			WallGravity ();
 
 
         // If we are on ground, no downward velocity.
@@ -839,6 +846,9 @@ public class SourcePlayer : MonoBehaviour {
 
             controller.Move (velocity * Time.deltaTime);
 			oldVelocity = velocity;
+
+			wallRunStarted = !wallRunning;
+
             wallRunning = true;
         } else {
             wallRunning = false;
@@ -918,7 +928,8 @@ public class SourcePlayer : MonoBehaviour {
             Vector3 p2 = p1 + Vector3.up * controller.height;
 
 			if (Physics.CapsuleCast (p1, p2, controller.radius, -wallNormal, out hitInfo,1.0f)) {
-				if (Vector3.Dot (wallNormal, hitInfo.normal) < 1) {
+				// Why is it 0.998? Cause unity.
+				if (Vector3.Dot (wallNormal, hitInfo.normal) < 0.998) {
 					// The normals are too different; end wall run.
 					EndWallRun ();
 				} else {
