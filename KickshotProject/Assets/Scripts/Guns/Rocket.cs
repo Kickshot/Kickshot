@@ -31,9 +31,7 @@ public class Rocket : MonoBehaviour {
             if (player != null) {
                 Vector3 direction = player.transform.position - explosionPos;
                 player.velocity += Vector3.Normalize(direction) * power;
-                if (player.velocity.y < (Vector3.Normalize (direction) * power).y/2f) { // we have a minimum height to propel the player at.
-                    player.velocity.y = (Vector3.Normalize (direction) * power).y/2f;
-                }   
+                //player.StunAirBreak (0.25f);
             }
         }
     }
