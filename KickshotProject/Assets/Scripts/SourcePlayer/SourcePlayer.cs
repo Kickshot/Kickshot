@@ -24,7 +24,7 @@ public class SourcePlayer : MonoBehaviour {
     [HideInInspector]
     public float airSpeedPunish = 1f;// How much we decelerate the player for trying to take turns too quickly while strafe jumping.
     public float airStrafePercentage = 0.1f; // How much the player actually accelerates while air strafing without moving the mouse.
-    public float airBreak = 3f;// Acceleration multiplier for trying to stop with the backwards key. (typically S).
+    public float airBrake = 3f;// Acceleration multiplier for trying to stop with the backwards key. (typically S).
     public float walkSpeed = 16f;// We stop applying standard acceleration when the player is this speed on the ground.
     public float flySpeed = 12f;// We stop applying standard acceleration when the player is this speed in the air.
     public float jumpSpeed = 10f;// The y velocity to set our character at when they jump.
@@ -65,7 +65,7 @@ public class SourcePlayer : MonoBehaviour {
 
 
     // Shouldn't need to access these, probably
-    private float airBreakStun = 0f;
+    private float airBrakeStun = 0f;
     private float jumpBufferTimer;
     private List<ContactPoint> contacts;
     private Vector3 wallNormal = new Vector3 (0f, 0f, 0f);
@@ -708,8 +708,8 @@ public class SourcePlayer : MonoBehaviour {
 
         StayOnGround ();
     }
-    public void StunAirBreak( float time ) {
-        airBreakStun = time;
+    public void StunAirBrake( float time ) {
+        airBrakeStun = time;
     }
     // Movement code for when we're in the air.
     private void AirMove()
@@ -749,31 +749,27 @@ public class SourcePlayer : MonoBehaviour {
         Vector3 flatvel = new Vector3(velocity.x, 0, velocity.z);
         float check = Vector3.Dot(Vector3.Normalize(flatvel), wishdir);
 
-
-        if (Mathf.Abs (check) < 0.75f) { // Trying to air-strafe, do air-strafey stuff.
-            // We only want to apply an air break if we're not stunned (by damage or rocket jumping, whatever).
-            if (airBreakStun <= 0f) {
-                // Apply air breaks, this keeps our turning really REALLY **REALLY** sharp.
+        if (airBrakeStun > 0f) {
+            airBrakeStun -= Time.deltaTime;
+        }
+        if (Mathf.Abs (check) < 0.7f) { // Trying to air-strafe, do air-strafey stuff.
+            // Apply air breaks, this keeps our turning really REALLY **REALLY** sharp.
+            if (airBrakeStun <= 0f) {
                 // It also basically enables or disables surfing. Turning it off makes it feel really bad.
-                float airbreak = 1f / Time.deltaTime;
+                float airbrake = 1f / Time.deltaTime;
                 // Future Dalton, YES this needs to use velocity, not flatvel, or it doesn't bring the character to a complete stop on that axis. (+-.1)
                 // You've tested it a thousand times stop changing it back to flatvel. You think "OH IT SHOULDN'T MATTER BECAUSE OF wishdir.y == 0"
                 // but Vector3.Dot() uses some approximation mumbo jumbo that makes it much more accurate to use velocity.
-                float airBreakMag = -Vector3.Dot (velocity, wishdir);
-                Accelerate (wishdir, airbreak, airBreakMag);
+                float airBrakeMag = -Vector3.Dot (velocity, wishdir);
+                Accelerate (wishdir, airbrake, airBrakeMag);
                 // Then calculate how much we should air-strafe.
-                float airStrafe = (1f - Mathf.Abs(check)) * airStrafeAccelerate;
+                float airStrafe = (1f - Mathf.Abs (check)) * airStrafeAccelerate;
                 // We don't want to accelerate just because they pressed A or D, we need them to move their mouse a little also.
-                float wishStrafeSpeed = (Mathf.Abs(check) + airStrafePercentage) / (1f + airStrafePercentage);
-                Accelerate(wishdir, airStrafe, wishStrafeSpeed * flySpeed);
-                airBreakStun = 0f;
+                float wishStrafeSpeed = (Mathf.Abs (check) + airStrafePercentage) / (1f + airStrafePercentage);
+                Accelerate (wishdir, airStrafe, wishStrafeSpeed * flySpeed);
+                airBrakeStun = 0f;
             } else {
-                // Then calculate how much we should air-strafe.
-                float airStrafe = (1f - Mathf.Abs(check)) * airAccelerate;
-                // We don't want to accelerate just because they pressed A or D, we need them to move their mouse a little also.
-                float wishStrafeSpeed = (Mathf.Abs(check) + airStrafePercentage) / (1f + airStrafePercentage);
-                Accelerate(wishdir, airStrafe, wishStrafeSpeed * flySpeed);
-                airBreakStun -= Time.deltaTime;
+                Accelerate (wishdir, airAccelerate, flySpeed);
             }
                 
 
@@ -801,8 +797,8 @@ public class SourcePlayer : MonoBehaviour {
                 velocity = Vector3.Normalize (pvel) * (pvel.magnitude + bonusSpeed);
                 velocity.y = yvel;
             }*/
-        } else if ( check < -0.75f  && airBreakStun <= 0f ) { // Give an acceleration bonus based on if they're trying to stop.
-            Accelerate (wishdir, airAccelerate * airBreak, flySpeed);
+        } else if ( check < -0.7f  && airBrakeStun <= 0f ) { // Give an acceleration bonus based on if they're trying to stop.
+            Accelerate (wishdir, airBrake, flySpeed);
         } else { // Just trying to move forward, accelerate normally.
             Accelerate (wishdir, airAccelerate, flySpeed);
         }

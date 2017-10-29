@@ -22,17 +22,6 @@ public class Rocket : MonoBehaviour {
         Instantiate (explosions [rand], transform.position, Quaternion.identity);//Quaternion.LookRotation(other.contacts[0].normal));
         Vector3 explosionPos = other.contacts[0].point;
         Destroy(gameObject);
-        foreach (Collider hit in Physics.OverlapSphere(explosionPos, radius)) {
-            Rigidbody rb = hit.GetComponent<Rigidbody>();
-            if (rb != null) {
-                rb.AddExplosionForce (power, explosionPos, radius, 3.0F);
-            }
-            SourcePlayer player = hit.GetComponent<SourcePlayer>();
-            if (player != null) {
-                Vector3 direction = player.transform.position - explosionPos;
-                player.velocity += Vector3.Normalize(direction) * power;
-                //player.StunAirBreak (0.25f);
-            }
-        }
+        GameRules.RadiusDamage (100f, power, explosionPos, radius, true);
     }
 }
