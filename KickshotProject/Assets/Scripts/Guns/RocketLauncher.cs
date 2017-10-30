@@ -13,7 +13,12 @@ public class RocketLauncher : GunBase {
         }
         transform.rotation = view.rotation;
         if ( reloading ) {
-            transform.rotation = Quaternion.Lerp(Quaternion.LookRotation(-view.forward),Quaternion.LookRotation(view.forward),busy/reloadDelay);
+            float progress = 1f - busy / reloadDelay;
+            if (progress < 0.5f) {
+                transform.rotation = Quaternion.Lerp (Quaternion.LookRotation (view.forward), Quaternion.LookRotation (view.right), progress / 0.5f);
+            } else {
+                transform.rotation = Quaternion.Lerp (Quaternion.LookRotation (view.right), Quaternion.LookRotation (view.forward), (progress-0.5f)/0.5f);
+            }
         }
     }
     public override void OnPrimaryFire()

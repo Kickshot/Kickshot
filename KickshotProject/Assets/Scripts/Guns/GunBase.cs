@@ -50,8 +50,9 @@ public class GunBase : MonoBehaviour {
         player = Player.GetComponent<SourcePlayer> ();
         view = Player.GetComponent<MouseLook> ().view;
         gameObject.SetActive (true);
-        transform.SetParent (Player.transform);
-        transform.position = Player.transform.position + Player.transform.right * .5f + Player.transform.up * .25f;
+        Transform shoulderBone = Player.GetComponentInChildren<Animator> ().GetBoneTransform (HumanBodyBones.RightShoulder);
+        transform.SetParent (shoulderBone);
+        transform.position = shoulderBone.position + shoulderBone.right * 0.4f - shoulderBone.up * 0.1f;
         transform.rotation = Quaternion.identity;
     }
     virtual public void OnPrimaryFire() {}
