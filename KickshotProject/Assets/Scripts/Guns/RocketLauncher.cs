@@ -24,7 +24,7 @@ public class RocketLauncher : GunBase {
     public override void OnPrimaryFire()
     {
         RaycastHit hit;
-        Vector3 hitpos = view.forward * 1000f;
+        Vector3 hitpos = view.position + view.forward * 1000f;
         // We ignore player collisions.
         if (Physics.Raycast (view.position, view.forward, out hit, 1000f, ~(1 << LayerMask.NameToLayer ("Player")))) {
             hitpos = hit.point;
@@ -34,7 +34,7 @@ public class RocketLauncher : GunBase {
     }
     public override void OnSecondaryFire() {
         RaycastHit hit;
-        Vector3 hitpos = -view.forward * 1000f;
+        Vector3 hitpos = view.position - view.forward * 1000f;
         // We ignore player collisions.
         if (Physics.Raycast (view.position, -view.forward, out hit, 1000f, ~(1 << LayerMask.NameToLayer ("Player")))) {
             hitpos = hit.point;
