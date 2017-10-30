@@ -21,6 +21,9 @@ public static class GameRules {
 
         // iterate on all entities in the vicinity.
         foreach ( Collider other in Physics.OverlapSphere( vecSrc, radius ) ) {
+            if (other.isTrigger) {
+                continue;
+            }
 
             // radius damage can only be blocked by the world
             if (other is CapsuleCollider || other is BoxCollider || other is SphereCollider) {

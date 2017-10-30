@@ -59,7 +59,7 @@ public static class Helper {
             return r.material;
         }
         if ( !mesh.isReadable ) {
-            Debug.LogError("Couldn't read mesh because it has a Static flag enabled. Returning base material.");
+            Debug.LogError("Couldn't read mesh because it has a Batching Static flag enabled. Returning base material.");
             return r.material;
         }
         if (hit.collider is MeshCollider) {

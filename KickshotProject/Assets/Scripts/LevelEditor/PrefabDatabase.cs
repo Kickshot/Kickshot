@@ -10,7 +10,7 @@ namespace LevelEditor
     public class PrefabDatabase : Singleton<PrefabDatabase>
     {
 
-        static Dictionary<int, string> prefabs = new Dictionary<int, string>();
+        //static Dictionary<int, string> prefabs = new Dictionary<int, string>();
 
         /// <summary>
         /// Gets the prefab path from the local prefab dictionary.
