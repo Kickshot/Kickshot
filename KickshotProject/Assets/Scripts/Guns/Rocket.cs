@@ -29,7 +29,7 @@ public class Rocket : MonoBehaviour {
         }
         int rand = (int)Random.Range (0, explosions.Count);
         Instantiate (explosions [rand], explosionPos, Quaternion.LookRotation(-hit.normal));//Quaternion.LookRotation(other.contacts[0].normal));
-        _Decal.DecalBuilder.BuildAndSetDirty((Instantiate(decal,explosionPos,Quaternion.LookRotation(-hit.normal)).GetComponent<_Decal.Decal>()));
+        //_Decal.DecalBuilder.BuildAndSetDirty((Instantiate(decal,explosionPos,Quaternion.LookRotation(-hit.normal)).GetComponent<_Decal.Decal>()));
         Destroy(gameObject);
         GameRules.RadiusDamage (100f, power, explosionPos, radius, true);
     }
