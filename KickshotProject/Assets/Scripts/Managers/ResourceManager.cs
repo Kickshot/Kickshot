@@ -15,6 +15,9 @@ public static class ResourceManager {
         resources.Add ("woodImpact",        new string[]{"Sounds/wood_impact1", "Sounds/wood_impact2", "Sounds/wood_impact3"});
         resources.Add ("wetImpact",         new string[]{"Sounds/wet_impact1", "Sounds/wet_impact2", "Sounds/wet_impact3"});
         resources.Add ("stoneImpact",       new string[]{"Sounds/stone_impact1", "Sounds/stone_impact2"});
+        resources.Add ("metalImpact",       new string[]{"Sounds/metal_impact1", "Sounds/metal_impact2"});
+        resources.Add ("wireImpact",        new string[]{"Sounds/chickenwire_impact1"});
+        resources.Add ("glassImpact",       new string[]{"Sounds/glass_impact1"});
         resources.Add ("Player",            new string[]{"Prefabs/Characters/SourcePlayer"});
         resources.Add ("RocketLauncher",    new string[]{"Prefabs/Weapons/RocketLauncher"});
         resources.Add ("TractorGrapple",    new string[]{"Prefabs/Weapons/TractorGrapple"});

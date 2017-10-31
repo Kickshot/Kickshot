@@ -13,13 +13,18 @@ public class RocketLauncher : GunBase {
         }
         transform.rotation = view.rotation;
         if ( reloading ) {
-            transform.rotation = Quaternion.Lerp(Quaternion.LookRotation(-view.forward),Quaternion.LookRotation(view.forward),busy/reloadDelay);
+            float progress = 1f - busy / reloadDelay;
+            if (progress < 0.5f) {
+                transform.rotation = Quaternion.Lerp (Quaternion.LookRotation (view.forward), Quaternion.LookRotation (view.right), progress / 0.5f);
+            } else {
+                transform.rotation = Quaternion.Lerp (Quaternion.LookRotation (view.right), Quaternion.LookRotation (view.forward), (progress-0.5f)/0.5f);
+            }
         }
     }
     public override void OnPrimaryFire()
     {
         RaycastHit hit;
-        Vector3 hitpos = view.forward * 1000f;
+        Vector3 hitpos = view.position + view.forward * 1000f;
         // We ignore player collisions.
         if (Physics.Raycast (view.position, view.forward, out hit, 1000f, ~(1 << LayerMask.NameToLayer ("Player")))) {
             hitpos = hit.point;
@@ -29,7 +34,7 @@ public class RocketLauncher : GunBase {
     }
     public override void OnSecondaryFire() {
         RaycastHit hit;
-        Vector3 hitpos = -view.forward * 1000f;
+        Vector3 hitpos = view.position - view.forward * 1000f;
         // We ignore player collisions.
         if (Physics.Raycast (view.position, -view.forward, out hit, 1000f, ~(1 << LayerMask.NameToLayer ("Player")))) {
             hitpos = hit.point;

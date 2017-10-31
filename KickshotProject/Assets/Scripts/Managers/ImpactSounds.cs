@@ -27,19 +27,74 @@ public static class ImpactSounds {
         soundLookup["StoneWall (Instance)"] = "stoneImpact";
         soundLookup["CobbleStone (Instance)"] = "stoneImpact";
 
-        // Whomp Fortress
+        // Sounds generated for WhompFortress
         soundLookup["30E48A81_c (Instance)"] = "stoneImpact";
-        soundLookup["53DCECCE_c (Instance)"] = "stoneImpact";
-        soundLookup["66E3247E_c (Instance)"] = "stoneImpact";
+        soundLookup["C2DAC08_c (Instance)"] = "stoneImpact";
+        soundLookup["2C725067_c (Instance)"] = "stoneImpact";
         soundLookup["59A41B70_c (Instance)"] = "stoneImpact";
-        soundLookup["60892055_c (Instance)"] = "stoneImpact";
-        soundLookup["710C9EF6_c (Instance)"] = "stoneImpact";
-        soundLookup["2A04AD32_c (Instance)"] = "stoneImpact";
-        soundLookup["2CF33CF6_c (Instance)"] = "stoneImpact";
         soundLookup["29730C45_c (Instance)"] = "stoneImpact";
-        soundLookup["6DAF90F6_c (Instance)"] = "wetImpact";
-        soundLookup["4D3B21B2_c (Instance)"] = "dirtImpact";
+        soundLookup["2CF33CF6_c (Instance)"] = "stoneImpact";
+        soundLookup["710C9EF6_c (Instance)"] = "stoneImpact";
         soundLookup["4399CB9D_c (Instance)"] = "woodImpact";
+        soundLookup["422EF87F_c (Instance)"] = "stoneImpact";
+        soundLookup["6DAF90F6_c (Instance)"] = "wetImpact";
+        soundLookup["18F70B20_c (Instance)"] = "metalImpact";
+        soundLookup["2A04AD32_c (Instance)"] = "stoneImpact";
+        soundLookup["60892055_c (Instance)"] = "stoneImpact";
+        soundLookup["5AEE262F_c (Instance)"] = "metalImpact";
+
+        // Sounds generated for jump_elephant
+        soundLookup["rockwall001 (Instance)"] = "dirtImpact";
+        soundLookup["rockground003 (Instance)"] = "dirtImpact";
+        soundLookup["grain_elevator_facade_06 (Instance)"] = "woodImpact";
+        soundLookup["grain_elevator_facade_14a (Instance)"] = "woodImpact";
+        soundLookup["wood_floor01 (Instance)"] = "woodImpact";
+        soundLookup["woodtrim001 (Instance)"] = "woodImpact";
+        soundLookup["woodwall_brownslats001 (Instance)"] = "woodImpact";
+        soundLookup["fence_alpha (Instance)"] = "wireImpact";
+        soundLookup["wood_wall004 (Instance)"] = "woodImpact";
+        soundLookup["water_water_well (Instance)"] = "wetImpact";
+        soundLookup["grain_elevator_facade_08 (Instance)"] = "woodImpact";
+        soundLookup["glasswindow001a (Instance)"] = "glassImpact";
+        soundLookup["gravelgrayred001 (Instance)"] = "dirtImpact";
+        soundLookup["concretefloor007b (Instance)"] = "stoneImpact";
+        soundLookup["flat_wall_02 (Instance)"] = "stoneImpact";
+        soundLookup["hyro_flat_outdoors_01 (Instance)"] = "stoneImpact";
+
+        // Sounds generated for DKMountain
+        soundLookup["dk.3SS06 (Instance)"] = "woodImpact";
+        soundLookup["dk.3SS12 (Instance)"] = "stoneImpact";
+        soundLookup["dk.3SS04 (Instance)"] = "dirtImpact";
+        soundLookup["dk.3SS17 (Instance)"] = "wireImpact";
+
+        // Sounds generated for plr_hightower
+        soundLookup["wall020b (Instance)"] = "woodImpact";
+        soundLookup["wood_beam03 (Instance)"] = "woodImpact";
+        soundLookup["wood_bridge001 (Instance)"] = "woodImpact";
+        soundLookup["grain_elevator_facade_14a (Instance)"] = "woodImpact";
+        soundLookup["steeldoor001 (Instance)"] = "metalImpact";
+        soundLookup["wall007a (Instance)"] = "woodImpact";
+        soundLookup["glasswindow001a (Instance)"] = "glassImpact";
+        soundLookup["wood_wall002b (Instance)"] = "woodImpact";
+        soundLookup["wood_wall002 (Instance)"] = "woodImpact";
+        soundLookup["wall028 (Instance)"] = "woodImpact";
+        soundLookup["Chicken_Wire001 (Instance)"] = "wireImpact";
+        soundLookup["wall025 (Instance)"] = "metalImpact";
+        soundLookup["Ibeam001 (Instance)"] = "metalImpact";
+        soundLookup["wall011g (Instance)"] = "metalImpact";
+        soundLookup["wall019 (Instance)"] = "metalImpact";
+        soundLookup["wall011 (Instance)"] = "metalImpact";
+        soundLookup["wood_floor002 (Instance)"] = "woodImpact";
+        soundLookup["rockwall013 (Instance)"] = "dirtImpact";
+        soundLookup["rockwall012 (Instance)"] = "dirtImpact";
+        soundLookup["wall011d (Instance)"] = "metalImpact";
+        soundLookup["wall011g (Instance)"] = "metalImpact";
+        soundLookup["Imetal005 (Instance)"] = "metalImpact";
+        soundLookup["concretewall011a (Instance)"] = "stoneImpact";
+        soundLookup["wall016d (Instance)"] = "metalImpact";
+        soundLookup["Ibeam002 (Instance)"] = "metalImpact";
+        soundLookup["metaldoor01_192 (Instance)"] = "metalImpact";
+
         generatedList = true;
     }
 }
