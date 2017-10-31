@@ -229,30 +229,30 @@ public class DecalEditor : Editor {
 		}
 	}
 
-	private static GameObject[] GetAffectedObjects(Bounds bounds, LayerMask affectedLayers) {
-		MeshRenderer[] renderers = (MeshRenderer[]) GameObject.FindObjectsOfType<MeshRenderer>();
-		List<GameObject> objects = new List<GameObject>();
-		foreach(Renderer r in renderers) {
-			if( !r.enabled ) continue;
-            /*
-            if (r.gameObject.name == "bonnet") {
-                Debug.Log("bonnet layer is " + r.gameObject.layer);
-                //int test = (affectedLayers.value >> 2);
-                Debug.Log("affected layer is " + (affectedLayers.value >> 2));
-
-                Debug.Log("Mask test: " + (affectedLayers.value & r.gameObject.layer >> 2));
-                //Debug.Log("Mask test: " + (r.gameObject.layer & (affectedLayers.value >> 2)));
+    private static GameObject[] GetAffectedObjects(Bounds bounds, LayerMask affectedLayers) {
+        List<GameObject> objects = new List<GameObject>();
+        foreach( Collider col in Physics.OverlapBox(bounds.center, bounds.extents, Quaternion.identity, affectedLayers, QueryTriggerInteraction.Ignore) ) {
+            Renderer r = col.gameObject.GetComponent<Renderer>();
+            // If the object doesn't render anything, ignore.
+            if (r == null ) continue;
+            // If we're trying to apply to a disabled object, ignore.
+            if( !r.enabled ) continue;
+            // If we are trying to apply ourselves to another decal, ignore.
+            if( r.GetComponent<Decal>() != null ) continue;
+            if ( r.GetComponent<MeshFilter>() == null ) continue;
+            // If we're a trigger, ignore.
+            if( col.isTrigger ) continue;
+            // If we're not static, ignore.
+            if ( r.GetComponent<Rigidbody>() != null ) {
+                continue;
             }
-            */
-			if( !IsLayerContains(affectedLayers, r.gameObject.layer) ) continue;
-			if( r.GetComponent<Decal>() != null ) continue;
-			
-			if( bounds.Intersects(r.bounds) ) {
-				objects.Add(r.gameObject);
-			}
-		}
-		return objects.ToArray();
-	}
+            if ( r.GetComponent<Movable>() != null ) {
+                continue;
+            }
+            objects.Add(r.gameObject);
+        }
+        return objects.ToArray();
+    }
 
 
 	

@@ -23,11 +23,11 @@ public class Rocket : MonoBehaviour {
         Vector3 explosionPos;
         if (Physics.Raycast (transform.position, transform.forward, out hit, 2f)) {
             explosionPos = hit.point;
-            Instantiate(decal,explosionPos,Quaternion.LookRotation(-hit.normal));
+            Instantiate(decal,explosionPos-hit.normal,Quaternion.LookRotation(-hit.normal));
             //Helper.DrawLine (hit.point, hit.point + hit.normal, Color.red, 10f);
         } else {
             explosionPos = other.contacts [0].point;
-            Instantiate(decal,explosionPos,Quaternion.LookRotation(-other.contacts[0].normal));
+            Instantiate(decal,explosionPos-other.contacts[0].normal,Quaternion.LookRotation(-other.contacts[0].normal));
         }
         int rand = (int)Random.Range (0, explosions.Count);
         Instantiate (explosions [rand], explosionPos, Quaternion.LookRotation(-hit.normal));//Quaternion.LookRotation(other.contacts[0].normal));
