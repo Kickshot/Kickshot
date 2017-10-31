@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+// Moves a GameObject between two points over a period of CycleLength seconds
 public class MoveBetween : MonoBehaviour {
     
     public Transform Target1;
@@ -9,8 +10,7 @@ public class MoveBetween : MonoBehaviour {
     public float CycleLength = 3;
     
     float cycleTime = 0;
-
-	// Update is called once per frame
+    
 	void Update () {
         // Update cycle time
         cycleTime += Time.deltaTime;
