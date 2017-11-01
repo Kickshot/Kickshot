@@ -11,6 +11,7 @@ public class Rocket : MonoBehaviour {
     public float radius = 5f;
     public float inheritPercentage = .5f;
     public Vector3 inheritedVel;
+    private bool exploded = false;
     void Start() {
         body = GetComponent<Rigidbody> ();
         body.velocity = (inheritedVel*inheritPercentage + transform.forward * speed);
@@ -19,6 +20,9 @@ public class Rocket : MonoBehaviour {
         //body.velocity = (inheritedVel*inheritPercentage + transform.forward * speed);
     }
     void OnCollisionEnter( Collision other ) {
+        if (exploded) {
+            return;
+        }
         RaycastHit hit;
         Vector3 explosionPos;
         if (Physics.Raycast (transform.position, transform.forward, out hit, 2f)) {
@@ -31,7 +35,14 @@ public class Rocket : MonoBehaviour {
         }
         int rand = (int)Random.Range (0, explosions.Count);
         Instantiate (explosions [rand], explosionPos, Quaternion.LookRotation(-hit.normal));//Quaternion.LookRotation(other.contacts[0].normal));
-        Destroy(gameObject);
+        Destroy(gameObject.transform.Find("Trail").gameObject);
+        Destroy(gameObject.transform.Find("rocket").gameObject);
+        Destroy(gameObject.transform.Find("CloudTrail").gameObject,1f);
+        gameObject.transform.Find ("CloudTrail").gameObject.GetComponent<ParticleSystem> ().Stop ();
+        Destroy (gameObject.GetComponent<SphereCollider> ());
+        Destroy (gameObject.GetComponent<Rigidbody> ());
+        Destroy (gameObject.GetComponent<AudioSource> ());
+        Destroy (gameObject, 1f);
         GameRules.RadiusDamage (100f, power, explosionPos, radius, true);
     }
 }

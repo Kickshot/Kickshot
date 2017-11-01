@@ -8,6 +8,7 @@ public class SourcePlayer : MonoBehaviour {
     // Accessible because it's configurable
     public Transform body;
     public GameObject deathSpawn;
+    public GameObject landSpawn;
     public Vector3 velocity;
     public Vector3 gravity = new Vector3 (0, -24f, 0); // gravity in meters per second per second.
     public float wallGravity = -12; // Gravity is weird on wall runs because of clip velocity.
@@ -464,7 +465,7 @@ public class SourcePlayer : MonoBehaviour {
             float fvol = Mathf.Min ((fallVelocity - fallSoundThreshold) / (maxSafeFallSpeed - fallSoundThreshold), 1f);
             RaycastHit hit;
             if (RaycastForGround (out hit)) {
-                PlayerRoughLandingEffects (fvol, hit.point, hit.normal);
+                PlayerRoughLandingEffects (fvol, transform.position - new Vector3(0f, distToGround, 0f), hit.normal);
             }
         }
         if (fallVelocity >= fallPunchThreshold) {
@@ -516,6 +517,7 @@ public class SourcePlayer : MonoBehaviour {
         if (Physics.Raycast (hitpos + hitnormal * 0.1f, -hitnormal, out hit, 1f)) {
             AudioSource.PlayClipAtPoint (ImpactSounds.GetSound (Helper.getMaterial (hit)), hitpos, volume);
         }
+        Instantiate (landSpawn, hitpos, Quaternion.LookRotation(hitnormal));
     }
 
     // Applies friction.
