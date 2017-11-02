@@ -20,8 +20,9 @@ public static class GameRules {
         //vecSrc.z += 1;// in case grenade is lying on the ground
 
         // iterate on all entities in the vicinity.
+        List<GameObject> ignoreObjects = new List<GameObject>();
         foreach ( Collider other in Physics.OverlapSphere( vecSrc, radius ) ) {
-            if (other.isTrigger) {
+            if (other.isTrigger || ignoreObjects.Contains(other.gameObject)) {
                 continue;
             }
 
@@ -31,6 +32,7 @@ public static class GameRules {
             } else {
                 vecSpot = other.ClosestPointOnBounds (vecSrc);
             }
+            ignoreObjects.Add (other.gameObject);
 
             bool bHit = false;
 

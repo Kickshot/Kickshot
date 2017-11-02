@@ -66,6 +66,7 @@ public class SourcePlayer : MonoBehaviour {
 
 
     // Shouldn't need to access these, probably
+    private float dustSpawnCooldown = 0f;
     private float airBrakeStun = 0f;
     private float jumpBufferTimer;
     private List<ContactPoint> contacts;
@@ -121,7 +122,7 @@ public class SourcePlayer : MonoBehaviour {
 
         controller = GetComponent<CharacterController> ();
         controller.detectCollisions = false; // The default collision resolution for character controller vs rigidbody is analogus to unstoppable infinite mass vs paper. We don't want that.
-        controller.enableOverlapRecovery = true;
+        controller.enableOverlapRecovery = false;
         controller.stepOffset = 0f; // We use our own step logic.
 
         originalHeight = controller.height;
@@ -314,11 +315,17 @@ public class SourcePlayer : MonoBehaviour {
         // assume we also haven't hit the ground.
         justJumped = false;
         justTookFallDamage = false;
-        // assume we aren't touching anything
 
 		// Check for wall collison.
 		HandleWallRunCollision ();
+        // assume we aren't touching anything
         contacts.Clear();
+
+        if (dustSpawnCooldown > 0f) {
+            dustSpawnCooldown -= Time.deltaTime;
+        } else {
+            dustSpawnCooldown = 0f;
+        }
 
         bool hitGround = false;
         // We only check for ground under us if we're moving downwards.
@@ -517,7 +524,10 @@ public class SourcePlayer : MonoBehaviour {
         if (Physics.Raycast (hitpos + hitnormal * 0.1f, -hitnormal, out hit, 1f)) {
             AudioSource.PlayClipAtPoint (ImpactSounds.GetSound (Helper.getMaterial (hit)), hitpos, volume);
         }
-        Instantiate (landSpawn, hitpos, Quaternion.LookRotation(hitnormal));
+        if (dustSpawnCooldown <= 0f) {
+            Instantiate (landSpawn, hitpos, Quaternion.LookRotation (hitnormal));
+            dustSpawnCooldown = 0.3f;
+        }
     }
 
     // Applies friction.
@@ -702,7 +712,7 @@ public class SourcePlayer : MonoBehaviour {
         // Add in any base velocity to the current velocity.
         velocity += groundVelocity;
 
-        //controller.Move(velocity*Time.deltaTime
+        //controller.Move (velocity * Time.deltaTime);
         StepMove ();
 
         // Now pull the base velocity back out.   Base velocity is set if you are on a moving object, like a conveyor (or maybe another monster?)
@@ -1040,6 +1050,12 @@ public class SourcePlayer : MonoBehaviour {
         }
         if (depth < maxDepth && contact) {
             RecursivePushback (depth + 1, maxDepth);
+        }
+    }
+
+    public void OnCollisionEnter(Collision c ) {
+        foreach( UnityEngine.ContactPoint p in c.contacts ) {
+            HandleCollision (p.otherCollider.gameObject, p.normal, p.point);
         }
     }
 
