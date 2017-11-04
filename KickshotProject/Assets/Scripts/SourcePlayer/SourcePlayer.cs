@@ -112,13 +112,7 @@ public class SourcePlayer : MonoBehaviour {
 
         // This generates our layermask, making sure we only collide with stuff that's specified by the physics engine.
         // This makes it so that if we specify in-engine layers to not collide with the player, that we actually abide to it.
-        int myLayer = gameObject.layer;
-        layerMask = 0;
-        for (int i = 0; i < 32; i++) {
-            if (!Physics.GetIgnoreLayerCollision (myLayer, i)) {
-                layerMask = layerMask | 1 << i;
-            }
-        }
+        layerMask = Helper.GetLayerMask(gameObject);
 
         controller = GetComponent<CharacterController> ();
         controller.detectCollisions = false; // The default collision resolution for character controller vs rigidbody is analogus to unstoppable infinite mass vs paper. We don't want that.

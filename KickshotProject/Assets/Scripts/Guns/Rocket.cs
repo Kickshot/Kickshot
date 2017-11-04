@@ -12,9 +12,11 @@ public class Rocket : MonoBehaviour {
     public float inheritPercentage = .5f;
     public Vector3 inheritedVel;
     private bool exploded = false;
+    private int layerMask;
     void Start() {
         body = GetComponent<Rigidbody> ();
         body.velocity = (inheritedVel*inheritPercentage + transform.forward * speed);
+        layerMask = Helper.GetLayerMask (gameObject);
     }
     void Update() {
         //body.velocity = (inheritedVel*inheritPercentage + transform.forward * speed);
@@ -25,7 +27,7 @@ public class Rocket : MonoBehaviour {
         }
         RaycastHit hit;
         Vector3 explosionPos;
-        if (Physics.Raycast (transform.position, transform.forward, out hit, 2f)) {
+        if (Physics.Raycast (transform.position, transform.forward, out hit, 2, layerMask, QueryTriggerInteraction.Ignore)) {
             explosionPos = hit.point;
             Instantiate(decal,explosionPos-hit.normal,Quaternion.LookRotation(-hit.normal));
             //Helper.DrawLine (hit.point, hit.point + hit.normal, Color.red, 10f);

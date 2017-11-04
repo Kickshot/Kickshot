@@ -20,6 +20,22 @@ public static class Helper {
         lr.SetPosition(1, end);
         GameObject.Destroy(myLine, duration);
     }
+    public static int GetHitScanLayerMask() {
+        //Hit everything but players, playerclips, and ignore raycast layers.
+        return ~((1 << LayerMask.NameToLayer ("Player")) | (1 << LayerMask.NameToLayer ("PlayerClip")) | (1 << LayerMask.NameToLayer ("IgnoreRaycast")));
+    }
+    public static int GetLayerMask( GameObject obj ) {
+        // This generates our layermask, making sure we only collide with stuff that's specified by the physics engine.
+        // This makes it so that if we specify in-engine layers to not collide with the player, that we actually abide to it.
+        int myLayer = obj.layer;
+        int layerMask = 0;
+        for (int i = 0; i < 32; i++) {
+            if (!Physics.GetIgnoreLayerCollision (myLayer, i)) {
+                layerMask = layerMask | 1 << i;
+            }
+        }
+        return layerMask;
+    }
     // Modulo implementation since C# doesn't have it.
     public static float fmod(float a, float b) {
         return a - b * Mathf.Floor (a / b);
