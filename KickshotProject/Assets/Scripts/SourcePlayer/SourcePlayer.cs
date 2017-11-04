@@ -232,11 +232,13 @@ public class SourcePlayer : MonoBehaviour {
         Movable check = groundEntity.GetComponent<Movable> ();
         if (check != null) {
             groundVelocity = check.velocity;
+			return true;
         }
         // A rigidbody we have to calculate the velocity of the ground immediately below us.
         Rigidbody cccheck = groundEntity.GetComponent<Rigidbody> ();
         if (cccheck != null) {
             groundVelocity = cccheck.GetPointVelocity (hit.point);
+			return true;
         }
         return true;
     }

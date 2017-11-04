@@ -3,25 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 
 // Moves a GameObject between two points over a period of CycleLength seconds
+[RequireComponent( typeof(Movable) )]
 public class MoveBetween : MonoBehaviour {
     
     public Transform Target1;
     public Transform Target2;
     public float CycleLength = 3;
-    
-    float cycleTime = 0;
-    
+	private Vector3 lastPosition;
 	void Update () {
-        // Update cycle time
-        cycleTime += Time.deltaTime;
-        if (cycleTime >= CycleLength)
-            cycleTime -= CycleLength;
-
-        // Move GameObject
-        if(cycleTime < CycleLength / 2)
-            transform.position = Vector3.Lerp(Target1.position, Target2.position, cycleTime / (CycleLength / 2));
-        else
-            transform.position = Vector3.Lerp(Target2.position, Target1.position, (cycleTime - CycleLength / 2) / (CycleLength / 2));
-
+		lastPosition = transform.position;
+		float progress = (Mathf.Cos (Time.timeSinceLevelLoad * 2 * Mathf.PI / CycleLength) + 1f) / 2f;
+		transform.position = Target1.position * progress + Target2.position * (1f - progress);
+		GetComponent<Movable> ().velocity = (transform.position - lastPosition)/Time.deltaTime;
     }
 }
