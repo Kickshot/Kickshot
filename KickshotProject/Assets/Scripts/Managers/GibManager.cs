@@ -2,15 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GibManager : MonoBehaviour {
+public static class GibManager {
+    public static void SpawnGibs( GameObject obj ) {
+    }
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    public static void SpawnGibs( SourcePlayer player ) {
+        
+    }
 }

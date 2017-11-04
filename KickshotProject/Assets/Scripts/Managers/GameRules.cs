@@ -72,7 +72,7 @@ public static class GameRules {
                     float flForce = knockBack * falloff;
                     Rigidbody rb = other.gameObject.GetComponent<Rigidbody>();
                     if (rb != null) {
-                        rb.AddForceAtPosition (flForce * dir, vecEndPos);
+                        rb.AddForceAtPosition (flForce * dir * 50f, vecEndPos);
                     }
                     SourcePlayer player = other.gameObject.GetComponent<SourcePlayer>();
                     if (player != null) {
