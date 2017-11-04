@@ -26,7 +26,7 @@ public class RocketLauncher : GunBase {
         RaycastHit hit;
         Vector3 hitpos = view.position + view.forward * 1000f;
         // We ignore player collisions.
-        if (Physics.Raycast (view.position, view.forward, out hit, 1000f, ~(1 << LayerMask.NameToLayer ("Player")))) {
+        if (Physics.Raycast (view.position, view.forward, out hit, 1000f, Helper.GetHitScanLayerMask())) {
             hitpos = hit.point;
         }
         Rocket r = Instantiate (rocket, gunBarrelFront.position, Quaternion.LookRotation (hitpos-gunBarrelFront.position));
@@ -36,7 +36,7 @@ public class RocketLauncher : GunBase {
         RaycastHit hit;
         Vector3 hitpos = view.position - view.forward * 1000f;
         // We ignore player collisions.
-        if (Physics.Raycast (view.position, -view.forward, out hit, 1000f, ~(1 << LayerMask.NameToLayer ("Player")))) {
+        if (Physics.Raycast (view.position, -view.forward, out hit, 1000f, Helper.GetHitScanLayerMask())) {
             hitpos = hit.point;
         }
         Rocket r = Instantiate (rocket, gunBarrelBack.position, Quaternion.LookRotation (hitpos-gunBarrelBack.position));
