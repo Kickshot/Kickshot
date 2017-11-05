@@ -203,4 +203,11 @@ public static class Helper {
         Vector3 direction = point - pivot;
         return pivot + rotation * direction;
     }
+
+    static public void SetLayerRecursively( GameObject obj , int newLayer  ) {
+        obj.layer = newLayer;
+        foreach( Transform child in obj.transform ) {
+            SetLayerRecursively( child.gameObject, newLayer );
+        }
+    }
 }

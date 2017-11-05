@@ -27,18 +27,19 @@ public class Rocket : MonoBehaviour {
         }
         RaycastHit hit;
         Vector3 explosionPos;
+        int rand = (int)Random.Range (0, explosions.Count);
         if (Physics.Raycast (transform.position, transform.forward, out hit, 2, layerMask, QueryTriggerInteraction.Ignore)) {
             explosionPos = hit.point;
-            GameObject d = Instantiate(decal,explosionPos,Quaternion.LookRotation(-hit.normal));
-            d.transform.SetParent (hit.transform);
+            GameObject d = Instantiate(decal,explosionPos,Quaternion.LookRotation(-hit.normal)*Quaternion.AngleAxis(Random.Range(0,360),new Vector3(0,0,1)));
+            //d.transform.SetParent (hit.transform);
             //Helper.DrawLine (hit.point, hit.point + hit.normal, Color.red, 10f);
+            Instantiate (explosions [rand], explosionPos, Quaternion.LookRotation(-hit.normal)*Quaternion.AngleAxis(Random.Range(0,360),new Vector3(0,0,1)));
         } else {
             explosionPos = other.contacts [0].point;
-            GameObject d = Instantiate(decal,explosionPos,Quaternion.LookRotation(-other.contacts[0].normal));
-            d.transform.SetParent (other.contacts [0].otherCollider.gameObject.transform);
+            GameObject d = Instantiate(decal,explosionPos,Quaternion.LookRotation(-other.contacts [0].normal)*Quaternion.AngleAxis(Random.Range(0,360),new Vector3(0,0,1)));
+            //d.transform.SetParent (other.contacts [0].otherCollider.gameObject.transform);
+            Instantiate (explosions [rand], explosionPos, Quaternion.LookRotation(-other.contacts [0].normal)*Quaternion.AngleAxis(Random.Range(0,360),new Vector3(0,0,1)));
         }
-        int rand = (int)Random.Range (0, explosions.Count);
-        Instantiate (explosions [rand], explosionPos, Quaternion.LookRotation(-hit.normal));//Quaternion.LookRotation(other.contacts[0].normal));
         Destroy(gameObject.transform.Find("Trail").gameObject);
         Destroy(gameObject.transform.Find("rocket").gameObject);
         Destroy(gameObject.transform.Find("CloudTrail").gameObject,1f);

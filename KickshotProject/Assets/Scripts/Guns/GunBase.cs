@@ -44,7 +44,7 @@ public class GunBase : MonoBehaviour {
             col.enabled = false;
         }
         // It's now part of the player, make sure we don't collide with rockets and the like.
-        gameObject.layer = LayerMask.NameToLayer ("Player");
+        Helper.SetLayerRecursively(gameObject, LayerMask.NameToLayer ("Player"));
         // Switch time
         busy = switchBusyTime;
         player = Player.GetComponent<SourcePlayer> ();
@@ -64,7 +64,7 @@ public class GunBase : MonoBehaviour {
         foreach (Collider col in gameObject.GetComponentsInChildren<Collider> ()) {
             col.enabled = true;
         }
-        gameObject.layer = LayerMask.NameToLayer ("Default");
+        Helper.SetLayerRecursively(gameObject, LayerMask.NameToLayer ("Default"));
         gameObject.SetActive (false);
     }
 
