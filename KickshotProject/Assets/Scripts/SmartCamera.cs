@@ -5,9 +5,17 @@ using UnityEngine;
 public class SmartCamera : MonoBehaviour {
 
     public Transform targetTransform { get; private set; }
+    public float ShakeIntensity = 0.25f;
+    public float DecreaseFactor = 1f;
+    public float MaxShake = 1f;
+    public float MaxRecoil = 20f;
+    public float RecoilSpeed = 10f;
+    public float RecoilDecayFactor = 1f;
 
     GameObject parentGO;
-	
+
+    float shake;
+    float recoil;
     // Use this for initialization
 	void Start ()
     {
@@ -19,13 +27,60 @@ public class SmartCamera : MonoBehaviour {
         parentGO.transform.parent = this.transform.parent;
         this.transform.parent = parentGO.transform;
 
-        GameObject.Find("SourcePlayer").GetComponent<MouseLook>().view = targetTransform;
+        GetComponentInParent<MouseLook>().view = targetTransform;
+
+        shake = 0f;
 	}
 	
 	// Update is called once per frame
 	void Update ()
     {
+        HandleShake();
+        HandleRecoil();
+        
         parentGO.transform.SetPositionAndRotation(targetTransform.position, targetTransform.rotation);
-        print(targetTransform.eulerAngles);
 	}
+
+    public void AddShake(float amount)
+    {
+        shake += amount;
+    }
+
+    public void AddRecoil(float amount)
+    {
+        recoil += amount;
+    }
+
+    void HandleShake()
+    {
+        shake = Mathf.Clamp(shake, 0, MaxShake);
+
+        if (shake > 0)
+        {
+            transform.localPosition = Random.insideUnitCircle * ShakeIntensity * shake;
+            shake -= Time.deltaTime * DecreaseFactor;
+        }
+    }
+
+    void HandleRecoil()
+    {
+        if (recoil > 0f)
+        {
+            Quaternion Recoil = Quaternion.Euler(-recoil, 0f, 0f);
+            if(recoil > MaxRecoil)
+            {
+                Recoil = Quaternion.Euler(-MaxRecoil, 0f, 0f);
+                recoil = MaxRecoil;
+            }
+            // Dampen towards the target rotation
+            transform.localRotation = Quaternion.Slerp(transform.localRotation, Recoil, Time.deltaTime * RecoilSpeed);
+            recoil -= Time.deltaTime * RecoilDecayFactor;
+        }
+        else
+        {
+            recoil = 0f;
+            // Dampen towards the target rotation
+            transform.localRotation = Quaternion.Slerp(transform.localRotation, Quaternion.identity, Time.deltaTime * RecoilSpeed / 2);
+        }
+    }
 }

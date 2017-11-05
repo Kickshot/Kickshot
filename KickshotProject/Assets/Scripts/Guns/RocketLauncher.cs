@@ -24,13 +24,18 @@ public class RocketLauncher : GunBase {
     public override void OnPrimaryFire()
     {
         RaycastHit hit;
+
         Vector3 hitpos = view.position + view.forward * 1000f;
         // We ignore player collisions.
         if (Physics.Raycast (view.position, view.forward, out hit, 1000f, Helper.GetHitScanLayerMask())) {
             hitpos = hit.point;
         }
         Rocket r = Instantiate (rocket, gunBarrelFront.position, Quaternion.LookRotation (hitpos-gunBarrelFront.position));
+        r.transform.Rotate(childView.localRotation.eulerAngles);
         r.inheritedVel = player.velocity+player.groundVelocity;
+
+        Camera.main.GetComponent<SmartCamera>().AddShake(1f);
+        Camera.main.GetComponent<SmartCamera>().AddRecoil(10f);
     }
     public override void OnSecondaryFire() {
         RaycastHit hit;

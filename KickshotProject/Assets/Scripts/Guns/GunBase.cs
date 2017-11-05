@@ -21,6 +21,7 @@ public class GunBase : MonoBehaviour {
 
     public SourcePlayer player = null;
     public Transform view;
+    public Transform childView;
     public bool equipped = false; // This is used internally to turn on/off the actual gun stuff. If we're unequipped we're either on the floor in in someone's pockets.
     private bool pfiring = false; // These dumb booleans just keep track to make sure that OnPrimaryRelease doesn't get called before OnPrimaryFire.
     private bool sfiring = false;
@@ -49,6 +50,7 @@ public class GunBase : MonoBehaviour {
         busy = switchBusyTime;
         player = Player.GetComponent<SourcePlayer> ();
         view = Player.GetComponent<MouseLook> ().view;
+        childView = Camera.main.GetComponent<Transform>();
         gameObject.SetActive (true);
         Transform shoulderBone = Player.GetComponentInChildren<Animator> ().GetBoneTransform (HumanBodyBones.RightShoulder);
         transform.SetParent (shoulderBone);
