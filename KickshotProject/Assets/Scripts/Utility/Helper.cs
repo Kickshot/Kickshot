@@ -78,27 +78,29 @@ public static class Helper {
             Debug.LogError("Couldn't read mesh because it has a Batching Static flag enabled. Returning base material.");
             return r.material;
         }
-        if (hit.collider is MeshCollider) {
-            // Search for which submesh we hit, once we find it, return the coorisponding material.
-            Vector3 findTri = new Vector3 (mesh.triangles [hit.triangleIndex * 3],
-                                  mesh.triangles [hit.triangleIndex * 3 + 1],
-                                  mesh.triangles [hit.triangleIndex * 3 + 2]);
-            for (int i = 0; i < mesh.subMeshCount; i++) {
-                int[] subMesh = mesh.GetTriangles (i);
-                for (int j = 0; j < subMesh.Length; j += 3) {
-                    Vector3 tri = new Vector3 (subMesh [j], subMesh [j + 1], subMesh [j + 2]);
-                    if (tri == findTri) {
-                        return r.materials [i];
-                    }
+        if (!(hit.collider is MeshCollider)) {
+            return r.material;
+        }
+        if (mesh.triangles.Length > 30000) {
+            //Debug.LogError ("A mesh is too complicated to optimally grab materials. This causes performance problems! Try splitting it up in the editor...");
+        }
+        // Search for which submesh we hit, once we find it, return the coorisponding material.
+        Vector3 findTri = new Vector3 (mesh.triangles [hit.triangleIndex * 3],
+                                       mesh.triangles [hit.triangleIndex * 3 + 1],
+                                       mesh.triangles [hit.triangleIndex * 3 + 2]);
+        for (int i = 0; i < mesh.subMeshCount; i++) {
+            int[] subMesh = mesh.GetTriangles (i);
+            for (int j = 0; j < subMesh.Length; j += 3) {
+                Vector3 tri = new Vector3 (subMesh [j], subMesh [j + 1], subMesh [j + 2]);
+                if (tri == findTri) {
+                    return r.materials [i];
                 }
             }
-        } else {
-            return r.materials [0];
         }
-        return null;
+        return r.material;
     }
     //Draws just the box at where it is currently hitting.
-    public static void DrawBoxCastOnHit(Vector3 origin, Vector3 halfExtents, Quaternion orientation, Vector3 direction, float hitInfoDistance, Color color)
+    /*public static void DrawBoxCastOnHit(Vector3 origin, Vector3 halfExtents, Quaternion orientation, Vector3 direction, float hitInfoDistance, Color color)
     {
         origin = CastCenterOnCollision(origin, direction, hitInfoDistance);
         DrawBox(origin, halfExtents, orientation, color);
@@ -190,7 +192,7 @@ public static class Helper {
             localFrontBottomLeft  = RotatePointAroundPivot(localFrontBottomLeft , Vector3.zero, orientation);
             localFrontBottomRight = RotatePointAroundPivot(localFrontBottomRight, Vector3.zero, orientation);
         }
-    }
+    }*/
 
     //This should work for all cast types
     static Vector3 CastCenterOnCollision(Vector3 origin, Vector3 direction, float hitInfoDistance)
@@ -209,5 +211,164 @@ public static class Helper {
         foreach( Transform child in obj.transform ) {
             SetLayerRecursively( child.gameObject, newLayer );
         }
+    }
+
+    public static bool TriangleIntersectsAABB( Vector3 a, Vector3 b, Vector3 c, Vector3 boxCenter, Vector3 boxExtents )
+    {
+        // Translate triangle as conceptually moving AABB to origin
+        var v0 = ( a - boxCenter );
+        var v1 = ( b - boxCenter );
+        var v2 = ( c - boxCenter );
+
+        // Compute edge vectors for triangle
+        var f0 = ( v1 - v0 );
+        var f1 = ( v2 - v1 );
+        var f2 = ( v0 - v2 );
+
+        #region Test axes a00..a22 (category 3)
+
+        // Test axis a00
+        var a00 = new Vector3( 0, -f0.z, f0.y );
+        var p0 = Vector3.Dot( v0, a00 );
+        var p1 = Vector3.Dot( v1, a00 );
+        var p2 = Vector3.Dot( v2, a00 );
+        var r = boxExtents.y * Mathf.Abs( f0.z ) + boxExtents.z * Mathf.Abs( f0.y );
+        if( Mathf.Max( -Mathf.Max(p0, p1, p2 ), Mathf.Min(p0, p1, p2 ) ) > r )
+        {
+            return false;
+        }
+
+        // Test axis a01
+        var a01 = new Vector3( 0, -f1.z, f1.y );
+        p0 = Vector3.Dot( v0, a01 );
+        p1 = Vector3.Dot( v1, a01 );
+        p2 = Vector3.Dot( v2, a01 );
+        r = boxExtents.y * Mathf.Abs( f1.z ) + boxExtents.z * Mathf.Abs( f1.y );
+        if( Mathf.Max( -Mathf.Max(p0, p1, p2 ), Mathf.Min(p0, p1, p2 ) ) > r )
+        {
+            return false;
+        }
+
+        // Test axis a02
+        var a02 = new Vector3( 0, -f2.z, f2.y );
+        p0 = Vector3.Dot( v0, a02 );
+        p1 = Vector3.Dot( v1, a02 );
+        p2 = Vector3.Dot( v2, a02 );
+        r = boxExtents.y * Mathf.Abs( f2.z ) + boxExtents.z * Mathf.Abs( f2.y );
+        if( Mathf.Max( -Mathf.Max(p0, p1, p2 ), Mathf.Min(p0, p1, p2 ) ) > r )
+        {
+            return false;
+        }
+
+        // Test axis a10
+        var a10 = new Vector3( f0.z, 0, -f0.x );
+        p0 = Vector3.Dot( v0, a10 );
+        p1 = Vector3.Dot( v1, a10 );
+        p2 = Vector3.Dot( v2, a10 );
+        r = boxExtents.x * Mathf.Abs( f0.z ) + boxExtents.z * Mathf.Abs( f0.x );
+        if( Mathf.Max( -Mathf.Max(p0, p1, p2 ), Mathf.Min(p0, p1, p2 ) ) > r )
+        {
+            return false;
+        }
+
+        // Test axis a11
+        var a11 = new Vector3( f1.z, 0, -f1.x );
+        p0 = Vector3.Dot( v0, a11 );
+        p1 = Vector3.Dot( v1, a11 );
+        p2 = Vector3.Dot( v2, a11 );
+        r = boxExtents.x * Mathf.Abs( f1.z ) + boxExtents.z * Mathf.Abs( f1.x );
+        if( Mathf.Max( -Mathf.Max(p0, p1, p2 ), Mathf.Min(p0, p1, p2 ) ) > r )
+        {
+            return false;
+        }
+
+        // Test axis a12
+        var a12 = new Vector3( f2.z, 0, -f2.x );
+        p0 = Vector3.Dot( v0, a12 );
+        p1 = Vector3.Dot( v1, a12 );
+        p2 = Vector3.Dot( v2, a12 );
+        r = boxExtents.x * Mathf.Abs( f2.z ) + boxExtents.z * Mathf.Abs( f2.x );
+        if( Mathf.Max( -Mathf.Max(p0, p1, p2 ), Mathf.Min(p0, p1, p2 ) ) > r )
+        {
+            return false;
+        }
+
+        // Test axis a20
+        var a20 = new Vector3( -f0.y, f0.x, 0 );
+        p0 = Vector3.Dot( v0, a20 );
+        p1 = Vector3.Dot( v1, a20 );
+        p2 = Vector3.Dot( v2, a20 );
+        r = boxExtents.x * Mathf.Abs( f0.y ) + boxExtents.y * Mathf.Abs( f0.x );
+        if( Mathf.Max( -Mathf.Max(p0, p1, p2 ), Mathf.Min(p0, p1, p2 ) ) > r )
+        {
+            return false;
+        }
+
+        // Test axis a21
+        var a21 = new Vector3( -f1.y, f1.x, 0 );
+        p0 = Vector3.Dot( v0, a21 );
+        p1 = Vector3.Dot( v1, a21 );
+        p2 = Vector3.Dot( v2, a21 );
+        r = boxExtents.x * Mathf.Abs( f1.y ) + boxExtents.y * Mathf.Abs( f1.x );
+        if( Mathf.Max( -Mathf.Max(p0, p1, p2 ), Mathf.Min(p0, p1, p2 ) ) > r )
+        {
+            return false;
+        }
+
+        // Test axis a22
+        var a22 = new Vector3( -f2.y, f2.x, 0 );
+        p0 = Vector3.Dot( v0, a22 );
+        p1 = Vector3.Dot( v1, a22 );
+        p2 = Vector3.Dot( v2, a22 );
+        r = boxExtents.x * Mathf.Abs( f2.y ) + boxExtents.y * Mathf.Abs( f2.x );
+        if( Mathf.Max( -Mathf.Max(p0, p1, p2 ), Mathf.Min(p0, p1, p2 ) ) > r )
+        {
+            return false;
+        }
+
+        #endregion 
+
+        #region Test the three axes corresponding to the face normals of AABB b (category 1)
+
+        // Exit if...
+        // ... [-extents.x, extents.x] and [min(v0.x,v1.x,v2.x), max(v0.x,v1.x,v2.x)] do not overlap
+        if( Mathf.Max(v0.x, v1.x, v2.x ) < -boxExtents.x || Mathf.Min(v0.x, v1.x, v2.x ) > boxExtents.x )
+        {
+            return false;
+        }
+
+        // ... [-extents.y, extents.y] and [min(v0.y,v1.y,v2.y), max(v0.y,v1.y,v2.y)] do not overlap
+        if( Mathf.Max(v0.y, v1.y, v2.y ) < -boxExtents.y || Mathf.Min(v0.y, v1.y, v2.y ) > boxExtents.y )
+        {
+            return false;
+        }
+
+        // ... [-extents.z, extents.z] and [min(v0.z,v1.z,v2.z), max(v0.z,v1.z,v2.z)] do not overlap
+        if( Mathf.Max(v0.z, v1.z, v2.z ) < -boxExtents.z || Mathf.Min(v0.z, v1.z, v2.z ) > boxExtents.z )
+        {
+            return false;
+        }
+
+        #endregion 
+
+        #region Test separating axis corresponding to triangle face normal (category 2)
+
+        var planeNormal = Vector3.Cross( f0, f1 );
+        var planeDistance = Vector3.Dot( planeNormal, v0 );
+
+        // Compute the projection interval radius of b onto L(t) = b.c + t * p.n
+        r = boxExtents.x * Mathf.Abs( planeNormal.x )
+            + boxExtents.y * Mathf.Abs( planeNormal.y )
+            + boxExtents.z * Mathf.Abs( planeNormal.z );
+
+        // Intersection occurs when plane distance falls within [-r,+r] interval
+        if( planeDistance > r )
+        {
+            return false;
+        }
+
+        #endregion
+
+        return true;
     }
 }

@@ -30,13 +30,13 @@ public class Rocket : MonoBehaviour {
         int rand = (int)Random.Range (0, explosions.Count);
         if (Physics.Raycast (transform.position, transform.forward, out hit, 2, layerMask, QueryTriggerInteraction.Ignore)) {
             explosionPos = hit.point;
-            GameObject d = Instantiate(decal,explosionPos,Quaternion.LookRotation(-hit.normal)*Quaternion.AngleAxis(Random.Range(0,360),new Vector3(0,0,1)));
+            Instantiate(decal,explosionPos,Quaternion.LookRotation(new Vector3(hit.normal.z, hit.normal.x, hit.normal.y),hit.normal)*Quaternion.AngleAxis(Random.Range(0,360),new Vector3(0,1,0)));
             //d.transform.SetParent (hit.transform);
             //Helper.DrawLine (hit.point, hit.point + hit.normal, Color.red, 10f);
             Instantiate (explosions [rand], explosionPos, Quaternion.LookRotation(-hit.normal)*Quaternion.AngleAxis(Random.Range(0,360),new Vector3(0,0,1)));
         } else {
             explosionPos = other.contacts [0].point;
-            GameObject d = Instantiate(decal,explosionPos,Quaternion.LookRotation(-other.contacts [0].normal)*Quaternion.AngleAxis(Random.Range(0,360),new Vector3(0,0,1)));
+            Instantiate(decal,explosionPos,Quaternion.LookRotation(-other.contacts [0].normal)*Quaternion.AngleAxis(Random.Range(0,360),new Vector3(0,0,1)));
             //d.transform.SetParent (other.contacts [0].otherCollider.gameObject.transform);
             Instantiate (explosions [rand], explosionPos, Quaternion.LookRotation(-other.contacts [0].normal)*Quaternion.AngleAxis(Random.Range(0,360),new Vector3(0,0,1)));
         }

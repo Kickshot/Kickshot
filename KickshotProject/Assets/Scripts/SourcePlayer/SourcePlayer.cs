@@ -117,6 +117,7 @@ public class SourcePlayer : MonoBehaviour {
         controller = GetComponent<CharacterController> ();
         controller.detectCollisions = false; // The default collision resolution for character controller vs rigidbody is analogus to unstoppable infinite mass vs paper. We don't want that.
         controller.enableOverlapRecovery = false;
+        controller.minMoveDistance = 0f;
         controller.stepOffset = 0f; // We use our own step logic.
 
         originalHeight = controller.height;
@@ -1057,24 +1058,31 @@ public class SourcePlayer : MonoBehaviour {
 
     private void StepMove () {
         //Temporarily ignore collisions.
-        ignoreCollisions = true;
         ignoreFootCollisions = true;
         // Try sliding forward both on ground and slide forward after being offset by stepSize
         //  take the move that goes farthest
         Vector3 savePos = transform.position;
+        Vector3 saveVelocity = velocity;
         // Move normally, then save that position.
         controller.Move (velocity * Time.deltaTime);
         Vector3 groundMove = transform.position;
+        Vector3 groundMoveVelocity = velocity;
         // Reset
         transform.position = savePos;
+        velocity = saveVelocity;
         // Move straight up,
-        controller.Move (new Vector3 (0f, stepSize, 0f));
+        //controller.Move (new Vector3 (0f, stepSize, 0f));
+        transform.position += new Vector3(0f,stepSize,0f);
         // Then move normally.
-        controller.Move (velocity * Time.deltaTime);
+        controller.Move (velocity * Time.deltaTime - new Vector3 (0f, stepSize, 0f));
         // Snap back to the ground
-        controller.Move (new Vector3 (0f, -stepSize, 0f));
+        //controller.Move (new Vector3 (0f, -stepSize, 0f));
         // Save this position
         Vector3 stepMove = transform.position;
+        Vector3 stepMoveVelocity = velocity;
+        // Enable collisions
+        ignoreFootCollisions = false;
+
         RaycastHit hit;
         // If we step-moved onto unstable ground, or into the air.. use the original move.
         // Or if we managed to move backwards from the step move. (possible because the top of our capsule head can push us out from under stuff...)
@@ -1089,23 +1097,13 @@ public class SourcePlayer : MonoBehaviour {
 
         bool wentBackwards = Mathf.Abs (Vector3.Dot (Vector3.Normalize (flatStepMove - flatSavePos), flatVelocity)) < Mathf.Abs (Vector3.Dot (Vector3.Normalize (flatGroundMove - flatSavePos), flatVelocity));
         if (!RaycastForGround (out hit) || wentBackwards || Mathf.Abs (savePos.y - stepMove.y) > stepSize) {
-            // Move normally
-            transform.position = savePos;
-            ignoreCollisions = false;
-            controller.Move (velocity * Time.deltaTime);
-            ignoreFootCollisions = false;
+            transform.position = groundMove;
+            velocity = groundMoveVelocity;
             return;
         }
             
-        // Redo the step move, this time registering collisions.
-        transform.position = savePos;
-        ignoreCollisions = false;
-        controller.Move (new Vector3 (0f, stepSize, 0f));
-        controller.Move (velocity * Time.deltaTime);
-        controller.Move (new Vector3 (0f, -stepSize, 0f));
-        // Enable collisions
-        ignoreCollisions = false;
-        ignoreFootCollisions = false;
+        transform.position = stepMove;
+        velocity = stepMoveVelocity;
     }
     // Calculates the position of the sphere, probably unnecessary, it's just how they do it from the code i copied.
     public Vector3 SpherePosition (CollisionSphere sphere) {

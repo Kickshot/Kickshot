@@ -8,10 +8,8 @@ using System.Collections.Generic;
 /// point
 /// </summary>
 [RequireComponent(typeof(MeshCollider))]
+[ExecuteInEditMode]
 public class BSPTree : MonoBehaviour {
-
-    [SerializeField]
-    bool drawMeshTreeOnStart;
 
     public class Node
     {
@@ -52,15 +50,12 @@ public class BSPTree : MonoBehaviour {
 
             triangleNormals[i / 3] = normal;
         }
-
-        if (!drawMeshTreeOnStart)
-            BuildTriangleTree();
+        BuildTriangleTree();
     }
 
     void Start()
     {
-        if (drawMeshTreeOnStart)
-            BuildTriangleTree();
+        //BuildTriangleTree();
     }
 
     /// <summary>
@@ -77,6 +72,30 @@ public class BSPTree : MonoBehaviour {
         Vector3 closest = ClosestPointOnTriangle(triangles.ToArray(), to);
 
         return transform.TransformPoint(closest);
+    }
+
+    public void FindClosestTriangles(Vector3 to, float radius, List<int> triangles) {
+        to = transform.InverseTransformPoint(to);
+        if (tree == null) {
+            BuildTriangleTree ();
+        }
+        FindClosestTriangles (tree, to, radius/transform.lossyScale.magnitude, triangles);
+    }
+
+    public void GetIndices( int triangleIndex, out int i1, out int i2, out int i3 ) {
+        i1 = tris[triangleIndex];
+        i2 = tris[triangleIndex + 1];
+        i3 = tris[triangleIndex + 2];
+    }
+
+    public Vector3 GetNormal( int triangleIndex) {
+        return triangleNormals[triangleIndex];
+    }
+
+    public void GetVertices( int triangleIndex, out Vector3 v1, out Vector3 v2, out Vector3 v3 ) {
+        v1 = vertices[tris[triangleIndex]];
+        v2 = vertices[tris[triangleIndex + 1]];
+        v3 = vertices[tris[triangleIndex + 2]];
     }
 
     void FindClosestTriangles(Node node, Vector3 to, float radius, List<int> triangles)
