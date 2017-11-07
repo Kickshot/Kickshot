@@ -7,6 +7,7 @@ using UnityEngine;
 public class Decal : MonoBehaviour {
     public Material decal;
     public float offset = 0.01f;
+    public bool randomRotateOnSpawn = false;
     public LayerMask layerMask;
     public List<GameObject> affectedObjects;
     private List<Vector3> newVerts = new List<Vector3> ();
@@ -16,6 +17,9 @@ public class Decal : MonoBehaviour {
     Dictionary<int, int> indexLookup = new Dictionary<int, int>();
 
     void Start() {
+        if (randomRotateOnSpawn) {
+            transform.RotateAround (transform.position, transform.up, Random.Range (0f, 360f));
+        }
         GetComponent<MeshRenderer> ().material = decal;
         BuildDecal ();
         transform.hasChanged = false;
@@ -76,7 +80,6 @@ public class Decal : MonoBehaviour {
         List<int> triangles = new List<int>();
         tree.FindClosestTriangles (transform.position, transform.lossyScale.magnitude/2f, triangles);
         Matrix4x4 mat = transform.worldToLocalMatrix * obj.transform.localToWorldMatrix;
-        float off = ((Helper.fmod(Time.time,10f)+0.1f)/10.1f)*offset;
         for (int i = 0; i < triangles.Count; i++) {
             int i1, i2, i3;
             tree.GetIndices (triangles [i], out i1, out i2, out i3);
@@ -93,6 +96,7 @@ public class Decal : MonoBehaviour {
             if (normal.y <= 0.05f) {
                 continue;
             }
+            float off = Random.Range(0f,1f)*offset;
             v1 += normal * off;
             v2 += normal * off;
             v3 += normal * off;

@@ -42,7 +42,8 @@ public class Rocket : MonoBehaviour {
             Instantiate (explosions [rand], explosionPos, Quaternion.LookRotation(-hit.normal)*Quaternion.AngleAxis(Random.Range(0,360),new Vector3(0,0,1)));
         } else {
             explosionPos = other.contacts [0].point;
-            Instantiate(decal,other.contacts [0].point,Quaternion.LookRotation(new Vector3(other.contacts [0].normal.z, other.contacts [0].normal.x, other.contacts [0].normal.y),other.contacts [0].normal)*Quaternion.AngleAxis(Random.Range(0,360),new Vector3(0,1,0)));
+            Vector3 perp = new Vector3 (-other.contacts [0].normal.z, other.contacts [0].normal.x, -other.contacts [0].normal.y);
+            Instantiate(decal,other.contacts [0].point - other.contacts[0].normal, Quaternion.LookRotation(perp,other.contacts[0].normal));
             //d.transform.SetParent (other.contacts [0].otherCollider.gameObject.transform);
             Instantiate (explosions [rand], explosionPos, Quaternion.LookRotation(-other.contacts [0].normal)*Quaternion.AngleAxis(Random.Range(0,360),new Vector3(0,0,1)));
         }
