@@ -15,10 +15,13 @@ public class GUIYouDied : MonoBehaviour {
         GUI.Label (new Rect (Screen.width/2f-125f, Screen.height/2f-50f, 250, 100), "You died!", style);
     }
     void Update() {
-        Camera.position = transform.position + new Vector3 (Mathf.Sin (Time.time), 1f, Mathf.Cos (Time.time))*10f;
-        Camera.LookAt (transform.position);
+        Vector3 targetPos = transform.position + new Vector3 (Mathf.Sin (Time.time), 1f, Mathf.Cos (Time.time)) * 10f;
+        Quaternion targetRot = Quaternion.LookRotation (Player.transform.position - Camera.position, Vector3.up);
+        Camera.position += (targetPos - Camera.position) * Time.deltaTime;
+        Camera.rotation = Quaternion.Lerp (Camera.rotation, targetRot,0.5f);
         if (Input.GetButtonDown ("Fire1")) {
-            SceneManager.LoadScene (SceneManager.GetActiveScene ().name);
+            GameManager.instance.Died ();
+            Destroy (gameObject);
         }
     }
 }

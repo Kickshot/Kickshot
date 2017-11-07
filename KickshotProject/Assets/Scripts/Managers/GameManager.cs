@@ -10,6 +10,7 @@ public class GameManager : MonoBehaviour
 
     SourcePlayer _player;
     LevelTimer _timer;
+    public Vector3 playerVelocity;
 
     bool _postLevelState = false;
 
@@ -59,6 +60,9 @@ public class GameManager : MonoBehaviour
     {
         if(_postLevelState)
         {
+            if (Player != null) {
+                playerVelocity = Player.velocity;
+            }
             if(Input.GetButtonDown("Fire1"))
             {
                 _postLevelState = false;

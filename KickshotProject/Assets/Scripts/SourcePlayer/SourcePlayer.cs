@@ -101,7 +101,6 @@ public class SourcePlayer : MonoBehaviour {
 	private bool wallRunStarted = false;
 	private Vector3 wallPoint;
 
-
     void Awake () {
         // Not sure how audio is supposed to work in unity, I just have a list of them on the player to have the jump, pain, and break sounds.
         contacts = new List<ContactPoint>();
@@ -149,7 +148,7 @@ public class SourcePlayer : MonoBehaviour {
         Vector3 castPos = transform.position;
         float castLength = distToGround;
         if (controller.isGrounded) { // This keeps us attached better to stairs, and other similarly complex geometry near the feet.
-            castLength += stepSize / 2f;
+            castLength += stepSize;
         }
         Vector3 halfExtents = new Vector3 (radius, 0.1f, radius);
         for ( float i = 0; i < radius; i += radius/4f ) { // Since we can hit something under us, but have it report as outside of our "cylinder" randomly, we have to try multiple times with different radiuses.
@@ -183,6 +182,37 @@ public class SourcePlayer : MonoBehaviour {
             }
         }
         resultHit = newHit;
+        return false;
+    }
+
+    // Check if the player is being crushed...
+    private bool CheckCrushed() {
+        List<Vector3> walls = new List<Vector3> ();
+        List<Vector3> floors = new List<Vector3> ();
+        foreach (ContactPoint c in contacts) {
+            if (Mathf.Abs (c.hitNormal.y) > 0.7) {
+                floors.Add (c.hitNormal);
+            } else {
+                walls.Add (c.hitNormal);
+            }
+        }
+        Vector3 check;
+        if (walls.Count > 1) {
+            check = walls [0];
+            foreach (Vector3 n in walls) {
+                if (Vector3.Dot (check, n) < -0.9) {
+                    return true;
+                }
+            }
+        }
+        if (floors.Count > 1) {
+            check = floors [0];
+            foreach (Vector3 n in floors) {
+                if (Vector3.Dot (check, n) < -0.9) {
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
@@ -227,13 +257,14 @@ public class SourcePlayer : MonoBehaviour {
             groundFriction = 1f;
         }
 
+        contacts.Add (new ContactPoint (groundEntity, groundNormal, hit.point));
+
         // We need to see if we have a velocity now, in order for the player to stay on moving conveyors and stuff.
         groundVelocity = Vector3.zero;
         // A movable just gives us a velocity. (most basic platforms, or conveyors should be movable)
         Movable check = groundEntity.GetComponent<Movable> ();
         if (check != null) {
             groundVelocity = check.velocity;
-
 			return true;
         }
         // A rigidbody we have to calculate the velocity of the ground immediately below us.
@@ -308,6 +339,11 @@ public class SourcePlayer : MonoBehaviour {
         }
     }
 
+    void Explode() {
+        Instantiate(deathSpawn,transform.position,transform.rotation);
+        Destroy (gameObject);
+    }
+
     void Update () {
         // assume we haven't jumped and that we haven't taken damage.
         // assume we also haven't hit the ground.
@@ -316,6 +352,10 @@ public class SourcePlayer : MonoBehaviour {
 
 		// Check for wall collison.
 		HandleWallRunCollision ();
+        if (CheckCrushed ()) {
+            Explode ();
+            return;
+        }
         // assume we aren't touching anything
         contacts.Clear();
 
@@ -327,12 +367,10 @@ public class SourcePlayer : MonoBehaviour {
 
         bool hitGround = false;
         // We only check for ground under us if we're moving downwards.
-        if (velocity.y <= 0) {
-            RaycastHit hit;
-            hitGround = RaycastForGround (out hit);
-            if (hitGround) {
-                hitGround = CalculateGround (hit);
-            }
+        RaycastHit hit;
+        hitGround = RaycastForGround (out hit);
+        if (hitGround) {
+            hitGround = CalculateGround (hit);
         }
 
         // If we failed to find any ground, we set up some variables that let the rest of the code know.
@@ -902,7 +940,7 @@ public class SourcePlayer : MonoBehaviour {
             //Debug.Log ("Ignoring collsion of object with " + obj.layer);
             return;
         }
-        if (ignoreFootCollisions && hitPos.y-stepSize < transform.position.y - distToGround) {
+        if (ignoreFootCollisions && hitPos.y - stepSize < transform.position.y - distToGround) {
             //Debug.Log ("Ignoring collsion because its feet."+hitPos.y+0.01f + " " + (transform.position.y - distToGround + stepSize));
             return;
         }
@@ -944,7 +982,6 @@ public class SourcePlayer : MonoBehaviour {
     void OnControllerColliderHit (ControllerColliderHit hit) {
         HandleCollision (hit.gameObject, hit.normal, hit.point);
     }
-
 
 	void EndWallRun()
 	{
@@ -1055,9 +1092,10 @@ public class SourcePlayer : MonoBehaviour {
     }
 
     public void OnCollisionEnter(Collision c ) {
-        foreach( UnityEngine.ContactPoint p in c.contacts ) {
-            HandleCollision (p.otherCollider.gameObject, p.normal, p.point);
-        }
+        // This completely ignores the ignoreCollisions flag. So we can't have it running for now..
+        //foreach( UnityEngine.ContactPoint p in c.contacts ) {
+            //HandleCollision (p.otherCollider.gameObject, p.normal, p.point);
+        //}
     }
 
     private void StepMove () {
@@ -1076,11 +1114,11 @@ public class SourcePlayer : MonoBehaviour {
         velocity = saveVelocity;
         // Move straight up,
         //controller.Move (new Vector3 (0f, stepSize, 0f));
-        transform.position += new Vector3(0f,stepSize,0f);
+        transform.position += new Vector3(0f,stepSize+0.05f,0f);
         // Then move normally.
-        controller.Move (velocity * Time.deltaTime - new Vector3 (0f, stepSize, 0f));
+        controller.Move (velocity * Time.deltaTime - new Vector3(0f,stepSize+0.05f,0f));
         // Snap back to the ground
-        //controller.Move (new Vector3 (0f, -stepSize, 0f));
+        //controller.Move (new Vector3 (0f, -(stepSize+0.05f), 0f));
         // Save this position
         Vector3 stepMove = transform.position;
         Vector3 stepMoveVelocity = velocity;
@@ -1100,7 +1138,7 @@ public class SourcePlayer : MonoBehaviour {
         Vector3 flatVelocity = new Vector3(velocity.x,0f,velocity.z).normalized;
 
         bool wentBackwards = Mathf.Abs (Vector3.Dot (Vector3.Normalize (flatStepMove - flatSavePos), flatVelocity)) < Mathf.Abs (Vector3.Dot (Vector3.Normalize (flatGroundMove - flatSavePos), flatVelocity));
-        if (!RaycastForGround (out hit) || wentBackwards || Mathf.Abs (savePos.y - stepMove.y) > stepSize) {
+        if (!RaycastForGround (out hit) || wentBackwards) {
             transform.position = groundMove;
             velocity = groundMoveVelocity;
             return;
@@ -1115,6 +1153,9 @@ public class SourcePlayer : MonoBehaviour {
     }
     // When we take damage from anything.
     void Damage (float damage) {
+        if (health <= 0) {
+            return;
+        }
         health -= damage;
         // play a pain grunt.
         painGrunt.Play ();
@@ -1122,7 +1163,7 @@ public class SourcePlayer : MonoBehaviour {
             // die
             // gameObject.SetActive(false);
             // Instantiate(deathSpawn, transform.position, Quaternion.identity);
-            GameManager.instance.Died ();
+            Explode();
         }
     }
 }

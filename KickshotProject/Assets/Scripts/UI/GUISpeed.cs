@@ -8,7 +8,7 @@ public class GUISpeed : MonoBehaviour {
 
     void Update()
     {
-        Vector3 vel = GameManager.instance.Player.velocity;
+        Vector3 vel = GameManager.instance.playerVelocity;
         vel.y = 0;
         float speed = vel.magnitude * 10;
 
