@@ -7,7 +7,6 @@ using System.Collections.Generic;
 /// narrow down the search for a nearest point on it's surface with respect to another
 /// point
 /// </summary>
-[RequireComponent(typeof(MeshCollider))]
 [ExecuteInEditMode]
 public class BSPTree : MonoBehaviour {
 
@@ -34,7 +33,16 @@ public class BSPTree : MonoBehaviour {
 
     void Awake()
     {
-        mesh = GetComponent<MeshCollider>().sharedMesh;
+        MeshCollider mc = GetComponent<MeshCollider>();
+        if (!mc) {
+            MeshFilter mf = GetComponent<MeshFilter> ();
+            if (!mf) {
+                throw new UnityException ("BSPTree can only be applied to things that have a mesh!");
+            }
+            mesh = mf.sharedMesh;
+        } else {
+            mesh = mc.sharedMesh;
+        }
 
         tris = mesh.triangles;
         vertices = mesh.vertices;

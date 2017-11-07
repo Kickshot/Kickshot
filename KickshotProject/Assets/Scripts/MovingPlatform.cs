@@ -17,7 +17,7 @@ public class MovingPlatform : Movable {
     public Transform Target1;
     public Transform Target2;
     public float CycleLength = 3;
-    private Vector3 lastPosition;
+    float lastProgress;
     void Start() {
         body = GetComponent<Rigidbody> ();
         body.useGravity = false;
@@ -27,7 +27,6 @@ public class MovingPlatform : Movable {
         }
     }
     void Update () {
-        lastPosition = body.position;
         float timer = Time.timeSinceLevelLoad + TimerOffset;
         float progress = 0f;
         switch (MovementFunction) {
@@ -43,7 +42,7 @@ public class MovingPlatform : Movable {
             }
             break;
         case MFunc.SinZipper:
-            progress = Mathf.Clamp ((Mathf.Sin (timer * 2f * Mathf.PI / CycleLength) + 1f)/1.8f, 0f, 1f);
+            progress = (Mathf.Clamp (Mathf.Sin (timer * 2f * Mathf.PI / CycleLength) * 1.5f, -1f, 1f) + 1f) / 2f;
             break;
         case MFunc.LinearZipper:
             float cyc2 = Helper.fmod (timer, CycleLength);
@@ -59,7 +58,10 @@ public class MovingPlatform : Movable {
             }
             break;
         }
-        body.MovePosition (Target1.position * progress + Target2.position * (1f - progress));
-        velocity = (body.position - lastPosition)/Time.deltaTime;
+        Vector3 lastPosition = Target1.position * lastProgress + Target2.position * (1f - lastProgress);
+        Vector3 newPosition = Target1.position * progress + Target2.position * (1f - progress);
+        velocity = (newPosition - lastPosition)/Time.deltaTime;
+        lastProgress = progress;
+        body.position = newPosition;
     }
 }

@@ -84,6 +84,9 @@ public static class Helper {
         if (mesh.triangles.Length > 30000) {
             //Debug.LogError ("A mesh is too complicated to optimally grab materials. This causes performance problems! Try splitting it up in the editor...");
         }
+        if (hit.triangleIndex < 0 || hit.triangleIndex > mesh.triangles.Length) {
+            return r.material;
+        }
         // Search for which submesh we hit, once we find it, return the coorisponding material.
         Vector3 findTri = new Vector3 (mesh.triangles [hit.triangleIndex * 3],
                                        mesh.triangles [hit.triangleIndex * 3 + 1],

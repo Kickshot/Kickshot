@@ -233,6 +233,7 @@ public class SourcePlayer : MonoBehaviour {
         Movable check = groundEntity.GetComponent<Movable> ();
         if (check != null) {
             groundVelocity = check.velocity;
+
 			return true;
         }
         // A rigidbody we have to calculate the velocity of the ground immediately below us.
@@ -952,7 +953,10 @@ public class SourcePlayer : MonoBehaviour {
 	}
 
     void HandleWallRunCollision () {
-
+        if (!Input.GetButton ("Jump")) {
+            EndWallRun ();
+            return;
+        }
 		// We have been wall running but there are now no contacts.
 		// Do a capsule cast to see if there is a wall near us.
 		if (contacts.Count == 0 && wallRunning)

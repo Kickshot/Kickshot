@@ -34,8 +34,8 @@ public class RocketLauncher : GunBase {
         r.transform.Rotate(childView.localRotation.eulerAngles);
         r.inheritedVel = player.velocity+player.groundVelocity;
 
-        Camera.main.GetComponent<SmartCamera>().AddShake(1f);
-        Camera.main.GetComponent<SmartCamera>().AddRecoil(10f);
+        Camera.main.GetComponent<SmartCamera>().AddShake(.4f);
+        Camera.main.GetComponent<SmartCamera>().AddRecoil(3f);
     }
     public override void OnSecondaryFire() {
         RaycastHit hit;

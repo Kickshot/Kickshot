@@ -8,6 +8,7 @@ public class Decal : MonoBehaviour {
     public Material decal;
     public float offset = 0.01f;
     public LayerMask layerMask;
+    public List<GameObject> affectedObjects;
     private List<Vector3> newVerts = new List<Vector3> ();
     private List<Vector2> newUV = new List<Vector2>();
     //private List<Vector2> newNormals = new List<Vector2>();
@@ -26,17 +27,40 @@ public class Decal : MonoBehaviour {
     }
 
     void Update() {
-        if (transform.hasChanged) {
+        if (transform.hasChanged && !Application.isPlaying && Application.isEditor ) {
             BuildDecal ();
             transform.hasChanged = false;
         }
     }
 
+    // Try our best to determine how to apply our mesh.
     public void BuildDecal() {
         StartBuildMesh ();
-        foreach (GameObject obj in GetAffectedObjects()) {
-            BSPTree affectedMesh = obj.GetComponent<BSPTree>();
+        affectedObjects = GetAffectedObjects ();
+        List<GameObject> movingObjects = new List<GameObject> ();
+        List<GameObject> staticObjects = new List<GameObject> ();
+        foreach (GameObject obj in affectedObjects) {
+            if (obj.GetComponent<Movable> () != null || obj.GetComponent<Rigidbody> () != null) {
+                movingObjects.Add (obj);
+            } else {
+                staticObjects.Add (obj);
+            }
+        }
+        foreach (GameObject obj in staticObjects) {
+            BSPTree affectedMesh = obj.GetComponent<BSPTree> ();
             BuildMeshForObject (obj, affectedMesh);
+        }
+        if (newVerts.Count <= 0) {
+            foreach (GameObject obj in movingObjects) {
+                BSPTree affectedMesh = obj.GetComponent<BSPTree> ();
+                BuildMeshForObject (obj, affectedMesh);
+                if (newVerts.Count > 0) {
+                    if (Application.isPlaying) {
+                        transform.SetParent (obj.transform);
+                    }
+                    break;
+                }
+            }
         }
         FinishMesh ();
     }
@@ -52,6 +76,7 @@ public class Decal : MonoBehaviour {
         List<int> triangles = new List<int>();
         tree.FindClosestTriangles (transform.position, transform.lossyScale.magnitude/2f, triangles);
         Matrix4x4 mat = transform.worldToLocalMatrix * obj.transform.localToWorldMatrix;
+        float off = ((Helper.fmod(Time.time,10f)+0.1f)/10.1f)*offset;
         for (int i = 0; i < triangles.Count; i++) {
             int i1, i2, i3;
             tree.GetIndices (triangles [i], out i1, out i2, out i3);
@@ -68,7 +93,6 @@ public class Decal : MonoBehaviour {
             if (normal.y <= 0.05f) {
                 continue;
             }
-            float off = Random.Range (0.1f, 1f)*offset;
             v1 += normal * off;
             v2 += normal * off;
             v3 += normal * off;
@@ -181,6 +205,9 @@ public class Decal : MonoBehaviour {
         return ray.GetPoint(dis);
     }
     private void FinishMesh() {
+        if (newVerts.Count <= 0 && Application.isPlaying) {
+            Destroy (gameObject);
+        }
         ClipPlane( newVerts, newUV, newTri, new Plane( Vector3.right, Vector3.right/2f ));
         ClipPlane( newVerts, newUV, newTri, new Plane( -Vector3.right, -Vector3.right/2f ));
         ClipPlane( newVerts, newUV, newTri, new Plane( Vector3.forward, Vector3.forward/2f ));
@@ -197,7 +224,7 @@ public class Decal : MonoBehaviour {
 
     private List<GameObject> GetAffectedObjects() {
         List<GameObject> objects = new List<GameObject>();
-        foreach( Collider col in Physics.OverlapBox(transform.position, transform.lossyScale, transform.rotation, layerMask, QueryTriggerInteraction.Ignore) ) {
+        foreach( Collider col in Physics.OverlapBox(transform.position, transform.lossyScale/2f, transform.rotation, layerMask, QueryTriggerInteraction.Ignore) ) {
             Renderer r = col.gameObject.GetComponent<Renderer>();
             // If the object doesn't render anything, ignore.
             if (r == null ) continue;
@@ -210,13 +237,6 @@ public class Decal : MonoBehaviour {
             if ( r.GetComponent<MeshFilter>() == null ) continue;
             // If we're a trigger, ignore.
             if( col.isTrigger ) continue;
-            // If we're not static, ignore.
-            if ( r.GetComponent<Rigidbody>() != null ) {
-                continue;
-            }
-            if ( r.GetComponent<Movable>() != null ) {
-                continue;
-            }
             objects.Add(r.gameObject);
         }
         return objects;
