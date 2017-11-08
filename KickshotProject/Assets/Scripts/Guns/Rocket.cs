@@ -36,9 +36,8 @@ public class Rocket : MonoBehaviour {
         int rand = (int)Random.Range (0, explosions.Count);
         if (Physics.Raycast (transform.position, transform.forward, out hit, 2, layerMask, QueryTriggerInteraction.Ignore) && Vector3.Dot(transform.forward,transform.position-other.contacts[0].point) > 0f) {
             explosionPos = hit.point;
-            Instantiate(decal,explosionPos,Quaternion.LookRotation(new Vector3(hit.normal.z, hit.normal.x, hit.normal.y),hit.normal)*Quaternion.AngleAxis(Random.Range(0,360),new Vector3(0,1,0)));
-            //d.transform.SetParent (hit.transform);
-            //Helper.DrawLine (hit.point, hit.point + hit.normal, Color.red, 10f);
+            Vector3 perp = new Vector3 (-hit.normal.z, hit.normal.x, -hit.normal.y);
+            Instantiate(decal,explosionPos-hit.normal,Quaternion.LookRotation(perp,hit.normal));
             Instantiate (explosions [rand], explosionPos, Quaternion.LookRotation(-hit.normal)*Quaternion.AngleAxis(Random.Range(0,360),new Vector3(0,0,1)));
         } else {
             explosionPos = other.contacts [0].point;
