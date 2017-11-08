@@ -83,11 +83,11 @@ public class BSPTree : MonoBehaviour {
     }
 
     public void FindClosestTriangles(Vector3 to, float radius, List<int> triangles) {
-        to = transform.InverseTransformPoint(to);
+        //to = transform.InverseTransformPoint(to);
         if (tree == null) {
             BuildTriangleTree ();
         }
-        FindClosestTriangles (tree, to, radius/transform.lossyScale.magnitude, triangles);
+        FindClosestTriangles (tree, to, radius, triangles);
     }
 
     public void GetIndices( int triangleIndex, out int i1, out int i2, out int i3 ) {
