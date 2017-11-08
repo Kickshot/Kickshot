@@ -50,7 +50,7 @@ public class ThreadedJob {
     }
     public IEnumerator WaitFor()
     {
-        while(!Update())
+        while(!IsDone)
         {
             yield return null;
         }
