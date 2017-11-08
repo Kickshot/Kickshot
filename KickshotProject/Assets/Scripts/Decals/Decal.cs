@@ -15,6 +15,10 @@ public class Decal : MonoBehaviour {
     //private List<Vector2> newNormals = new List<Vector2>();
     private List<int> newTri = new List<int> ();
     Dictionary<int, int> indexLookup = new Dictionary<int, int>();
+    [HideInInspector]
+    public List<GameObject> subDecals = new List<GameObject> ();
+
+    private int triangleCount = 0;
 
     void Start() {
         // Randomly rotate the decal around its up axis.
@@ -26,6 +30,9 @@ public class Decal : MonoBehaviour {
         BuildDecal ();
         // Make sure we don't re-build the mesh by saying our transform hasn't changed.
         transform.hasChanged = false;
+        if (triangleCount <= 0) {
+            Destroy (gameObject);
+        }
     }
 
     // This shows a pretty little box when we're in the editor.
@@ -39,16 +46,50 @@ public class Decal : MonoBehaviour {
         // This doesn't run if we're playing since the decal would be rebuilt whenever
         // its parent moves, and we don't need that.
         if (transform.hasChanged && !Application.isPlaying && Application.isEditor ) {
+            foreach (GameObject obj in subDecals) {
+                for (int i = 0; i < obj.transform.childCount; i++) {
+                    DestroyImmediate (obj.transform.GetChild (i).gameObject, true);
+                }
+                DestroyImmediate (obj, true);
+            }
+            subDecals.Clear ();
             BuildDecal ();
             transform.hasChanged = false;
         }
     }
 
-    // Try our best to determine how to apply our mesh.
-    public void BuildDecal() {
+    private void InstanciateDecalForMovable( GameObject obj ) {
         // Clear whatever mesh we might have generated already.
         StartBuildMesh ();
+        BSPTree affectedMesh = obj.GetComponent<BSPTree> ();
+        BuildMeshForObject (obj, affectedMesh);
+        GameObject subDecal = new GameObject("SubDecalMesh");
+        subDecal.transform.position = transform.position;
+        subDecal.transform.rotation = transform.rotation;
+        subDecal.transform.localScale = transform.localScale;
+        GameObject subDecalTarget = new GameObject("SubDecalTarget");
+        subDecalTarget.transform.position = transform.position;
+        subDecalTarget.transform.rotation = transform.rotation;
+        subDecalTarget.transform.SetParent (obj.transform);
+        Follower subMeshFollower = subDecal.AddComponent<Follower> ();
+        subMeshFollower.target = subDecalTarget.transform;
+        MeshFilter subMeshFilter = subDecal.AddComponent<MeshFilter> ();
+        MeshRenderer subRenderer = subDecal.AddComponent<MeshRenderer> ();
+        subRenderer.material = decal;
+        FinishMesh (subMeshFilter);
+        subDecals.Add (subDecal);
+        subDecals.Add (subDecalTarget);
+    }
 
+    void OnDestroy() {
+        foreach (GameObject obj in subDecals) {
+            Destroy (obj);
+        }
+        subDecals.Clear ();
+    }
+
+    // Try our best to determine how to apply our mesh.
+    public void BuildDecal() {
         // Separate our affected objects into moving and static objects.
         affectedObjects = GetAffectedObjects ();
         List<GameObject> movingObjects = new List<GameObject> ();
@@ -60,30 +101,18 @@ public class Decal : MonoBehaviour {
                 staticObjects.Add (obj);
             }
         }
+        foreach (GameObject obj in movingObjects) {
+            InstanciateDecalForMovable (obj);
+        }
+        // Clear whatever mesh we might have generated already.
+        StartBuildMesh ();
         // Try building a mesh for each static object.
-        // Since we use approximations and we don't clip triangles here,
-        // we'll almost always get some triangles.
         foreach (GameObject obj in staticObjects) {
             BSPTree affectedMesh = obj.GetComponent<BSPTree> ();
             BuildMeshForObject (obj, affectedMesh);
         }
-        // If we didn't manage to find any affected triangles for the static objects, we'll try attaching
-        // to one of the moving objects.
-        if (newTri.Count <= 0) {
-            foreach (GameObject obj in movingObjects) {
-                BSPTree affectedMesh = obj.GetComponent<BSPTree> ();
-                BuildMeshForObject (obj, affectedMesh);
-                if (newTri.Count > 0) {
-                    if (Application.isPlaying) {
-                        transform.SetParent (obj.transform);
-                    }
-                    break;
-                }
-            }
-        }
-
         // Clip the mesh to fall within our boundaries, then set the mesh.
-        FinishMesh ();
+        FinishMesh (GetComponent<MeshFilter>());
     }
 
     private void StartBuildMesh() {
@@ -265,25 +294,17 @@ public class Decal : MonoBehaviour {
     }
 
     // Clips the mesh, and sends it to the renderer.
-    private void FinishMesh() {
+    private void FinishMesh(MeshFilter mf) {
         ClipPlane( newVerts, newUV, newTri, new Plane( Vector3.right, Vector3.right/2f ));
         ClipPlane( newVerts, newUV, newTri, new Plane( -Vector3.right, -Vector3.right/2f ));
         ClipPlane( newVerts, newUV, newTri, new Plane( Vector3.forward, Vector3.forward/2f ));
         ClipPlane( newVerts, newUV, newTri, new Plane( -Vector3.forward, -Vector3.forward/2f ));
         ClipPlane( newVerts, newUV, newTri, new Plane( Vector3.up, Vector3.up/2f ));
         ClipPlane( newVerts, newUV, newTri, new Plane( -Vector3.up, -Vector3.up/2f ));
-        // If we happened to clip all of the triangles away, we destroy ourselves.
-        if (newTri.Count <= 0 && Application.isPlaying) {
-            // Clean up data
-            StartBuildMesh();
-            // Delete
-            Destroy (gameObject);
-            return;
-        }
-
+        triangleCount += newVerts.Count;
         Mesh newMesh = new Mesh ();
         newMesh.name = "DecalMesh";
-        GetComponent<MeshFilter> ().mesh = newMesh;
+        mf.mesh = newMesh;
         newMesh.vertices = newVerts.ToArray ();
         newMesh.uv = newUV.ToArray ();
         newMesh.triangles = newTri.ToArray ();

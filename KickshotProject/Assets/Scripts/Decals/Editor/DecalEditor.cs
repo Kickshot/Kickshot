@@ -19,6 +19,13 @@ public class DecalEditor : Editor {
     void OnSceneGUI() {
         Decal decal = (Decal)target;
         if (decal.transform.hasChanged) {
+            foreach (GameObject obj in decal.subDecals) {
+                for (int i = 0; i < obj.transform.childCount; i++) {
+                    DestroyImmediate (obj.transform.GetChild (i).gameObject, true);
+                }
+                DestroyImmediate (obj, true);
+            }
+            decal.subDecals.Clear ();
             decal.BuildDecal ();
             decal.transform.hasChanged = false;
         }
