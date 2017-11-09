@@ -102,6 +102,7 @@ public class DecalBuilder : ThreadedJob {
         clipper.newVerts = verts;
         clipper.Start ();
         while (!clipper.IsDone) {
+            Thread.Sleep (1);
             // we wait for our jobs to be done.
         }
     }

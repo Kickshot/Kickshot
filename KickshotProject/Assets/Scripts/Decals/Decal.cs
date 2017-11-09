@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Threading;
 
 [RequireComponent( typeof(MeshFilter) )]
 [RequireComponent( typeof(MeshRenderer) )]
@@ -58,8 +59,8 @@ public class Decal : MonoBehaviour {
         for (int i = 0; i < jobs.Count; i++) {
             if (jobs[i].Update()) {
                 jobs.RemoveAt (i);
+                i--;
             }
-            i--;
         }
         if (jobs.Count <= 0 && buildingMesh) {
             buildingMesh = false;
@@ -126,7 +127,6 @@ public class Decal : MonoBehaviour {
             builder.target = obj;
             builder.isStatic = false;
             builder.Start ();
-            //StartCoroutine(builder.WaitFor());
             jobs.Add (builder);
         }
         // Try building a mesh for each static object.
@@ -142,7 +142,6 @@ public class Decal : MonoBehaviour {
             builder.target = obj;
             builder.isStatic = true;
             builder.Start ();
-            //StartCoroutine(builder.WaitFor());
             jobs.Add (builder);
         }
     }
