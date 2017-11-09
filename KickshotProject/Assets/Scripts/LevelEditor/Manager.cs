@@ -11,12 +11,20 @@ namespace LevelEditor
         public GameObject activeSelection;
 
         private Camera cam;
+        private LevelData levelData;
 
         private void Start()
         {
             cam = Camera.main;
             if (cam == null)
                 throw new UnityException("Failed to find camera for Level Editor");
+        }
+
+        private void Awake()
+        {
+            levelData = GameObject.Find("LevelData").GetComponent<LevelData>();
+            if (levelData == null)
+                levelData = Instantiate(new GameObject(), Vector3.zero, Quaternion.identity, SceneOrganizationManager.Instance.DataParent).GetComponent<LevelData>();
         }
 
         private void Update()
