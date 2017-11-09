@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Threading;
+using System.Diagnostics;
 
 public class DecalBuilder : ThreadedJob {
     // Indata
@@ -99,7 +101,10 @@ public class DecalBuilder : ThreadedJob {
         clipper.newUV = uvs;
         clipper.newVerts = verts;
         clipper.Start ();
-        clipper.WaitFor ();
+        while (!clipper.IsDone) {
+            clipper.Update ();
+            // we wait for our jobs to be done.
+        }
     }
     protected override void OnFinished()
     {

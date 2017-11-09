@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 
 public class ThreadedJob {
     private bool m_IsDone = false;
@@ -9,12 +10,7 @@ public class ThreadedJob {
     {
         get
         {
-            bool tmp;
-            lock (m_Handle)
-            {
-                tmp = m_IsDone;
-            }
-            return tmp;
+            return m_IsDone;
         }
         set
         {
@@ -28,7 +24,7 @@ public class ThreadedJob {
     public virtual void Start()
     {
         m_Thread = new System.Threading.Thread(Run);
-        m_Thread.Start();
+        m_Thread.Start ();
     }
     public virtual void Abort()
     {
@@ -50,7 +46,7 @@ public class ThreadedJob {
     }
     public IEnumerator WaitFor()
     {
-        while(!IsDone)
+        while(!Update())
         {
             yield return null;
         }

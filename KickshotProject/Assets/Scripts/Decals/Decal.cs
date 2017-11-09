@@ -16,7 +16,6 @@ public class Decal : MonoBehaviour {
     [HideInInspector]
     public List<GameObject> subDecals = new List<GameObject> ();
     private List<DecalBuilder> jobs = new List<DecalBuilder>();
-    private int jobCount = 0;
 
     void Start() {
         // Randomly rotate the decal around its up axis.
@@ -56,7 +55,7 @@ public class Decal : MonoBehaviour {
             transform.hasChanged = false;
         }
         for (int i = 0; i < jobs.Count; i++) {
-            if (jobs[i].Update () == true) {
+            if (jobs[i].IsDone) {
                 jobs.RemoveAt (i);
             }
             i--;
@@ -124,12 +123,12 @@ public class Decal : MonoBehaviour {
             builder.target = obj;
             builder.isStatic = false;
             builder.Start ();
+            StartCoroutine(builder.WaitFor());
             jobs.Add (builder);
         }
         // Try building a mesh for each static object.
         foreach (GameObject obj in staticObjects) {
             BSPTree affectedMesh = obj.GetComponent<BSPTree> ();
-
             DecalBuilder builder = new DecalBuilder ();
             builder.mat = transform.worldToLocalMatrix * obj.transform.localToWorldMatrix;
             builder.position = affectedMesh.transform.InverseTransformPoint(transform.position);
@@ -140,6 +139,7 @@ public class Decal : MonoBehaviour {
             builder.target = obj;
             builder.isStatic = true;
             builder.Start ();
+            StartCoroutine(builder.WaitFor());
             jobs.Add (builder);
         }
     }
