@@ -24,6 +24,8 @@ public class ThreadedJob {
     public virtual void Start()
     {
         m_Thread = new System.Threading.Thread(Run);
+        m_Thread.IsBackground = true;
+        m_Thread.Priority = ThreadPriority.Lowest;
         m_Thread.Start ();
     }
     public virtual void Abort()

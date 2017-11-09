@@ -16,6 +16,7 @@ public class Decal : MonoBehaviour {
     [HideInInspector]
     public List<GameObject> subDecals = new List<GameObject> ();
     private List<DecalBuilder> jobs = new List<DecalBuilder>();
+    private bool buildingMesh = false;
 
     void Start() {
         // Randomly rotate the decal around its up axis.
@@ -55,12 +56,13 @@ public class Decal : MonoBehaviour {
             transform.hasChanged = false;
         }
         for (int i = 0; i < jobs.Count; i++) {
-            if (jobs[i].IsDone) {
+            if (jobs[i].Update()) {
                 jobs.RemoveAt (i);
             }
             i--;
         }
-        if (jobs.Count <= 0) {
+        if (jobs.Count <= 0 && buildingMesh) {
+            buildingMesh = false;
             Mesh newMesh = new Mesh ();
             newMesh.name = "DecalMesh";
             GetComponent<MeshFilter> ().mesh = newMesh;
@@ -98,6 +100,7 @@ public class Decal : MonoBehaviour {
 
     // Try our best to determine how to apply our mesh.
     public void BuildDecal() {
+        buildingMesh = true;
         // Clear whatever mesh we might have generated already.
         StartBuildMesh ();
         // Separate our affected objects into moving and static objects.
@@ -123,7 +126,7 @@ public class Decal : MonoBehaviour {
             builder.target = obj;
             builder.isStatic = false;
             builder.Start ();
-            StartCoroutine(builder.WaitFor());
+            //StartCoroutine(builder.WaitFor());
             jobs.Add (builder);
         }
         // Try building a mesh for each static object.
@@ -139,7 +142,7 @@ public class Decal : MonoBehaviour {
             builder.target = obj;
             builder.isStatic = true;
             builder.Start ();
-            StartCoroutine(builder.WaitFor());
+            //StartCoroutine(builder.WaitFor());
             jobs.Add (builder);
         }
     }
