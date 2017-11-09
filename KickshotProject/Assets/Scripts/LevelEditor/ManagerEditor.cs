@@ -6,7 +6,7 @@ using UnityEditor;
 namespace LevelEditor
 {
     [CustomEditor(typeof(LevelEditorManager))]
-    public class LevelEditorManagerEditor : Editor
+    public class ManagerEditor : Editor
     {
 
         public override void OnInspectorGUI()
