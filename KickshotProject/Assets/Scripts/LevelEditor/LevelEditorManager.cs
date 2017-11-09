@@ -4,10 +4,27 @@ using UnityEngine;
 
 namespace LevelEditor
 {
-    public class LevelEditorManager : MonoBehaviour
+    public class LevelEditorManager : Singleton<LevelEditorManager>
     {
 
         public string objectTag = "LevelObject";
+        public GameObject activeSelection;
+
+        private Camera cam;
+
+        private void Start()
+        {
+            cam = Camera.main;
+            if (cam == null)
+                throw new UnityException("Failed to find camera for Level Editor");
+        }
+
+        private void Update()
+        {
+            if (Input.GetMouseButtonDown(0)) {
+                
+            }
+        }
 
         public void Export()
         {

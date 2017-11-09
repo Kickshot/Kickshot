@@ -1,4 +1,4 @@
-﻿/*using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
@@ -13,11 +13,18 @@ namespace LevelEditor
         {
             DrawDefaultInspector();
 
-            LevelEditorManager lvlEManager = (LevelEditorManager)target;
+            //GUILayout.TextField(LevelEditorManager.objectTag);
+            //EditorGUILayout.ObjectField(LevelEditorManager.activeSelection, typeof(GameObject));
+
             if (GUILayout.Button("Export Level"))
             {
-                lvlEManager.Export();
+                LevelEditorManager.Instance.Export();
             }
         }
+
+        [MenuItem("Tools/Level Editor/Export")]
+        public static void Export() {
+            LevelEditorManager.Instance.Export();
+        }
     }
-}*/
+}
