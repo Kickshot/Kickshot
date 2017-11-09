@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace LevelEditor
 {
-    public class LevelEditorManager : Singleton<LevelEditorManager>
+    public class Manager : Singleton<Manager>
     {
 
         public string objectTag = "LevelObject";

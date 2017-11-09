@@ -5,7 +5,7 @@ using UnityEditor;
 
 namespace LevelEditor
 {
-    [CustomEditor(typeof(LevelEditorManager))]
+    [CustomEditor(typeof(Manager))]
     public class ManagerEditor : Editor
     {
 
@@ -18,13 +18,13 @@ namespace LevelEditor
 
             if (GUILayout.Button("Export Level"))
             {
-                LevelEditorManager.Instance.Export();
+                Manager.Instance.Export();
             }
         }
 
         [MenuItem("Tools/Level Editor/Export")]
         public static void Export() {
-            LevelEditorManager.Instance.Export();
+            Manager.Instance.Export();
         }
     }
 }
