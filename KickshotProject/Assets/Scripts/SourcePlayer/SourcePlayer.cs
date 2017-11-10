@@ -340,7 +340,8 @@ public class SourcePlayer : MonoBehaviour {
     }
 
     void Explode() {
-        Instantiate(deathSpawn,transform.position,transform.rotation);
+        GameObject gibs = Instantiate(deathSpawn,transform.position,transform.rotation);
+        gibs.GetComponent<GibPile> ().FitToPlayer (gameObject);
         Destroy (gameObject);
     }
 
@@ -363,6 +364,11 @@ public class SourcePlayer : MonoBehaviour {
             dustSpawnCooldown -= Time.deltaTime;
         } else {
             dustSpawnCooldown = 0f;
+        }
+
+        if (Input.GetButtonDown ("Suicide")) {
+            Explode ();
+            return;
         }
 
         bool hitGround = false;
