@@ -11,7 +11,7 @@ namespace LevelEditor
         public GameObject activeSelection;
 
         private Camera cam;
-        private LevelData levelData;
+        private LoadPath levelData;
 
         private void Start()
         {
@@ -24,48 +24,41 @@ namespace LevelEditor
         {
             GameObject lvlDataObject = GameObject.Find("LevelData");
             if (lvlDataObject != null)
-                levelData = lvlDataObject.GetComponent<LevelData>();
+                levelData = lvlDataObject.GetComponent<LoadPath>();
             else
             {
                 Debug.Log("Could not find LevelData, generating empty");
-                levelData = new GameObject().AddComponent<LevelData>();
+                levelData = new GameObject().AddComponent<LoadPath>();
                 levelData.gameObject.name = "LevelData";
                 levelData.transform.parent = SceneOrganizationManager.Instance.DataParent;
             }
         }
 
-        private void Update()
-        {
-            if (Input.GetMouseButtonDown(0)) {
-                
-            }
-        }
-
         public void Export()
         {
-            List<GameObject> objs = new List<GameObject>(GameObject.FindGameObjectsWithTag(objectTag));
-            LevelObject testObj = ComputeTransformStruct(objs[0]);
-            Debug.Log(JsonUtility.ToJson(testObj));
-        }
+            //Level data structure used for JSON serialization
+            LevelData level = new LevelData();
 
-        private LevelObject ComputeTransformStruct(GameObject o)
-        {
-            LevelObject ret;
-            ret.name = o.name;
-            ret.position = o.transform.position;
-            ret.rotation = o.transform.rotation;
-            ret.scale = o.transform.localScale;
-            return ret;
+            LevelObject[] objects = FindObjectsOfType<LevelObject>();
+            for (int i = 0; i < objects.Length; i++) {
+                LevelObjectData data = new LevelObjectData();
+                data.objectID = objects[i].objectID;
+                data.name = objects[i].name;
+                data.position = objects[i].transform.position;
+                data.rotation = objects[i].transform.eulerAngles;
+                data.scale = objects[i].transform.localScale;
+                level.objects.Add(data);
+            }
+
+            //For now just log it
+            //TODO open up a dialog to export it to a file location
+            Debug.Log(JsonUtility.ToJson(level));
         }
     }
 
     [System.Serializable]
-    public struct LevelObject
+    public class LevelData
     {
-        public string name;
-        public Vector3 position;
-        public Quaternion rotation;
-        public Vector3 scale;
+        public List<LevelObjectData> objects;
     }
-
 }

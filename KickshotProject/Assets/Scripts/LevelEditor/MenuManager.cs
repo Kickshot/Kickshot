@@ -8,7 +8,7 @@ namespace LevelEditor
 {
     public class MenuManager : MonoBehaviour
     {
-        private LevelData levelData;
+        private LoadPath levelData;
 
         public void NewLevel() {
             Debug.Log("New Level");
@@ -41,11 +41,11 @@ namespace LevelEditor
             GameObject lvlDataObject = GameObject.Find("LevelData");
             if (lvlDataObject == null)
             {
-                levelData = new GameObject().AddComponent<LevelData>();
+                levelData = new GameObject().AddComponent<LoadPath>();
                 levelData.transform.parent = SceneOrganizationManager.Instance.DataParent;
                 levelData.name = "LevelData";
             } else {
-                levelData = lvlDataObject.GetComponent<LevelData>();
+                levelData = lvlDataObject.GetComponent<LoadPath>();
             }
             if (levelPath == "") {
                 return;
@@ -55,7 +55,7 @@ namespace LevelEditor
         }
     }
 
-    public class LevelData : MonoBehaviour 
+    public class LoadPath : MonoBehaviour 
     {
         public bool loadLevel = false;
         public string levelPath = "";

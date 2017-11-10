@@ -14,16 +14,13 @@ namespace LevelEditor
         {
             DrawDefaultInspector();
 
-            //GUILayout.TextField(LevelEditorManager.objectTag);
-            //EditorGUILayout.ObjectField(LevelEditorManager.activeSelection, typeof(GameObject));
-
             if (GUILayout.Button("Export Level"))
             {
                 Manager.Instance.Export();
             }
         }
 
-        [MenuItem("Tools/Level Editor/Export")]
+        [MenuItem("Tools/Level Editor/Export Level")]
         public static void Export()
         {
             Manager.Instance.Export();
