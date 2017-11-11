@@ -22,9 +22,16 @@ namespace LevelEditor
 
         private void Awake()
         {
-            levelData = GameObject.Find("LevelData").GetComponent<LevelData>();
-            if (levelData == null)
-                levelData = Instantiate(new GameObject(), Vector3.zero, Quaternion.identity, SceneOrganizationManager.Instance.DataParent).GetComponent<LevelData>();
+            GameObject lvlDataObject = GameObject.Find("LevelData");
+            if (lvlDataObject != null)
+                levelData = lvlDataObject.GetComponent<LevelData>();
+            else
+            {
+                Debug.Log("Could not find LevelData, generating empty");
+                levelData = new GameObject().AddComponent<LevelData>();
+                levelData.gameObject.name = "LevelData";
+                levelData.transform.parent = SceneOrganizationManager.Instance.DataParent;
+            }
         }
 
         private void Update()

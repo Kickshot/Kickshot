@@ -26,22 +26,26 @@ namespace LevelEditor
             string path = paths[0];
             Debug.Log("Path: " + path);
 
+            CreateLevelData(path);
+
             SceneManager.LoadScene("LevelEditor");
         }
 
         public void MainMenu() {
-            //TODO Once a main menu is made load the scene
+            //TODO Once a main menu is made, load the scene
             Debug.Log("Going to main menu");
         }
 
         private void CreateLevelData(string levelPath)
         {
-            levelData = GameObject.Find("LevelData").GetComponent<LevelData>();
-            if (levelData == null)
+            GameObject lvlDataObject = GameObject.Find("LevelData");
+            if (lvlDataObject == null)
             {
-                levelData = Instantiate(new LevelData(), Vector3.zero, Quaternion.identity, SceneOrganizationManager.Instance.DataParent);
+                levelData = new GameObject().AddComponent<LevelData>();
+                levelData.transform.parent = SceneOrganizationManager.Instance.DataParent;
                 levelData.name = "LevelData";
-                DontDestroyOnLoad(levelData);
+            } else {
+                levelData = lvlDataObject.GetComponent<LevelData>();
             }
             if (levelPath == "") {
                 return;
