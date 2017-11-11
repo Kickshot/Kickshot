@@ -27,15 +27,9 @@ public class Rocket : MonoBehaviour {
         if (body.velocity != (inheritedVel * inheritPercentage + transform.forward * speed)) {
             body.velocity += ((inheritedVel * inheritPercentage + transform.forward * speed) - body.velocity) * Time.deltaTime * 3f;
         }
-        foreach (Collider col in Physics.OverlapSphere(transform.position,GetComponent<SphereCollider>().radius+0.01f,layerMask,QueryTriggerInteraction.Ignore)) {
-            Collision fakeCollision = new Collision ();
-            fakeCollision.contacts = new UnityEngine.ContactPoint[1];
-            fakeCollision.contacts [0] = new UnityEngine.ContactPoint ();
-            fakeCollision.contacts [0].otherCollider = col;
-            fakeCollision.contacts [0].normal = (col.transform.position - transform.position).normalized;
-            fakeCollision.contacts [0].point = transform.position;
-            OnCollisionEnter (fakeCollision);
-        }
+        //foreach (Collider col in Physics.OverlapSphere(transform.position,GetComponent<SphereCollider>().radius+0.01f,layerMask,QueryTriggerInteraction.Ignore)) {
+            
+        //}
     }
     void OnCollisionEnter( Collision other ) {
         if (exploded) {
