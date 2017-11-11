@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public static class GameRules {
-    public static void RadiusDamage( float damage, float knockBack, Vector3 vecSrcIn, float radius, bool ignoreWorld ) {
+    public static void RadiusDamage( float damage, float knockBack, Vector3 vecSrcIn, float radius, bool ignoreWorld, GameObject owner = null) {
         float        adjustedDamage, falloff;
         Vector3      vecSpot;
         Vector3      vecToTarget;
@@ -61,11 +61,14 @@ public static class GameRules {
 
                 if ( adjustedDamage > 0f ) {
                     Vector3 dir;
-                    if (other.GetComponent<SourcePlayer> () == null) {
+                    if (other.tag != "Player") {
                         dir = Vector3.Normalize (vecToTarget);
                     } else {
                         // Should base kickback around the players eyes, this doesn't make sense, but it makes it way easier to wall jump with rockets and stuff.
                         dir = Vector3.Normalize (other.transform.position + new Vector3(0f,0.6f,0f) - vecSrc);
+                    }
+                    if (dir.magnitude == 0) {
+                        dir = Vector3.Normalize (other.transform.position - vecSrc);
                     }
 
                     // Assume the force passed in is the maximum force. Decay it based on falloff.
@@ -78,8 +81,12 @@ public static class GameRules {
                     if (player != null) {
                         player.velocity += flForce * dir;
                         player.StunAirBrake (0.25f);
+                        player.StunFriction (0.25f);
                     }
 
+                    if (other.gameObject != owner) {
+                        other.SendMessage ("Damage", adjustedDamage, SendMessageOptions.DontRequireReceiver);
+                    }
                     //pEntity->TakeDamage( adjustedInfo );
                 }
             }

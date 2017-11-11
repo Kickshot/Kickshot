@@ -4,6 +4,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent( typeof(AudioSource) )]
+[RequireComponent( typeof(CharacterController) )]
+[RequireComponent( typeof(Rigidbody) )]
+[RequireComponent( typeof(CapsuleCollider) )]
+[RequireComponent( typeof(MouseLook) )]
 public class SourcePlayer : MonoBehaviour {
     // Accessible because it's configurable
     public Transform body;
@@ -45,6 +50,17 @@ public class SourcePlayer : MonoBehaviour {
     public float jumpBufferTime = 0.1f; // How long a jump will be "queued" for, if the player presses jump too early.
     public float crouchAcceleration = 8f;
 
+    [HideInInspector]
+    public Vector3 wishDir;
+    [HideInInspector]
+    public bool wishJump;
+    [HideInInspector]
+    public bool wishJumpDown;
+    [HideInInspector]
+    public bool wishSuicideDown;
+    [HideInInspector]
+    public bool wishCrouch;
+
     // Accessible because it's useful
     [HideInInspector]
     public bool justJumped = false;
@@ -68,6 +84,7 @@ public class SourcePlayer : MonoBehaviour {
     // Shouldn't need to access these, probably
     private float dustSpawnCooldown = 0f;
     private float airBrakeStun = 0f;
+    private float frictionStun = 0f;
     private float jumpBufferTimer;
     private List<ContactPoint> contacts;
     private Vector3 wallNormal = new Vector3 (0f, 0f, 0f);
@@ -112,6 +129,10 @@ public class SourcePlayer : MonoBehaviour {
         // This generates our layermask, making sure we only collide with stuff that's specified by the physics engine.
         // This makes it so that if we specify in-engine layers to not collide with the player, that we actually abide to it.
         layerMask = Helper.GetLayerMask(gameObject);
+        // We force ignore raycast stuff. We can still "collide" with it, but we won't stand on it or push away from it...
+        if ((layerMask & (1<<LayerMask.NameToLayer ("Ignore Raycast"))) != 0) {
+            layerMask -= (1 << LayerMask.NameToLayer ("Ignore Raycast"));
+        }
 
         controller = GetComponent<CharacterController> ();
         controller.detectCollisions = false; // The default collision resolution for character controller vs rigidbody is analogus to unstoppable infinite mass vs paper. We don't want that.
@@ -132,7 +153,7 @@ public class SourcePlayer : MonoBehaviour {
     }
 
     private bool TryJump(bool Jumping = false) {
-        if (!autoBhop && Input.GetButtonDown ("Jump")) {
+        if (!autoBhop && wishJumpDown) {
             jumpBufferTimer = jumpBufferTime;
         }
         if (jumpBufferTimer > 0f) {
@@ -140,7 +161,7 @@ public class SourcePlayer : MonoBehaviour {
         } else {
             jumpBufferTimer = 0f;
         }
-        return (autoBhop && Input.GetButton ("Jump")) || jumpBufferTimer != 0f;
+        return (autoBhop && wishJump) || jumpBufferTimer != 0f;
     }
 
     private bool RaycastForGround (out RaycastHit resultHit) {
@@ -244,7 +265,7 @@ public class SourcePlayer : MonoBehaviour {
     // It also returns if the raycast hit valid ground or not.
     private bool CalculateGround (RaycastHit hit) {
         // Check to see if it's valid solid ground.
-        if (hit.normal.y < .7f) {
+        if (hit.normal.y <= .7f) {
             return false;
         }
         groundEntity = hit.collider.gameObject;
@@ -306,9 +327,9 @@ public class SourcePlayer : MonoBehaviour {
     // TODO: Gotta make this smoothly transition, shouldn't be hard.
     private void CheckCrouched () {
         RaycastHit hit;
-        if (Input.GetButton ("Crouch") && !wantCrouch) {
+        if (wishCrouch && !wantCrouch) {
             wantCrouch = true;
-        } else if (!Input.GetButton ("Crouch") && wantCrouch && !RaycastForHeadroom (out hit)) {
+        } else if (!wishCrouch && wantCrouch && !RaycastForHeadroom (out hit)) {
             wantCrouch = false;
         }
         if (wantCrouch) {
@@ -366,7 +387,7 @@ public class SourcePlayer : MonoBehaviour {
             dustSpawnCooldown = 0f;
         }
 
-        if (Input.GetButtonDown ("Suicide")) {
+        if (wishSuicideDown) {
             Explode ();
             return;
         }
@@ -394,13 +415,15 @@ public class SourcePlayer : MonoBehaviour {
         //GetComponent<MouseLook> ().view.localPosition = new Vector3 (0f, headHit.distance, 0f);
         //}
         //}
-
+       
         // Push ourselves out of nearby objects.
         RecursivePushback (0, MaxPushbackIterations);
 
         PlayerMove ();
 		wallEntity = null;
-
+        if (velocity.magnitude < 0.001f) {
+            velocity = Vector3.zero;
+        }
     }
     // Slide off of impacting surface
     // This is just projecting a vector onto a plane (our velocity), check wikipedia or purple math if you want to confirm.
@@ -428,7 +451,7 @@ public class SourcePlayer : MonoBehaviour {
         float max;
         float total;
         float scale;
-        Vector3 command = new Vector3 (Input.GetAxisRaw ("Horizontal"), 0, Input.GetAxisRaw ("Vertical"));
+        Vector3 command = wishDir;
 
         max = Mathf.Max (Mathf.Abs (command.z), Mathf.Abs (command.x));
         if (max <= 0) {
@@ -500,7 +523,7 @@ public class SourcePlayer : MonoBehaviour {
     private void CheckFalling () {
         //Debug.Log (fallVelocity);
         // this function really deals with landing, not falling, so early out otherwise
-        if (groundEntity == null || groundNormal.y < 0.7f || fallVelocity <= 0f) {
+        if (groundEntity == null || groundNormal.y <= 0.7f || fallVelocity <= 0f) {
             return;
         }
 
@@ -535,8 +558,8 @@ public class SourcePlayer : MonoBehaviour {
             }
 
             // Calculate camera shake amounts.
-            float shakeIntensity = Mathf.Min ((fallVelocity - fallPunchThreshold) / (maxSafeFallSpeed - fallPunchThreshold), 1f);
-            gameObject.SendMessage ("ShakeImpact", Vector3.down * shakeIntensity);
+            //float shakeIntensity = Mathf.Min ((fallVelocity - fallPunchThreshold) / (maxSafeFallSpeed - fallPunchThreshold), 1f);
+            //gameObject.SendMessage ("ShakeImpact", Vector3.down * shakeIntensity);
 
             if (fallVelocity > maxSafeFallSpeed) {
                 //
@@ -588,8 +611,9 @@ public class SourcePlayer : MonoBehaviour {
 
         drop = 0;
         // apply ground friction
+        Debug.Log(frictionStun);
         if (groundEntity != null && !TryJump()) { // On an entity that is the ground
-            friction = baseFriction * groundFriction;
+            friction = (baseFriction * groundFriction)*(1f-(frictionStun*4f));
 
             // Bleed off some speed, but if we have less than the bleed
             //  threshold, bleed the threshold amount.
@@ -645,6 +669,9 @@ public class SourcePlayer : MonoBehaviour {
 
         if (Vector3.Angle (groundNormal, new Vector3 (0f, 1f, 0f)) > controller.slopeLimit) {
             groundEntity = null;
+        }
+        if (frictionStun > 0f) {
+            frictionStun -= Time.deltaTime;
         }
         // Friction is handled before we add in any base velocity. That way, if we are on a conveyor,
         //  we don't slow when standing still, relative to the conveyor.
@@ -765,6 +792,9 @@ public class SourcePlayer : MonoBehaviour {
     public void StunAirBrake( float time ) {
         airBrakeStun = time;
     }
+    public void StunFriction( float time ) {
+        frictionStun = time;
+    }
     // Movement code for when we're in the air.
     private void AirMove()
     {
@@ -867,7 +897,7 @@ public class SourcePlayer : MonoBehaviour {
 
     private void WallMove () {
 
-		if (Input.GetKey (KeyCode.Space) && wallEntity != null) {
+		if (wishJump && wallEntity != null) {
 			
 			Vector3 adjustedVelocity = velocity;
 			Vector3 adjustedOldVelocity = oldVelocity;
@@ -996,7 +1026,7 @@ public class SourcePlayer : MonoBehaviour {
 	}
 
     void HandleWallRunCollision () {
-        if (!Input.GetButton ("Jump")) {
+        if (!wishJump) {
             EndWallRun ();
             return;
         }
@@ -1049,7 +1079,7 @@ public class SourcePlayer : MonoBehaviour {
         bool contact = false;
         foreach (var sphere in spheres) {
             foreach (Collider col in Physics.OverlapSphere(SpherePosition(sphere), sphere.radius, layerMask, QueryTriggerInteraction.Ignore)) {
-                if (col.isTrigger) {
+                if (col.isTrigger || col.gameObject == gameObject) {
                     continue;
                 }
                 Vector3 position = SpherePosition (sphere);
