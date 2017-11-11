@@ -29,6 +29,7 @@ public class DecalEditor : Editor {
             decal.BuildDecal ();
             decal.transform.hasChanged = false;
         }
+        decal.Update ();
     }
     private static LayerMask LayerMaskField(string label, LayerMask mask) {
         List<string> layers = new List<string>();

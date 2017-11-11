@@ -55,7 +55,7 @@ public class Rocket : MonoBehaviour {
         Destroy (gameObject.GetComponent<Rigidbody> ());
         Destroy (gameObject.GetComponent<AudioSource> ());
         Destroy (gameObject, 1f);
-        GameRules.RadiusDamage (100f, power, explosionPos, radius, true, owner);
+        GameRules.RadiusDamage (50f, power, explosionPos, radius, true, owner);
         exploded = true;
     }
 }
