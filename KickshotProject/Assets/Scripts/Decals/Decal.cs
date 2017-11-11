@@ -37,7 +37,7 @@ public class Decal : MonoBehaviour {
         Gizmos.DrawWireCube( Vector3.zero, Vector3.one );
     }
 
-    void Update() {
+    public void Update() {
         // Check if our transform has changed while editing, and rebuld the mesh if so.
         // This doesn't run if we're playing since the decal would be rebuilt whenever
         // its parent moves, and we don't need that.

@@ -6,7 +6,7 @@ public class DeathTrigger : MonoBehaviour
 {
     void OnTriggerEnter(Collider other)
     {
-        if (other.tag == "Player")
-            GameManager.instance.Died();
+		if (other.tag == "Player")
+			other.SendMessage ("Damage", 99999999);
     }
 }
