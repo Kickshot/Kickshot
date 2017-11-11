@@ -259,8 +259,9 @@ public class SourcePlayer : MonoBehaviour {
     // This is necessary to grab material frictions, moving ground velocities, and normals.
     // It also returns if the raycast hit valid ground or not.
     private bool CalculateGround (RaycastHit hit) {
+        Debug.Log (hit.normal.y);
         // Check to see if it's valid solid ground.
-        if (hit.normal.y < .7f) {
+        if (hit.normal.y <= .7f) {
             return false;
         }
         groundEntity = hit.collider.gameObject;
@@ -518,7 +519,7 @@ public class SourcePlayer : MonoBehaviour {
     private void CheckFalling () {
         //Debug.Log (fallVelocity);
         // this function really deals with landing, not falling, so early out otherwise
-        if (groundEntity == null || groundNormal.y < 0.7f || fallVelocity <= 0f) {
+        if (groundEntity == null || groundNormal.y <= 0.7f || fallVelocity <= 0f) {
             return;
         }
 
