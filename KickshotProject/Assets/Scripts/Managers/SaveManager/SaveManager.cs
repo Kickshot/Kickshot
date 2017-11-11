@@ -12,6 +12,9 @@ public static class SaveManager
     public static void Save() {
         data = new List<SaveData> ();
         foreach( SourcePlayer player in UnityEngine.Object.FindObjectsOfType<SourcePlayer>() ) {
+            if (player.tag != "Player") {
+                continue;
+            }
             data.Add (new SourcePlayerSaveData (player.gameObject));
         }
         foreach( GunBase gun in UnityEngine.Object.FindObjectsOfType<GunBase>() )
@@ -36,6 +39,9 @@ public static class SaveManager
     {
         foreach (SourcePlayer player in UnityEngine.Object.FindObjectsOfType<SourcePlayer>())
         {
+            if (player.tag != "Player") {
+                continue;
+            }
             GameObject.Destroy(player.gameObject);
         }
         foreach (GunBase gun in UnityEngine.Object.FindObjectsOfType<GunBase>())

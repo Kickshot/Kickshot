@@ -31,6 +31,7 @@ public class RocketLauncher : GunBase {
             hitpos = hit.point;
         }
         Rocket r = Instantiate (rocket, gunBarrelFront.position, Quaternion.LookRotation (hitpos-gunBarrelFront.position));
+        r.owner = player.gameObject;
         r.transform.Rotate(childView.localRotation.eulerAngles);
         r.inheritedVel = player.velocity+player.groundVelocity;
 
@@ -45,6 +46,7 @@ public class RocketLauncher : GunBase {
             hitpos = hit.point;
         }
         Rocket r = Instantiate (rocket, gunBarrelBack.position, Quaternion.LookRotation (hitpos-gunBarrelBack.position));
+        r.owner = player.gameObject;
         r.inheritedVel = player.velocity+player.groundVelocity;
     }
 }

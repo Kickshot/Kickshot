@@ -13,7 +13,7 @@ public class SourcePlayerAnimationHandler : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
-		Vector3 commandvel = new Vector3 (Input.GetAxisRaw ("Horizontal"), 0, Input.GetAxisRaw ("Vertical"));
+        Vector3 commandvel = player.wishDir;
 		smoothcommand += (commandvel-smoothcommand) * Time.deltaTime * 10f;
 		animator.SetBool ("isGrounded", player.groundEntity != null);
         animator.SetBool ("isCrouched", player.crouched);

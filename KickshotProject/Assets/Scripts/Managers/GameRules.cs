@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public static class GameRules {
-    public static void RadiusDamage( float damage, float knockBack, Vector3 vecSrcIn, float radius, bool ignoreWorld ) {
+    public static void RadiusDamage( float damage, float knockBack, Vector3 vecSrcIn, float radius, bool ignoreWorld, GameObject owner = null) {
         float        adjustedDamage, falloff;
         Vector3      vecSpot;
         Vector3      vecToTarget;
@@ -61,7 +61,7 @@ public static class GameRules {
 
                 if ( adjustedDamage > 0f ) {
                     Vector3 dir;
-                    if (other.GetComponent<SourcePlayer> () == null) {
+                    if (other.tag != "Player") {
                         dir = Vector3.Normalize (vecToTarget);
                     } else {
                         // Should base kickback around the players eyes, this doesn't make sense, but it makes it way easier to wall jump with rockets and stuff.
@@ -80,6 +80,9 @@ public static class GameRules {
                         player.StunAirBrake (0.25f);
                     }
 
+                    if (other.gameObject != owner) {
+                        other.SendMessage ("Damage", adjustedDamage, SendMessageOptions.DontRequireReceiver);
+                    }
                     //pEntity->TakeDamage( adjustedInfo );
                 }
             }

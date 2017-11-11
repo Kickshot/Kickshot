@@ -6,6 +6,7 @@ public class Rocket : MonoBehaviour {
     private Rigidbody body;
     public List<GameObject> explosions;
     public GameObject decal;
+    public GameObject owner = null;
     public float speed = 10f;
     public float power = 10f;
     public float radius = 5f;
@@ -54,7 +55,7 @@ public class Rocket : MonoBehaviour {
         Destroy (gameObject.GetComponent<Rigidbody> ());
         Destroy (gameObject.GetComponent<AudioSource> ());
         Destroy (gameObject, 1f);
-        GameRules.RadiusDamage (100f, power, explosionPos, radius, true);
+        GameRules.RadiusDamage (100f, power, explosionPos, radius, true, owner);
         exploded = true;
     }
 }
