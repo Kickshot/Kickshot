@@ -11,6 +11,11 @@ public class SmartCamera : MonoBehaviour {
     public float MaxRecoil = 20f;
     public float RecoilSpeed = 10f;
     public float RecoilDecayFactor = 1f;
+    public bool WallRunning = false;
+    public float WallRunAngle = 25f;
+    private float wallRunAmount = 0;
+
+    
 
     GameObject parentGO;
 
@@ -35,6 +40,9 @@ public class SmartCamera : MonoBehaviour {
 	// Update is called once per frame
 	void Update ()
     {
+        if (WallRunning == false)
+            wallRunAmount = 0f;
+
         HandleShake();
         HandleRecoil();
         
@@ -66,12 +74,14 @@ public class SmartCamera : MonoBehaviour {
     {
         if (recoil > 0f)
         {
-            Quaternion Recoil = Quaternion.Euler(-recoil, 0f, 0f);
+            
+            Quaternion Recoil = Quaternion.Euler(-recoil, 0f, wallRunAmount);
             if(recoil > MaxRecoil)
             {
-                Recoil = Quaternion.Euler(-MaxRecoil, 0f, 0f);
+                Recoil = Quaternion.Euler(-MaxRecoil, 0f, wallRunAmount);
                 recoil = MaxRecoil;
             }
+            
             // Dampen towards the target rotation
             transform.localRotation = Quaternion.Slerp(transform.localRotation, Recoil, Time.deltaTime * RecoilSpeed);
             recoil -= Time.deltaTime * RecoilDecayFactor;
@@ -79,8 +89,31 @@ public class SmartCamera : MonoBehaviour {
         else
         {
             recoil = 0f;
-            // Dampen towards the target rotation
-            transform.localRotation = Quaternion.Slerp(transform.localRotation, Quaternion.identity, Time.deltaTime * RecoilSpeed / 2);
+            if (!WallRunning)
+            {
+                // Dampen towards the target rotation
+                transform.localRotation = Quaternion.Slerp(transform.localRotation, Quaternion.identity, Time.deltaTime * RecoilSpeed / 2);
+            }
+            else
+            {
+                transform.localRotation = Quaternion.Slerp(transform.localRotation, Quaternion.Euler(0f, 0f, wallRunAmount), Time.deltaTime * RecoilSpeed / 2);
+            }
         }
+    }
+
+    public void AddWallVector(Vector3 WallNormal)
+    {
+        float leftDot = Vector3.Dot(WallNormal, -transform.right);
+        float rightDot = Vector3.Dot(WallNormal, transform.right);
+
+        if (leftDot < rightDot)
+            wallRunAmount = -WallRunAngle;
+        else
+            wallRunAmount = WallRunAngle;
+    }
+
+    public void UpdateWallRunning(bool bWallRunning)
+    {
+        WallRunning = bWallRunning;
     }
 }
