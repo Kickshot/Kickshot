@@ -51,7 +51,11 @@ public class EnemyPossession : MonoBehaviour {
         }
         dir.y = 0;
         Quaternion rot = Quaternion.LookRotation (dir.normalized);
-        player.wishDir = new Vector3 (0, 0, 1);//(Quaternion.Inverse(rot)*dir).normalized;
+        if (player.groundEntity != null) {
+            player.wishDir = new Vector3 (0, 0, 1);//(Quaternion.Inverse(rot)*dir).normalized;
+        } else {
+            player.wishDir = new Vector3 (0, 0, 0);
+        }
         look.wishDir = Quaternion.LookRotation ((targetPos - transform.position).normalized);
         //Vector3 dest = agent.path.corners [0];
         //Vector3 dir = (dest - transform.position).normalized;

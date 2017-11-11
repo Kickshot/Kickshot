@@ -61,7 +61,7 @@ public static class GameRules {
 
                 if ( adjustedDamage > 0f ) {
                     Vector3 dir;
-                    if (other.tag != "Player") {
+                    if (other.gameObject.GetComponent<SourcePlayer>() == null) {
                         dir = Vector3.Normalize (vecToTarget);
                     } else {
                         // Should base kickback around the players eyes, this doesn't make sense, but it makes it way easier to wall jump with rockets and stuff.
@@ -72,7 +72,7 @@ public static class GameRules {
                     float flForce = knockBack * falloff;
                     Rigidbody rb = other.gameObject.GetComponent<Rigidbody>();
                     if (rb != null) {
-                        rb.AddForceAtPosition (flForce * dir * 50f, vecEndPos);
+                        rb.AddForceAtPosition (flForce * dir * 10f, vecEndPos);
                     }
                     SourcePlayer player = other.gameObject.GetComponent<SourcePlayer>();
                     if (player != null) {

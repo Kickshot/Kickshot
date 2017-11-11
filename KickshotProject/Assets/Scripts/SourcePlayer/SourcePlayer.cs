@@ -259,7 +259,6 @@ public class SourcePlayer : MonoBehaviour {
     // This is necessary to grab material frictions, moving ground velocities, and normals.
     // It also returns if the raycast hit valid ground or not.
     private bool CalculateGround (RaycastHit hit) {
-        Debug.Log (hit.normal.y);
         // Check to see if it's valid solid ground.
         if (hit.normal.y <= .7f) {
             return false;

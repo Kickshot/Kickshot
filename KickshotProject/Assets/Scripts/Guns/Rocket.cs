@@ -27,6 +27,15 @@ public class Rocket : MonoBehaviour {
         if (body.velocity != (inheritedVel * inheritPercentage + transform.forward * speed)) {
             body.velocity += ((inheritedVel * inheritPercentage + transform.forward * speed) - body.velocity) * Time.deltaTime * 3f;
         }
+        foreach (Collider col in Physics.OverlapSphere(transform.position,GetComponent<SphereCollider>().radius+0.01f,layerMask,QueryTriggerInteraction.Ignore)) {
+            Collision fakeCollision = new Collision ();
+            fakeCollision.contacts = new UnityEngine.ContactPoint[1];
+            fakeCollision.contacts [0] = new UnityEngine.ContactPoint ();
+            fakeCollision.contacts [0].otherCollider = col;
+            fakeCollision.contacts [0].normal = (col.transform.position - transform.position).normalized;
+            fakeCollision.contacts [0].point = transform.position;
+            OnCollisionEnter (fakeCollision);
+        }
     }
     void OnCollisionEnter( Collision other ) {
         if (exploded) {
@@ -55,7 +64,7 @@ public class Rocket : MonoBehaviour {
         Destroy (gameObject.GetComponent<Rigidbody> ());
         Destroy (gameObject.GetComponent<AudioSource> ());
         Destroy (gameObject, 1f);
-        GameRules.RadiusDamage (50f, power, explosionPos, radius, true, owner);
+        GameRules.RadiusDamage (25f, power, explosionPos, radius, true, owner);
         exploded = true;
     }
 }
