@@ -117,6 +117,7 @@ public class SourcePlayer : MonoBehaviour {
 	private Vector3 oldVelocity;
 	private bool wallRunStarted = false;
 	private Vector3 wallPoint;
+    private SmartCamera CameraControls;
 
     void Awake () {
         // Not sure how audio is supposed to work in unity, I just have a list of them on the player to have the jump, pain, and break sounds.
@@ -150,6 +151,8 @@ public class SourcePlayer : MonoBehaviour {
         TemporaryLayerIndex = LayerMask.NameToLayer (TemporaryLayer);
         originalBodyPosition = body.localPosition;
         collider = GetComponent<CapsuleCollider> ();
+
+        CameraControls = Camera.main.GetComponent<SmartCamera>();
     }
 
     private bool TryJump(bool Jumping = false) {
@@ -611,7 +614,7 @@ public class SourcePlayer : MonoBehaviour {
 
         drop = 0;
         // apply ground friction
-        Debug.Log(frictionStun);
+        //Debug.Log(frictionStun);
         if (groundEntity != null && !TryJump()) { // On an entity that is the ground
             friction = (baseFriction * groundFriction)*(1f-(frictionStun*4f));
 
@@ -709,7 +712,7 @@ public class SourcePlayer : MonoBehaviour {
 		if (groundEntity != null) {
             velocity.y = 0;
         }
-			
+        UpdateWallCamera();
     }
     // Smoothly transform our velocity into wishdir*max_velocity at the speed of accel
     private void Accelerate (Vector3 wishdir, float accel, float max_velocity) {
@@ -960,11 +963,20 @@ public class SourcePlayer : MonoBehaviour {
 			oldVelocity = velocity;
 			wallRunStarted = !wallRunning;
             wallRunning = true;
+            CameraControls.AddWallVector(wallNormal);
         } else {
             wallRunning = false;
         }
+
     }
 
+    private void UpdateWallCamera() {
+        if (wallEntity == null || wallRunning == false)
+            CameraControls.UpdateWallRunning(false);
+        else
+            CameraControls.UpdateWallRunning(true);
+    }
+    
 
     // Either the character controller moved into something, or something moved into the supercollider spheres.
     private void HandleCollision (GameObject obj, Vector3 hitNormal, Vector3 hitPos) {
