@@ -84,6 +84,7 @@ public class SourcePlayer : MonoBehaviour {
     // Shouldn't need to access these, probably
     private float dustSpawnCooldown = 0f;
     private float airBrakeStun = 0f;
+    private float frictionStun = 0f;
     private float jumpBufferTimer;
     private List<ContactPoint> contacts;
     private Vector3 wallNormal = new Vector3 (0f, 0f, 0f);
@@ -128,6 +129,10 @@ public class SourcePlayer : MonoBehaviour {
         // This generates our layermask, making sure we only collide with stuff that's specified by the physics engine.
         // This makes it so that if we specify in-engine layers to not collide with the player, that we actually abide to it.
         layerMask = Helper.GetLayerMask(gameObject);
+        // We force ignore raycast stuff. We can still "collide" with it, but we won't stand on it or push away from it...
+        if ((layerMask & (1<<LayerMask.NameToLayer ("Ignore Raycast"))) != 0) {
+            layerMask -= (1 << LayerMask.NameToLayer ("Ignore Raycast"));
+        }
 
         controller = GetComponent<CharacterController> ();
         controller.detectCollisions = false; // The default collision resolution for character controller vs rigidbody is analogus to unstoppable infinite mass vs paper. We don't want that.
@@ -410,7 +415,7 @@ public class SourcePlayer : MonoBehaviour {
         //GetComponent<MouseLook> ().view.localPosition = new Vector3 (0f, headHit.distance, 0f);
         //}
         //}
-
+       
         // Push ourselves out of nearby objects.
         RecursivePushback (0, MaxPushbackIterations);
 
@@ -606,8 +611,9 @@ public class SourcePlayer : MonoBehaviour {
 
         drop = 0;
         // apply ground friction
+        Debug.Log(frictionStun);
         if (groundEntity != null && !TryJump()) { // On an entity that is the ground
-            friction = baseFriction * groundFriction;
+            friction = (baseFriction * groundFriction)*(1f-(frictionStun*4f));
 
             // Bleed off some speed, but if we have less than the bleed
             //  threshold, bleed the threshold amount.
@@ -663,6 +669,9 @@ public class SourcePlayer : MonoBehaviour {
 
         if (Vector3.Angle (groundNormal, new Vector3 (0f, 1f, 0f)) > controller.slopeLimit) {
             groundEntity = null;
+        }
+        if (frictionStun > 0f) {
+            frictionStun -= Time.deltaTime;
         }
         // Friction is handled before we add in any base velocity. That way, if we are on a conveyor,
         //  we don't slow when standing still, relative to the conveyor.
@@ -782,6 +791,9 @@ public class SourcePlayer : MonoBehaviour {
     }
     public void StunAirBrake( float time ) {
         airBrakeStun = time;
+    }
+    public void StunFriction( float time ) {
+        frictionStun = time;
     }
     // Movement code for when we're in the air.
     private void AirMove()

@@ -61,23 +61,27 @@ public static class GameRules {
 
                 if ( adjustedDamage > 0f ) {
                     Vector3 dir;
-                    if (other.gameObject.GetComponent<SourcePlayer>() == null) {
+                    if (other.tag != "Player") {
                         dir = Vector3.Normalize (vecToTarget);
                     } else {
                         // Should base kickback around the players eyes, this doesn't make sense, but it makes it way easier to wall jump with rockets and stuff.
                         dir = Vector3.Normalize (other.transform.position + new Vector3(0f,0.6f,0f) - vecSrc);
+                    }
+                    if (dir.magnitude == 0) {
+                        dir = Vector3.Normalize (other.transform.position - vecSrc);
                     }
 
                     // Assume the force passed in is the maximum force. Decay it based on falloff.
                     float flForce = knockBack * falloff;
                     Rigidbody rb = other.gameObject.GetComponent<Rigidbody>();
                     if (rb != null) {
-                        rb.AddForceAtPosition (flForce * dir * 10f, vecEndPos);
+                        rb.AddForceAtPosition (flForce * dir * 50f, vecEndPos);
                     }
                     SourcePlayer player = other.gameObject.GetComponent<SourcePlayer>();
                     if (player != null) {
                         player.velocity += flForce * dir;
                         player.StunAirBrake (0.25f);
+                        player.StunFriction (0.25f);
                     }
 
                     if (other.gameObject != owner) {

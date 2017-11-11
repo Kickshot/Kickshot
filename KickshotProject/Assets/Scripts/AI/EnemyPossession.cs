@@ -33,6 +33,7 @@ public class EnemyPossession : MonoBehaviour {
             }
         }
         if (path == null || path.corners.Length <= 0) {
+            player.wishDir = new Vector3 (0, 0, 0);
             return;
         }
         Vector3 targetPos;
@@ -50,7 +51,6 @@ public class EnemyPossession : MonoBehaviour {
             return;
         }
         dir.y = 0;
-        Quaternion rot = Quaternion.LookRotation (dir.normalized);
         if (player.groundEntity != null) {
             player.wishDir = new Vector3 (0, 0, 1);//(Quaternion.Inverse(rot)*dir).normalized;
         } else {
