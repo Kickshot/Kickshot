@@ -696,7 +696,6 @@ public class SourcePlayer : MonoBehaviour {
         // wall running
 		if (groundEntity != null) {
 			WalkMove ();
-
 		} else if (wallEntity != null) {
 			WallMove ();
 		} else {
@@ -720,10 +719,6 @@ public class SourcePlayer : MonoBehaviour {
             velocity.y = 0;
         }
         UpdateWallCamera();
-        if (Input.GetKeyDown(KeyCode.LeftShift))
-        {
-            PerformDodge();
-        }
     }
     // Smoothly transform our velocity into wishdir*max_velocity at the speed of accel
     private void Accelerate (Vector3 wishdir, float accel, float max_velocity) {
