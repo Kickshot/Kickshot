@@ -33,6 +33,7 @@ namespace LevelEditor
 
         public void MainMenu() {
             //TODO Once a main menu is made, load the scene
+            SceneManager.LoadScene("MainMenu");
             Debug.Log("Going to main menu");
         }
 
