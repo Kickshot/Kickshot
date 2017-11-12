@@ -42,17 +42,6 @@ public class Decal : MonoBehaviour {
         // This doesn't run if we're playing since the decal would be rebuilt whenever
         // its parent moves, and we don't need that.
         if (transform.hasChanged && !Application.isPlaying && Application.isEditor ) {
-            foreach (GameObject obj in subDecals) {
-                for (int i = 0; i < obj.transform.childCount; i++) {
-                    DestroyImmediate (obj.transform.GetChild (i).gameObject, true);
-                }
-                DestroyImmediate (obj, true);
-            }
-            foreach (DecalBuilder job in jobs) {
-                job.Abort ();
-            }
-            jobs.Clear ();
-            subDecals.Clear ();
             BuildDecal ();
             transform.hasChanged = false;
         }
@@ -147,6 +136,17 @@ public class Decal : MonoBehaviour {
     }
 
     private void StartBuildMesh() {
+        foreach (GameObject obj in subDecals) {
+            for (int i = 0; i < obj.transform.childCount; i++) {
+                DestroyImmediate (obj.transform.GetChild (i).gameObject, true);
+            }
+            DestroyImmediate (obj, true);
+        }
+        foreach (DecalBuilder job in jobs) {
+            job.Abort ();
+        }
+        jobs.Clear ();
+        subDecals.Clear ();
         newVerts.Clear ();
         newUV.Clear ();
         newTri.Clear ();

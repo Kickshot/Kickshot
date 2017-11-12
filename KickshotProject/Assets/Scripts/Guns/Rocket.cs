@@ -31,25 +31,13 @@ public class Rocket : MonoBehaviour {
             
         //}
     }
-    void OnCollisionEnter( Collision other ) {
+    void Explode( Vector3 position, Vector3 hitnormal ) {
         if (exploded) {
             return;
         }
-        RaycastHit hit;
-        Vector3 explosionPos;
-        int rand = (int)Random.Range (0, explosions.Count);
-        if (Physics.Raycast (transform.position, transform.forward, out hit, 2, layerMask, QueryTriggerInteraction.Ignore) && Vector3.Dot(transform.forward,transform.position-other.contacts[0].point) > 0f) {
-            explosionPos = hit.point;
-            Vector3 perp = new Vector3 (-hit.normal.z, hit.normal.x, -hit.normal.y);
-            Instantiate(decal,explosionPos-hit.normal,Quaternion.LookRotation(perp,hit.normal));
-            Instantiate (explosions [rand], explosionPos, Quaternion.LookRotation(-hit.normal)*Quaternion.AngleAxis(Random.Range(0,360),new Vector3(0,0,1)));
-        } else {
-            explosionPos = other.contacts [0].point;
-            Vector3 perp = new Vector3 (-other.contacts [0].normal.z, other.contacts [0].normal.x, -other.contacts [0].normal.y);
-            Instantiate(decal,other.contacts [0].point - other.contacts[0].normal, Quaternion.LookRotation(perp,other.contacts[0].normal));
-            //d.transform.SetParent (other.contacts [0].otherCollider.gameObject.transform);
-            Instantiate (explosions [rand], explosionPos, Quaternion.LookRotation(-other.contacts [0].normal)*Quaternion.AngleAxis(Random.Range(0,360),new Vector3(0,0,1)));
-        }
+        Vector3 perp = new Vector3 (-hitnormal.z, hitnormal.x, -hitnormal.y);
+        Instantiate(decal,position,Quaternion.LookRotation(perp,hitnormal));
+        Instantiate (explosions [(int)Random.Range (0, explosions.Count)], position, Quaternion.LookRotation(-hitnormal)*Quaternion.AngleAxis(Random.Range(0,360),new Vector3(0,0,1)));
         Destroy(gameObject.transform.Find("Trail").gameObject);
         Destroy(gameObject.transform.Find("rocket").gameObject);
         Destroy(gameObject.transform.Find("CloudTrail").gameObject,1f);
@@ -58,7 +46,23 @@ public class Rocket : MonoBehaviour {
         Destroy (gameObject.GetComponent<Rigidbody> ());
         Destroy (gameObject.GetComponent<AudioSource> ());
         Destroy (gameObject, 1f);
-        GameRules.RadiusDamage (25f, power, explosionPos, radius, true, owner);
+        GameRules.RadiusDamage (25f, power, position, radius, true, owner);
         exploded = true;
+    }
+    void OnCollisionEnter( Collision other ) {
+        if (exploded) {
+            return;
+        }
+        if (other.contacts [0].otherCollider.gameObject.GetComponent<SourcePlayer> () != null) {
+            Explode (transform.position, -transform.forward);
+            return;
+        }
+        RaycastHit hit;
+        Vector3 explosionPos;
+        if (Physics.Raycast (transform.position, transform.forward, out hit, 2, layerMask, QueryTriggerInteraction.Ignore) && Vector3.Dot(transform.forward,transform.position-other.contacts[0].point) > 0f) {
+            Explode (hit.point, hit.normal);
+        } else {
+            Explode (other.contacts [0].point, other.contacts [0].normal);
+        }
     }
 }
