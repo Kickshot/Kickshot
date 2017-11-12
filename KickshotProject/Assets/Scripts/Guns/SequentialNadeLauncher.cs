@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class SequentialNadeLauncher : GunBase
 {
+	public GameObject mine;
     public int MaxNadesOut = 5;
     public bool ReverseOrder = true;
     public float Knockback = 1f;
@@ -23,7 +24,7 @@ public class SequentialNadeLauncher : GunBase
         RaycastHit hit;
         if (Physics.Raycast(view.position, view.forward, out hit, 1000f, Helper.GetHitScanLayerMask()))
         {
-           GameObject newNade = Instantiate(GameObject.CreatePrimitive(PrimitiveType.Sphere), hit.point, Quaternion.identity);
+           GameObject newNade = Instantiate(mine, hit.point, Quaternion.identity);
 
            nades.Insert(0, newNade);
 
@@ -53,7 +54,7 @@ public class SequentialNadeLauncher : GunBase
             {
                 GameObject exp = Instantiate(Explosion, nades[0].transform.position, Quaternion.identity);
                 Destroy(nades[0]);
-                GameRules.RadiusDamage(100f, Knockback, nades[0].transform.position, Radius, true);
+				GameRules.RadiusDamage(100f, Knockback, nades[0].transform.position, Radius, true,player.gameObject);
 
                 nades.RemoveAt(0);
             }
@@ -61,7 +62,8 @@ public class SequentialNadeLauncher : GunBase
             {
                 GameObject exp = Instantiate(Explosion, nades[nades.Count - 1].transform.position, Quaternion.identity);
                 Destroy(nades[nades.Count - 1]);
-                GameRules.RadiusDamage(100f, Knockback, nades[nades.Count - 1].transform.position, Radius, true);
+				print (player.gameObject.name);
+				GameRules.RadiusDamage(100f, Knockback, nades[nades.Count - 1].transform.position, Radius, true, player.gameObject);
 
                 nades.RemoveAt(nades.Count - 1);
             }
