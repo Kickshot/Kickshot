@@ -75,7 +75,7 @@ public class GunBase : MonoBehaviour {
     }
 
     virtual public void Update() {
-        if (view == null || player == null) {
+        if ((view == null || player == null) && equipped) {
             equipped = false;
             OnUnequip (null);
             gameObject.SetActive (true);
