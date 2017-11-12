@@ -715,7 +715,7 @@ public class SourcePlayer : MonoBehaviour {
         UpdateWallCamera();
     }
     // Smoothly transform our velocity into wishdir*max_velocity at the speed of accel
-    private void Accelerate (Vector3 wishdir, float accel, float max_velocity) {
+	public void Accelerate (Vector3 wishdir, float accel, float max_velocity) {
         float addspeed, accelspeed, currentspeed;
         // Determine veer amount
         currentspeed = Vector3.Dot (velocity, wishdir);
