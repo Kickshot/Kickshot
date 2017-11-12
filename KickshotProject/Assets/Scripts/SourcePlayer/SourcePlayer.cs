@@ -49,6 +49,7 @@ public class SourcePlayer : MonoBehaviour {
     public bool autoBhop = false;
     public float jumpBufferTime = 0.1f; // How long a jump will be "queued" for, if the player presses jump too early.
     public float crouchAcceleration = 8f;
+    public float DodgeSpeed = 20f;
 
     [HideInInspector]
     public Vector3 wishDir;
@@ -60,6 +61,8 @@ public class SourcePlayer : MonoBehaviour {
     public bool wishSuicideDown;
     [HideInInspector]
     public bool wishCrouch;
+    [HideInInspector]
+    public bool wishDodge;
 
     // Accessible because it's useful
     [HideInInspector]
@@ -118,6 +121,9 @@ public class SourcePlayer : MonoBehaviour {
 	private bool wallRunStarted = false;
 	private Vector3 wallPoint;
     private SmartCamera CameraControls;
+    private Vector3 DodgeDirection;
+    private Vector3 DodgeCross;
+
 
     void Awake () {
         // Not sure how audio is supposed to work in unity, I just have a list of them on the player to have the jump, pain, and break sounds.
@@ -152,7 +158,8 @@ public class SourcePlayer : MonoBehaviour {
         originalBodyPosition = body.localPosition;
         collider = GetComponent<CapsuleCollider> ();
 
-        CameraControls = Camera.main.GetComponent<SmartCamera>();
+        CameraControls = GetComponentInChildren<SmartCamera>();
+       
     }
 
     private bool TryJump(bool Jumping = false) {
@@ -659,7 +666,6 @@ public class SourcePlayer : MonoBehaviour {
     // Detect which movement code we should run, and set up our parameters for it.
     private void PlayerMove () {
 
-
         CheckFalling ();
         // If we are not on ground, store off how fast we are moving down
         if (groundEntity == null) {
@@ -690,6 +696,7 @@ public class SourcePlayer : MonoBehaviour {
         // wall running
 		if (groundEntity != null) {
 			WalkMove ();
+
 		} else if (wallEntity != null) {
 			WallMove ();
 		} else {
@@ -713,6 +720,10 @@ public class SourcePlayer : MonoBehaviour {
             velocity.y = 0;
         }
         UpdateWallCamera();
+        if (Input.GetKeyDown(KeyCode.LeftShift))
+        {
+            PerformDodge();
+        }
     }
     // Smoothly transform our velocity into wishdir*max_velocity at the speed of accel
     private void Accelerate (Vector3 wishdir, float accel, float max_velocity) {
@@ -791,6 +802,8 @@ public class SourcePlayer : MonoBehaviour {
         velocity -= groundVelocity;
 
         StayOnGround ();
+        if (wishDodge)
+            PerformDodge();
     }
     public void StunAirBrake( float time ) {
         airBrakeStun = time;
@@ -963,18 +976,54 @@ public class SourcePlayer : MonoBehaviour {
 			oldVelocity = velocity;
 			wallRunStarted = !wallRunning;
             wallRunning = true;
-            CameraControls.AddWallVector(wallNormal);
+            if(CameraControls != null)
+                CameraControls.AddWallVector(wallNormal);
         } else {
             wallRunning = false;
         }
 
     }
 
+
+    private void PerformDodge() {
+
+        if (groundEntity == null)
+            return;
+
+        if (wishDir == new Vector3(0, 0, 0))
+            return;
+
+        Vector3 forward, right;
+
+        forward = transform.forward;
+        right = transform.right;
+
+        // Zero out z components of movement vectors
+        forward.y = 0;
+        right.y = 0;
+
+        forward = Vector3.Normalize(forward);  // Normalize remainder of vectors.
+        right = Vector3.Normalize(right);    //
+
+        // Determine x and y parts of velocity
+        DodgeDirection = forward * wishDir.z + right * wishDir.x;
+
+        float speed = DodgeSpeed;
+
+      
+        velocity = new Vector3(DodgeDirection.x * speed, 5,DodgeDirection.z * speed);
+        Debug.Log(velocity.magnitude);
+    }
+
     private void UpdateWallCamera() {
+        if (CameraControls == null)
+            return;
+
         if (wallEntity == null || wallRunning == false)
             CameraControls.UpdateWallRunning(false);
         else
             CameraControls.UpdateWallRunning(true);
+ 
     }
     
 
@@ -1067,14 +1116,14 @@ public class SourcePlayer : MonoBehaviour {
 				EndWallRun ();
 			}
         }
-			
-		foreach(ContactPoint point in contacts) {
+        foreach (ContactPoint point in contacts) {
 			// TODO Mutiple collision points.
 			if (point.hitNormal.y < 0.1f && point.hitNormal.y > -0.1f) {
 				wallEntity = point.obj;
 				wallNormal = point.hitNormal;
 				wallPoint = point.point;
 			}
+            
 		}
 			
 		if (Vector3.Dot (wallNormal, transform.forward) < -.75 && !wallRunning)
