@@ -80,8 +80,8 @@ public static class GameRules {
                     SourcePlayer player = other.gameObject.GetComponent<SourcePlayer>();
                     if (player != null) {
                         player.velocity += flForce * dir;
-                        player.StunAirBrake (0.25f);
-                        player.StunFriction (0.25f);
+                        player.StunAirBrake ();
+                        player.StunFriction ();
                     }
 
                     if (other.gameObject != owner) {

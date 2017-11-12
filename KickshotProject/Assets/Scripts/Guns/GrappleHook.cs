@@ -11,14 +11,15 @@ public class GrappleHook : GunBase {
     private float fade = 0f;
     public float fadeTime = 1f;
     public float range = 12f;
-    public float GrappleSpeed = 25f;
+    public float GrappleStrength = 25f;
     private Vector3 missStart;
     private Vector3 missEnd;
     private AudioSource shotSound;
     private float saveMaxAirSpeed;
-    private Vector3 grappleVelocity;
-    private bool firstShot;
-    private float lastDistance;
+	private Vector3 grappleVelocity;
+	private Vector3 targetPosition;
+	private float firstLockedDistance; //D
+	private bool firstShot;
     
 
     void Start()
@@ -30,12 +31,15 @@ public class GrappleHook : GunBase {
         linerender = GetComponent<LineRenderer>();
         linerender.enabled = false;
         shotSound = GetComponent<AudioSource>();
+		firstLockedDistance = 0;
         //saveMaxAirSpeed = player.maxSpeed;
     }
     override public void OnEquip(GameObject Player)
     {
         base.OnEquip(Player);
+		Transform shoulderBone = Player.GetComponentInChildren<Animator> ().GetBoneTransform (HumanBodyBones.RightShoulder);
         saveMaxAirSpeed = player.maxSpeed;
+		transform.position = shoulderBone.position + shoulderBone.right * 0.4f - shoulderBone.up * 0.4f;
     }
     override public void OnUnequip(GameObject Player)
     {
@@ -50,24 +54,19 @@ public class GrappleHook : GunBase {
             return;
         }
         transform.rotation = view.rotation;
+
         if (hitSomething)
         { 
             // Keep us busy so we don't reload during grappling.
             busy = 1f;
-            //player.transform.position = hitPosition.position - player.view.forward * hitDist;
-            Vector3 desiredPosition = hitPosition.position; //- view.forward * hitDist;
-            print(Mathf.Min(Vector3.Distance(player.transform.position, desiredPosition), lastDistance));
-            if (Vector3.Distance(player.transform.position, desiredPosition) >= 2f)
-            {
-                grappleVelocity = (hitPosition.position - player.transform.position).normalized * GrappleSpeed;
-                player.velocity = Vector3.Lerp(player.velocity, grappleVelocity,0.05f);//* Time.deltaTime;
-            }
-            else
-            {
-                print("Here");
-                player.velocity = Vector3.Lerp(player.velocity,(hitPosition.position - player.transform.position).normalized,0.05f);
-            }
-                
+			targetPosition = (player.transform.position - hitPosition.position).normalized * firstLockedDistance;
+			Vector3 springAccelerate = (targetPosition - (player.transform.position - hitPosition.position)) * GrappleStrength * Time.deltaTime;
+
+			//print (springAccelerate/Time.deltaTime);
+			print(Vector3.Dot (springAccelerate, player.transform.position - hitPosition.position));
+			if (Vector3.Dot (springAccelerate, player.transform.position - hitPosition.position) < 0) {
+				player.velocity += springAccelerate;
+			}   
             //print((desiredPosition - player.transform.position));
             linerender.SetPosition(0, gunBarrelFront.position);
             linerender.SetPosition(1, hitPosition.position);
@@ -94,7 +93,7 @@ public class GrappleHook : GunBase {
     {
         player.maxSpeed = saveMaxAirSpeed;
         hitSomething = false;
-        //firstShot = true;
+        firstShot = true;
     }
     public override void OnPrimaryFire()
     {
@@ -106,10 +105,19 @@ public class GrappleHook : GunBase {
             hitPosition.position = hit.point;
             hitSomething = true;
             hitDist = hit.distance;
+			print (hitDist);
             linerender.SetPosition(0, gunBarrelFront.position);
             linerender.SetPosition(1, hit.point);
             player.maxSpeed = 1000f;
-                
+            
+			if (firstShot)
+			{
+				firstLockedDistance = hit.distance;
+				targetPosition = (player.transform.position - hitPosition.position).normalized * firstLockedDistance;
+				//print (hit.distance);
+				//print (targetPosition.magnitude);
+				firstShot = false;
+			}
         }
         else
         {

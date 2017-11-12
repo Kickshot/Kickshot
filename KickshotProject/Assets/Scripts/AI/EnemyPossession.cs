@@ -51,7 +51,7 @@ public class EnemyPossession : MonoBehaviour {
             return;
         }
         dir.y = 0;
-        if (player.groundEntity != null) {
+        if (player.groundEntity != null && player.frictionStun <= 0f) {
             player.wishDir = new Vector3 (0, 0, 1);//(Quaternion.Inverse(rot)*dir).normalized;
         } else {
             player.wishDir = new Vector3 (0, 0, 0);
