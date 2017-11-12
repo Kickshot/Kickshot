@@ -14,7 +14,7 @@ public class light_control : MonoBehaviour {
 		if(timeout>0.1f)
 		{
 			timeout-=Time.deltaTime;
-			Light.range=15;
+			Light.range=7;
 		}
 		else
 		{

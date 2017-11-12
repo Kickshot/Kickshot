@@ -80,11 +80,14 @@ public class SourcePlayer : MonoBehaviour {
     [HideInInspector]
     public bool wallRunning = false;
 
+    [HideInInspector]
+    public float airBrakeStun = 0f;
+    [HideInInspector]
+    public float frictionStun = 0f;
+
 
     // Shouldn't need to access these, probably
     private float dustSpawnCooldown = 0f;
-    private float airBrakeStun = 0f;
-    private float frictionStun = 0f;
     private float jumpBufferTimer;
     private List<ContactPoint> contacts;
     private Vector3 wallNormal = new Vector3 (0f, 0f, 0f);
@@ -214,6 +217,12 @@ public class SourcePlayer : MonoBehaviour {
         List<Vector3> walls = new List<Vector3> ();
         List<Vector3> floors = new List<Vector3> ();
         foreach (ContactPoint c in contacts) {
+            // We don't care about casual collisions.
+            if (c.obj.GetComponent<Rigidbody> () != null) {
+                if (c.obj.GetComponent<Rigidbody> ().mass <= 5 && c.obj.GetComponent<Movable> () == null) {
+                    continue;
+                }
+            }
             if (Mathf.Abs (c.hitNormal.y) > 0.7) {
                 floors.Add (c.hitNormal);
             } else {
@@ -614,9 +623,8 @@ public class SourcePlayer : MonoBehaviour {
 
         drop = 0;
         // apply ground friction
-        //Debug.Log(frictionStun);
         if (groundEntity != null && !TryJump()) { // On an entity that is the ground
-            friction = (baseFriction * groundFriction)*(1f-(frictionStun*4f));
+            friction = (baseFriction * groundFriction)*(1f-(frictionStun*2f));
 
             // Bleed off some speed, but if we have less than the bleed
             //  threshold, bleed the threshold amount.
@@ -792,10 +800,10 @@ public class SourcePlayer : MonoBehaviour {
 
         StayOnGround ();
     }
-    public void StunAirBrake( float time ) {
+    public void StunAirBrake( float time = 0.25f ) {
         airBrakeStun = time;
     }
-    public void StunFriction( float time ) {
+    public void StunFriction( float time = 0.5f ) {
         frictionStun = time;
     }
     // Movement code for when we're in the air.
@@ -1186,7 +1194,7 @@ public class SourcePlayer : MonoBehaviour {
         Vector3 flatVelocity = new Vector3(velocity.x,0f,velocity.z).normalized;
 
         bool wentBackwards = Mathf.Abs (Vector3.Dot (Vector3.Normalize (flatStepMove - flatSavePos), flatVelocity)) < Mathf.Abs (Vector3.Dot (Vector3.Normalize (flatGroundMove - flatSavePos), flatVelocity));
-        if (!RaycastForGround (out hit) || wentBackwards) {
+        if (!RaycastForGround (out hit) || wentBackwards || hit.collider.gameObject.layer == LayerMask.NameToLayer("Ignore Raycast")) {
             transform.position = groundMove;
             velocity = groundMoveVelocity;
             return;

@@ -19,16 +19,15 @@ public class DecalBuilder : ThreadedJob {
     private List<Vector3> verts = new List<Vector3> ();
     private List<Vector2> uvs = new List<Vector2>();
     private LinkedList<int> tri = new LinkedList<int> ();
-    private Dictionary<int, int> indexLookup = new Dictionary<int, int>();
+    private Dictionary<int, int> indexLookup;//= new Dictionary<int, int>();
     private void BuildMeshForObject() {
         List<int> triangles = new List<int>();
         // Use a BSP tree to find nearby triangles at log(n) speeds.
-        tree.FindClosestTriangles (position, scale/2f, triangles);
+        tree.FindClosestTriangles (position, scale, triangles);
         // Calculate the matrix needed to transform a point from the obj's local mesh, to our local mesh.
         // Matrix4x4 mat = transform.worldToLocalMatrix * obj.transform.localToWorldMatrix;
         // Clear the index lookup, we use it to check which verticies are shared.
         // This keeps us from having to rebuild the mesh so intricately.
-        indexLookup.Clear();
         indexLookup = new Dictionary<int, int>(triangles.Count);
         // TODO: split this up into more jobs.
         for (int i = 0; i < triangles.Count; i++) {
