@@ -17,8 +17,10 @@ public class GolfMutator : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if (!CanWalk)
+		if (!CanWalk) {
 			player.wishDir = new Vector3 (0, 0, 0);
+			Debug.Log ("STOP");
+		}
 
 
 		if (player.groundEntity == null) {

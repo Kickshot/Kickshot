@@ -17,12 +17,14 @@ public class GolfStart : MonoBehaviour {
 		if (other.gameObject.tag == "Player") {
 			mutator = other.GetComponent<GolfMutator> ();
 			mutator.ChangeWalk (true);
+			Debug.Log("HELLO");
 		}
 	}
 	void OnTriggerExit(Collider other) {
 		if (other.gameObject.tag == "Player") {
 			mutator = other.GetComponent<GolfMutator> ();
 			mutator.ChangeWalk (false);
+			Debug.Log("False");
 		}
 	}
 }
