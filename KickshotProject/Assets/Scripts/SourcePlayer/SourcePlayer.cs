@@ -50,6 +50,8 @@ public class SourcePlayer : MonoBehaviour {
     public float jumpBufferTime = 0.1f; // How long a jump will be "queued" for, if the player presses jump too early.
     public float crouchAcceleration = 8f;
     public float DodgeSpeed = 20f;
+	public bool CantWalk = false;
+
 
     [HideInInspector]
     public Vector3 wishDir;
@@ -77,11 +79,12 @@ public class SourcePlayer : MonoBehaviour {
     public bool wantCrouch = false;
     [HideInInspector]
     public bool crouched = false;
-
     [HideInInspector]
     public GameObject wallEntity = null;
     [HideInInspector]
     public bool wallRunning = false;
+	[HideInInspector]
+	public GameObject jumpGround = null;
 
 
     // Shouldn't need to access these, probably
@@ -377,6 +380,9 @@ public class SourcePlayer : MonoBehaviour {
     }
 
     void Update () {
+
+		if (CantWalk)
+			stopPlayer();
         // assume we haven't jumped and that we haven't taken damage.
         // assume we also haven't hit the ground.
         justJumped = false;
@@ -415,6 +421,7 @@ public class SourcePlayer : MonoBehaviour {
             groundEntity = null;
             groundFriction = 1f;
             groundNormal = Vector3.up;
+			jumpGround = null;
             //groundVelocity = new Vector3 (0f, 0f, 0f); Shouldn't set this, need to remember how fast we were launched off of a moving object.
         }
 
@@ -502,6 +509,7 @@ public class SourcePlayer : MonoBehaviour {
                 lastGrunt = Time.time;
             }
             velocity.y = crouched ? crouchJumpSpeed : jumpSpeed;
+			jumpGround = groundEntity;
             groundEntity = null;
             velocity += groundVelocity;
             groundVelocity = Vector3.zero;
@@ -520,6 +528,7 @@ public class SourcePlayer : MonoBehaviour {
                 flSpeedAddition *= -1.0f;
             }
             velocity += transform.forward * flSpeedAddition;
+
             justJumped = true;
         }
         // We were standing on the ground, then suddenly are not.
@@ -1183,6 +1192,11 @@ public class SourcePlayer : MonoBehaviour {
         }
     }
 
+	public void stopPlayer()
+	{
+		wishDir = new Vector3 (0, 0, 0);
+	}
+		
     public void OnCollisionEnter(Collision c ) {
         // This completely ignores the ignoreCollisions flag. So we can't have it running for now..
         //foreach( UnityEngine.ContactPoint p in c.contacts ) {
