@@ -111,7 +111,7 @@ public class SourcePlayer : MonoBehaviour {
     private float distToGround;
     private float radius;
     private const string TemporaryLayer = "TempCast";
-    private const int MaxPushbackIterations = 2;
+    private const int MaxPushbackIterations = 0;
     private int TemporaryLayerIndex;
     private AudioSource jumpGrunt;
     private AudioSource painGrunt;
@@ -1107,7 +1107,7 @@ public class SourcePlayer : MonoBehaviour {
                 bool contactPointSuccess = SuperCollider.ClosestPointOnSurface (col, position, radius, out contactPoint);
 
                 if (!contactPointSuccess) {
-                    return;
+                    continue;
                 }
 
                 Vector3 v = contactPoint - position;
@@ -1150,7 +1150,7 @@ public class SourcePlayer : MonoBehaviour {
     public void OnCollisionEnter(Collision c ) {
         // This completely ignores the ignoreCollisions flag. So we can't have it running for now..
         //foreach( UnityEngine.ContactPoint p in c.contacts ) {
-            //HandleCollision (p.otherCollider.gameObject, p.normal, p.point);
+        //HandleCollision (p.otherCollider.gameObject, p.normal, p.point);
         //}
     }
 

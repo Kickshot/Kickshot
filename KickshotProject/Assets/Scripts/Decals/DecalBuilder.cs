@@ -14,6 +14,7 @@ public class DecalBuilder : ThreadedJob {
     public Decal decal;
     public GameObject target;
     public bool isStatic;
+    public GameObject targetPos = null;
 
     // Outdata
     private List<Vector3> verts = new List<Vector3> ();
@@ -107,6 +108,6 @@ public class DecalBuilder : ThreadedJob {
     }
     protected override void OnFinished()
     {
-        decal.FinishMesh (isStatic, target, verts, uvs, tri);
+        decal.FinishMesh (isStatic, target, verts, uvs, tri, targetPos);
     }
 }

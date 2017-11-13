@@ -16,7 +16,6 @@ public class PlayerManager : MonoBehaviour
 
 
     private GameObject _finish_text;
-    private Text _speed_text;
 
     void Start() {
         FindAssets();
@@ -36,24 +35,9 @@ public class PlayerManager : MonoBehaviour
         FinishPoint = GameObject.FindGameObjectWithTag("Finish");
 
         _finish_text = GameObject.Find("FinishText");
-        _speed_text = GameObject.Find("SpeedText").GetComponent<Text>();
         SaveManager.Save ();
     }
-
-    void Update()
-    {
-        updateSpeedText();
-    }
-
-    void updateSpeedText()
-    {
-        Vector3 vel = Player.GetComponent<SourcePlayer>().velocity;
-        vel.y = 0;
-        float speed = vel.magnitude * 10;
-
-        _speed_text.text = speed.ToString("N0");
-    }
-
+        
     // Call this in a fail state to reset the player.
     // Eventually this needs to involve some sort of timed delay, 
     // so the you don't just restart immediately

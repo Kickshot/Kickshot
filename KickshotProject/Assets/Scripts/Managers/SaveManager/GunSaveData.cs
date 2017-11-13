@@ -7,7 +7,11 @@ public class GunSaveData : SaveData {
     public enum GunType {
         RocketLauncher,
         TractorGrapple,
-        RecoilGun
+        RecoilGun,
+        GroundReloadRecoilGun,
+        GrappleHook,
+        Minigun,
+        SequentialNadeLauncher
     }
     public GunType type;
     public string gunName;
@@ -72,6 +76,14 @@ public class GunSaveData : SaveData {
             type = GunType.TractorGrapple;
         } else if (g.GetType () == typeof(RecoilGun)) {
             type = GunType.RecoilGun;
+        } else if (g.GetType () == typeof(GroundReloadRecoilGun)) {
+            type = GunType.GroundReloadRecoilGun;
+        } else if (g.GetType () == typeof(GrappleHook)) {
+            type = GunType.GrappleHook;
+        } else if (g.GetType () == typeof(MiniGun)) {
+            type = GunType.Minigun;
+        } else if (g.GetType () == typeof(SequentialNadeLauncher)) {
+            type = GunType.SequentialNadeLauncher;
         }
     }
     public override GameObject Load () {
@@ -89,6 +101,22 @@ public class GunSaveData : SaveData {
         case GunType.TractorGrapple:
             obj = GameObject.Instantiate (ResourceManager.GetResource<GameObject>("TractorGrapple"));
             g = obj.GetComponent<TractorGrapple> ();
+            break;
+        case GunType.GroundReloadRecoilGun:
+            obj = GameObject.Instantiate (ResourceManager.GetResource<GameObject>("GroundReloadRecoilGun"));
+            g = obj.GetComponent<GroundReloadRecoilGun> ();
+            break;
+        case GunType.GrappleHook:
+            obj = GameObject.Instantiate (ResourceManager.GetResource<GameObject>("GrappleHook"));
+            g = obj.GetComponent<GrappleHook> ();
+            break;
+        case GunType.Minigun:
+            obj = GameObject.Instantiate (ResourceManager.GetResource<GameObject>("Minigun"));
+            g = obj.GetComponent<MiniGun> ();
+            break;
+        case GunType.SequentialNadeLauncher:
+            obj = GameObject.Instantiate (ResourceManager.GetResource<GameObject>("SequentialNadeLauncher"));
+            g = obj.GetComponent<SequentialNadeLauncher> ();
             break;
         }
         if (obj == null || g == null) {
