@@ -63,7 +63,7 @@ public class GrappleHook : GunBase {
 			Vector3 springAccelerate = (targetPosition - (player.transform.position - hitPosition.position)) * GrappleStrength * Time.deltaTime;
 
 			//print (springAccelerate/Time.deltaTime);
-			print(Vector3.Dot (springAccelerate, player.transform.position - hitPosition.position));
+			//print(Vector3.Dot (springAccelerate, player.transform.position - hitPosition.position));
 			if (Vector3.Dot (springAccelerate, player.transform.position - hitPosition.position) < 0) {
 				player.velocity += springAccelerate;
 			}   
