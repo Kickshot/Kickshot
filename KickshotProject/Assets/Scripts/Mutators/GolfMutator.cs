@@ -7,8 +7,10 @@ public class GolfMutator : MonoBehaviour {
     SourcePlayer player;
     bool hitGround = false;
     bool inAir = false;
-    int score = -1;
+    int score = 0;
 	bool CanWalk = false;
+	bool justHitGround = true;
+	bool justJumped = false;
 	// Use this for initialization
 	void Start () {
 		player = GetComponent<SourcePlayer> ();
@@ -17,24 +19,31 @@ public class GolfMutator : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if (!CanWalk) {
-			player.wishDir = new Vector3 (0, 0, 0);
-			Debug.Log ("STOP");
-		}
+		player.CantWalk = !CanWalk;
 
 
+			
+		
 		if (player.groundEntity == null) {
 			inAir = true;
-		}
+			if (player.jumpGround != null) 
+			{
+				if(justHitGround == false)
+				{
+					score += 1;
+					print (score);
+				}
+				else
+				{
+					justHitGround = false;
+				}
+			}
 
-		if (inAir) {
-			player.jumpBufferTime = 0;
-			player.wishJump = false;
 		}
-		
+			
 		if (player.groundEntity != null)
         {
-            
+
             if (inAir == true)
             {
                 inAir = false;
@@ -43,9 +52,15 @@ public class GolfMutator : MonoBehaviour {
             if (hitGround)
             {
                 score += 1;
+				print (score);
                 hitGround = false;
+				justHitGround = true;
             }
         }
+
+		if (player.jumpGround != null) {
+				
+		}
 
 	}
 
