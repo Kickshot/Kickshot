@@ -20,7 +20,8 @@ public class GolfMutator : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		player.CantWalk = !CanWalk;
-
+		if (inAir)
+			player.CantWalk = false;
 
 			
 		
