@@ -20,11 +20,34 @@ public class MovingPlatform : Movable {
     float lastProgress;
     void Start() {
         body = GetComponent<Rigidbody> ();
+        body.isKinematic = true;
         body.useGravity = false;
         body.mass = 999999;
         if (Target1 == null || Target2 == null) {
             Debug.LogError ("You must specify target positions for platforms. Drag and drop any object into the Target1/2 slot.");
         }
+    }
+    void Move( Vector3 lastPos, Vector3 newPos ) {
+        Vector3 dir = newPos - lastPos;
+        float dist = dir.magnitude;
+        velocity = dir/Time.deltaTime;
+        dir = Vector3.Normalize (dir);
+        float errorMargin = 0.5f;
+        body.position = lastPos - dir*errorMargin;
+        // Push away players that get hit, and cause a collision.
+        foreach (RaycastHit hit in body.SweepTestAll(dir,dist+errorMargin,QueryTriggerInteraction.Ignore)) {
+            SourcePlayer p = hit.collider.gameObject.GetComponent<SourcePlayer> ();
+            if (p == null) {
+                continue;
+            }
+            float fraction = (hit.distance-errorMargin) / (dist+errorMargin);
+            Vector3 bodyPositionAtHit = lastPos * (1 - fraction) + newPos * fraction;
+            Vector3 diff = p.transform.position - bodyPositionAtHit;
+            Vector3 pointDiff = hit.point - bodyPositionAtHit;
+            p.transform.position = newPos + diff;
+            p.HandleCollision (gameObject, -hit.normal, newPos + pointDiff);
+        }
+        body.position = newPos;
     }
     void Update () {
         float timer = Time.timeSinceLevelLoad + TimerOffset;
@@ -60,8 +83,7 @@ public class MovingPlatform : Movable {
         }
         Vector3 lastPosition = Target1.position * lastProgress + Target2.position * (1f - lastProgress);
         Vector3 newPosition = Target1.position * progress + Target2.position * (1f - progress);
-        velocity = (newPosition - lastPosition)/Time.deltaTime;
+        Move (lastPosition, newPosition);
         lastProgress = progress;
-        body.position = newPosition;
     }
 }
