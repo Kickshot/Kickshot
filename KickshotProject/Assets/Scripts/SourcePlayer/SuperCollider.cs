@@ -20,6 +20,11 @@ public static class SuperCollider {
             closestPointOnSurface = SuperCollider.ClosestPointOnSurface((CapsuleCollider)collider, to);
             return true;
         }
+        else if (collider is CharacterController)
+        {
+            closestPointOnSurface = SuperCollider.ClosestPointOnSurface((CharacterController)collider, to);
+            return true;
+        }
         else if (collider is MeshCollider)
         {
             BSPTree bsp = collider.GetComponent<BSPTree>();
@@ -130,6 +135,35 @@ public static class SuperCollider {
         p = p * collider.radius + pt;
         return ct.TransformPoint(p);
 
+    }
+        
+    public static Vector3 ClosestPointOnSurface(CharacterController collider, Vector3 to)
+    {
+        Transform ct = collider.transform; // Transform of the collider
+
+        float lineLength = collider.height - collider.radius * 2; // The length of the line connecting the center of both sphere
+        Vector3 dir = Vector3.up;
+
+        Vector3 upperSphere = dir * lineLength * 0.5f + collider.center; // The position of the radius of the upper sphere in local coordinates
+        Vector3 lowerSphere = -dir * lineLength * 0.5f + collider.center; // The position of the radius of the lower sphere in local coordinates
+
+        Vector3 local = ct.InverseTransformPoint(to); // The position of the controller in local coordinates
+
+        Vector3 p = Vector3.zero; // Contact point
+        Vector3 pt = Vector3.zero; // The point we need to use to get a direction vector with the controller to calculate contact point
+
+        if (local.y < lineLength * 0.5f && local.y > -lineLength * 0.5f) // Controller is contacting with cylinder, not spheres
+            pt = dir * local.y + collider.center;
+        else if (local.y > lineLength * 0.5f) // Controller is contacting with the upper sphere 
+            pt = upperSphere;
+        else if (local.y < -lineLength * 0.5f) // Controller is contacting with lower sphere
+            pt = lowerSphere;
+
+        //Calculate contact point in local coordinates and return it in world coordinates
+        p = local - pt;
+        p.Normalize();
+        p = p * collider.radius + pt;
+        return ct.TransformPoint(p);
     }
 
     public static Vector3 ClosestPointOnSurface(TerrainCollider collider, Vector3 to, float radius, bool debug=false)

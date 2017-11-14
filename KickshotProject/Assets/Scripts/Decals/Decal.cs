@@ -42,17 +42,6 @@ public class Decal : MonoBehaviour {
         // This doesn't run if we're playing since the decal would be rebuilt whenever
         // its parent moves, and we don't need that.
         if (transform.hasChanged && !Application.isPlaying && Application.isEditor ) {
-            foreach (GameObject obj in subDecals) {
-                for (int i = 0; i < obj.transform.childCount; i++) {
-                    DestroyImmediate (obj.transform.GetChild (i).gameObject, true);
-                }
-                DestroyImmediate (obj, true);
-            }
-            foreach (DecalBuilder job in jobs) {
-                job.Abort ();
-            }
-            jobs.Clear ();
-            subDecals.Clear ();
             BuildDecal ();
             transform.hasChanged = false;
         }
@@ -73,22 +62,20 @@ public class Decal : MonoBehaviour {
         }
     }
 
-    private MeshFilter InstanciateDecalForMovable( GameObject obj ) {
+    private MeshFilter InstanciateDecalForMovable( GameObject obj, GameObject target ) {
+        if (target == null) {
+            Debug.LogError ("We shouldn't ever get a null target for moving decals...");
+        }
         GameObject subDecal = new GameObject("SubDecalMesh");
         subDecal.transform.position = transform.position;
         subDecal.transform.rotation = transform.rotation;
         subDecal.transform.localScale = transform.localScale;
-        GameObject subDecalTarget = new GameObject("SubDecalTarget");
-        subDecalTarget.transform.position = transform.position;
-        subDecalTarget.transform.rotation = transform.rotation;
-        subDecalTarget.transform.SetParent (obj.transform);
         Follower subMeshFollower = subDecal.AddComponent<Follower> ();
-        subMeshFollower.target = subDecalTarget.transform;
+        subMeshFollower.target = target.transform;
         MeshFilter subMeshFilter = subDecal.AddComponent<MeshFilter> ();
         MeshRenderer subRenderer = subDecal.AddComponent<MeshRenderer> ();
         subRenderer.material = decal;
         subDecals.Add (subDecal);
-        subDecals.Add (subDecalTarget);
         return subMeshFilter;
     }
 
@@ -116,6 +103,12 @@ public class Decal : MonoBehaviour {
             }
         }
         foreach (GameObject obj in movingObjects) {
+            GameObject subDecalTarget = new GameObject("SubDecalTarget");
+            subDecalTarget.transform.position = transform.position;
+            subDecalTarget.transform.rotation = transform.rotation;
+            subDecalTarget.transform.SetParent (obj.transform);
+            subDecals.Add (subDecalTarget);
+
             BSPTree affectedMesh = obj.GetComponent<BSPTree> ();
             DecalBuilder builder = new DecalBuilder ();
             builder.mat = transform.worldToLocalMatrix * obj.transform.localToWorldMatrix;
@@ -126,6 +119,7 @@ public class Decal : MonoBehaviour {
             builder.decal = this;
             builder.target = obj;
             builder.isStatic = false;
+            builder.targetPos = subDecalTarget;
             builder.Start ();
             jobs.Add (builder);
         }
@@ -147,18 +141,29 @@ public class Decal : MonoBehaviour {
     }
 
     private void StartBuildMesh() {
+        foreach (GameObject obj in subDecals) {
+            for (int i = 0; i < obj.transform.childCount; i++) {
+                DestroyImmediate (obj.transform.GetChild (i).gameObject, true);
+            }
+            DestroyImmediate (obj, true);
+        }
+        foreach (DecalBuilder job in jobs) {
+            job.Abort ();
+        }
+        jobs.Clear ();
+        subDecals.Clear ();
         newVerts.Clear ();
         newUV.Clear ();
         newTri.Clear ();
     }
 
-    public void FinishMesh( bool isStatic, GameObject obj, List<Vector3> verts, List<Vector2> uvs, LinkedList<int> tris ) {
+    public void FinishMesh( bool isStatic, GameObject obj, List<Vector3> verts, List<Vector2> uvs, LinkedList<int> tris, GameObject target = null) {
         if (tris.Count <= 0) {
             return;
         }
         // For moving objects, we create a new object to parent to it.
         if (!isStatic) {
-            MeshFilter mf = InstanciateDecalForMovable (obj);
+            MeshFilter mf = InstanciateDecalForMovable (obj, target);
             Mesh newMesh = new Mesh ();
             newMesh.name = "DecalMesh";
             mf.mesh = newMesh;

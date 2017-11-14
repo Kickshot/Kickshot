@@ -7,6 +7,7 @@ public class CheckpointTrigger : MonoBehaviour {
 	void OnTriggerEnter(Collider other)
     {
         if (other.tag == "Player")
-            GameManager.instance.GetComponent<PlayerManager>().StartPoint.transform.position = transform.position;
+            SaveManager.Save ();
+            //GameManager.instance.GetComponent<PlayerManager>().StartPoint.transform.position = transform.position;
     }
 }

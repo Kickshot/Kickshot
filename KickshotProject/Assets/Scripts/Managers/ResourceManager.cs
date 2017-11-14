@@ -11,21 +11,27 @@ public static class ResourceManager {
             return;
         }
         resources = new Dictionary<string, string[]> ();
-        resources.Add ("dirtImpact",        new string[]{"Sounds/dirt_impact1", "Sounds/dirt_impact2", "Sounds/dirt_impact3"});
-        resources.Add ("woodImpact",        new string[]{"Sounds/wood_impact1", "Sounds/wood_impact2", "Sounds/wood_impact3"});
-        resources.Add ("wetImpact",         new string[]{"Sounds/wet_impact1", "Sounds/wet_impact2", "Sounds/wet_impact3"});
-        resources.Add ("stoneImpact",       new string[]{"Sounds/stone_impact1", "Sounds/stone_impact2"});
-        resources.Add ("metalImpact",       new string[]{"Sounds/metal_impact1", "Sounds/metal_impact2"});
-        resources.Add ("wireImpact",        new string[]{"Sounds/chickenwire_impact1"});
-        resources.Add ("glassImpact",       new string[]{"Sounds/glass_impact1"});
-        resources.Add ("Player",            new string[]{"Prefabs/Characters/SourcePlayer"});
-        resources.Add ("RocketLauncher",    new string[]{"Prefabs/Weapons/RocketLauncher"});
-        resources.Add ("TractorGrapple",    new string[]{"Prefabs/Weapons/TractorGrapple"});
-        resources.Add ("RecoilGun",         new string[]{"Prefabs/Weapons/RecoilGun"});
+        resources.Add ("dirtImpact",            new string[]{"Sounds/dirt_impact1", "Sounds/dirt_impact2", "Sounds/dirt_impact3"});
+        resources.Add ("woodImpact",            new string[]{"Sounds/wood_impact1", "Sounds/wood_impact2", "Sounds/wood_impact3"});
+        resources.Add ("wetImpact",             new string[]{"Sounds/wet_impact1", "Sounds/wet_impact2", "Sounds/wet_impact3"});
+        resources.Add ("stoneImpact",           new string[]{"Sounds/stone_impact1", "Sounds/stone_impact2"});
+        resources.Add ("metalImpact",           new string[]{"Sounds/metal_impact1", "Sounds/metal_impact2"});
+        resources.Add ("wireImpact",            new string[]{"Sounds/chickenwire_impact1"});
+        resources.Add ("glassImpact",           new string[]{"Sounds/glass_impact1"});
+        resources.Add ("Player",                new string[]{"Prefabs/Characters/SourcePlayer"});
+        resources.Add ("RocketLauncher",        new string[]{"Prefabs/Weapons/RocketLauncher"});
+        resources.Add ("TractorGrapple",        new string[]{"Prefabs/Weapons/TractorGrapple"});
+        resources.Add ("RecoilGun",             new string[]{"Prefabs/Weapons/RecoilGun"});
+        resources.Add ("GroundReloadRecoilGun", new string[]{"Prefabs/Weapons/Testing/GroundReloadRecoilGun"});
+        resources.Add ("GrappleHook",           new string[]{"Prefabs/Weapons/Grapple Hook"});
+        resources.Add ("Minigun",               new string[]{"Prefabs/Weapons/Minigun"});
+        resources.Add ("SequentialNadeLauncher",new string[]{"Prefabs/Weapons/SequentialNadeLauncher"});
         // Whomp Fortress music.
         resources.Add ("MarioMusic",        new string[]{"Sounds/Super Mario 64 - Main Theme Music - Bob-Omb Battlefield"});
         // DK Mountain music
         resources.Add ("DKMusic",           new string[]{"Sounds/Mario Kart Double Dash - DK Mountain Music"});
+        // Luis' level music
+        resources.Add ("drum&bass",           new string[]{"Sounds/Paul SG & Carter - A Lot To Talk About"});
         generated = true;
     }
     // Randomly returns a resource with the given name.
@@ -38,9 +44,10 @@ public static class ResourceManager {
             throw new UnityException("Resource not found: "+name);
         }
         string[] array = resources [name];
-        T resource = Resources.Load(array [Random.Range (0, array.Length - 1)]) as T;
+        int rand = Random.Range (0, array.Length - 1);
+        T resource = Resources.Load(array [rand]) as T;
         if (resource == null) {
-            throw new UnityException ("Resource specified not found in Resource folder: " + resource);
+            throw new UnityException ("Resource specified not found in Resource folder: " + array [rand]);
         }
         return resource;
     }

@@ -50,7 +50,8 @@ public class SourcePlayer : MonoBehaviour {
     public float jumpBufferTime = 0.1f; // How long a jump will be "queued" for, if the player presses jump too early.
     public float crouchAcceleration = 8f;
     public float DodgeSpeed = 20f;
-	public bool CantWalk = false;
+	public bool StopPlayer = false;
+    public float DodgeHeight = 5.0f;
 
 
     [HideInInspector]
@@ -86,11 +87,14 @@ public class SourcePlayer : MonoBehaviour {
 	[HideInInspector]
 	public GameObject jumpGround = null;
 
+    [HideInInspector]
+    public float airBrakeStun = 0f;
+    [HideInInspector]
+    public float frictionStun = 0f;
+
 
     // Shouldn't need to access these, probably
     private float dustSpawnCooldown = 0f;
-    private float airBrakeStun = 0f;
-    private float frictionStun = 0f;
     private float jumpBufferTimer;
     private List<ContactPoint> contacts;
     private Vector3 wallNormal = new Vector3 (0f, 0f, 0f);
@@ -114,7 +118,7 @@ public class SourcePlayer : MonoBehaviour {
     private float distToGround;
     private float radius;
     private const string TemporaryLayer = "TempCast";
-    private const int MaxPushbackIterations = 2;
+    private const int MaxPushbackIterations = 0;
     private int TemporaryLayerIndex;
     private AudioSource jumpGrunt;
     private AudioSource painGrunt;
@@ -224,6 +228,12 @@ public class SourcePlayer : MonoBehaviour {
         List<Vector3> walls = new List<Vector3> ();
         List<Vector3> floors = new List<Vector3> ();
         foreach (ContactPoint c in contacts) {
+            // We don't care about casual collisions.
+            if (c.obj.GetComponent<Rigidbody> () != null) {
+                if (c.obj.GetComponent<Rigidbody> ().mass <= 5 && c.obj.GetComponent<Movable> () == null) {
+                    continue;
+                }
+            }
             if (Mathf.Abs (c.hitNormal.y) > 0.7) {
                 floors.Add (c.hitNormal);
             } else {
@@ -381,7 +391,7 @@ public class SourcePlayer : MonoBehaviour {
 
     void Update () {
 
-		if (CantWalk)
+		if (StopPlayer)
 			stopPlayer();
         // assume we haven't jumped and that we haven't taken damage.
         // assume we also haven't hit the ground.
@@ -630,9 +640,8 @@ public class SourcePlayer : MonoBehaviour {
 
         drop = 0;
         // apply ground friction
-        //Debug.Log(frictionStun);
         if (groundEntity != null && !TryJump()) { // On an entity that is the ground
-            friction = (baseFriction * groundFriction)*(1f-(frictionStun*4f));
+            friction = (baseFriction * groundFriction)*(1f-(frictionStun*2f));
 
             // Bleed off some speed, but if we have less than the bleed
             //  threshold, bleed the threshold amount.
@@ -730,7 +739,7 @@ public class SourcePlayer : MonoBehaviour {
         UpdateWallCamera();
     }
     // Smoothly transform our velocity into wishdir*max_velocity at the speed of accel
-    private void Accelerate (Vector3 wishdir, float accel, float max_velocity) {
+	public void Accelerate (Vector3 wishdir, float accel, float max_velocity) {
         float addspeed, accelspeed, currentspeed;
         // Determine veer amount
         currentspeed = Vector3.Dot (velocity, wishdir);
@@ -809,10 +818,10 @@ public class SourcePlayer : MonoBehaviour {
         if (wishDodge)
             PerformDodge();
     }
-    public void StunAirBrake( float time ) {
+    public void StunAirBrake( float time = 0.25f ) {
         airBrakeStun = time;
     }
-    public void StunFriction( float time ) {
+    public void StunFriction( float time = 0.5f ) {
         frictionStun = time;
     }
     // Movement code for when we're in the air.
@@ -1015,8 +1024,8 @@ public class SourcePlayer : MonoBehaviour {
         float speed = DodgeSpeed;
 
       
-        velocity = new Vector3(DodgeDirection.x * speed, 5,DodgeDirection.z * speed);
-        Debug.Log(velocity.magnitude);
+        velocity = new Vector3(DodgeDirection.x * speed, DodgeHeight,DodgeDirection.z * speed);
+        groundEntity = null;
     }
 
     private void UpdateWallCamera() {
@@ -1032,7 +1041,7 @@ public class SourcePlayer : MonoBehaviour {
     
 
     // Either the character controller moved into something, or something moved into the supercollider spheres.
-    private void HandleCollision (GameObject obj, Vector3 hitNormal, Vector3 hitPos) {
+    public void HandleCollision (GameObject obj, Vector3 hitNormal, Vector3 hitPos) {
         if (ignoreCollisions) {
             //Debug.Log ("Ignoring collsion because we're ignorin."+Time.time);
             return;
@@ -1052,6 +1061,7 @@ public class SourcePlayer : MonoBehaviour {
         //Helper.DrawLine(hitPos,hitPos+hitNormal, Color.red, 10f);
         float mag = velocity.magnitude;
         velocity = ClipVelocity (velocity, hitNormal);
+        float change = Mathf.Abs (mag - velocity.magnitude);
         Movable check = obj.GetComponent<Movable> ();
         if (check != null) {
             Vector3 vel = check.velocity;
@@ -1059,16 +1069,16 @@ public class SourcePlayer : MonoBehaviour {
             if (d > 0.01f) { // If the velocity should be applied
                 velocity += hitNormal * d * overbounce; // We apply it with some overbounce, to keep us from getting stuck.
             }
-        }
-        float change = Mathf.Abs (mag - velocity.magnitude);
-        Rigidbody rigidcheck = obj.GetComponent<Rigidbody> ();
-        if (rigidcheck != null) {
-            Vector3 vel = rigidcheck.GetPointVelocity (hitPos);
-            float d = Vector3.Dot (vel, hitNormal);
-            if (d > 0.01f) {
-                velocity += hitNormal * d * overbounce;
+        } else {
+            Rigidbody rigidcheck = obj.GetComponent<Rigidbody> ();
+            if (rigidcheck != null) {
+                Vector3 vel = rigidcheck.GetPointVelocity (hitPos);
+                float d = Vector3.Dot (vel, hitNormal);
+                if (d > 0.01f) {
+                    velocity += hitNormal * d * overbounce;
+                }
+                rigidcheck.AddForceAtPosition (-hitNormal * change * mass, hitPos);
             }
-            rigidcheck.AddForceAtPosition (-hitNormal * change * mass, hitPos);
         }
         if (change > fallSoundThreshold) {
             float fvol = Mathf.Min (change / (maxSafeFallSpeed - fallSoundThreshold), 1f);
@@ -1152,7 +1162,7 @@ public class SourcePlayer : MonoBehaviour {
                 bool contactPointSuccess = SuperCollider.ClosestPointOnSurface (col, position, radius, out contactPoint);
 
                 if (!contactPointSuccess) {
-                    return;
+                    continue;
                 }
 
                 Vector3 v = contactPoint - position;
@@ -1200,7 +1210,7 @@ public class SourcePlayer : MonoBehaviour {
     public void OnCollisionEnter(Collision c ) {
         // This completely ignores the ignoreCollisions flag. So we can't have it running for now..
         //foreach( UnityEngine.ContactPoint p in c.contacts ) {
-            //HandleCollision (p.otherCollider.gameObject, p.normal, p.point);
+        //HandleCollision (p.otherCollider.gameObject, p.normal, p.point);
         //}
     }
 
@@ -1244,7 +1254,7 @@ public class SourcePlayer : MonoBehaviour {
         Vector3 flatVelocity = new Vector3(velocity.x,0f,velocity.z).normalized;
 
         bool wentBackwards = Mathf.Abs (Vector3.Dot (Vector3.Normalize (flatStepMove - flatSavePos), flatVelocity)) < Mathf.Abs (Vector3.Dot (Vector3.Normalize (flatGroundMove - flatSavePos), flatVelocity));
-        if (!RaycastForGround (out hit) || wentBackwards) {
+        if (!RaycastForGround (out hit) || wentBackwards || hit.collider.gameObject.layer == LayerMask.NameToLayer("Ignore Raycast")) {
             transform.position = groundMove;
             velocity = groundMoveVelocity;
             return;

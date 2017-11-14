@@ -87,7 +87,17 @@ public class BSPTree : MonoBehaviour {
         if (tree == null) {
             BuildTriangleTree ();
         }
-        FindClosestTriangles (tree, to, radius, triangles);
+        // TODO: Maybe just use a hash set initially instead of doing this dumb shit lmaoo.
+        List<int> tempTriangles = new List<int>();
+        FindClosestTriangles (tree, to, radius, tempTriangles);
+        HashSet<int> noDupSet = new HashSet<int> ();
+        foreach (int tri in tempTriangles) {
+            noDupSet.Add (tri);
+        }
+        foreach (int tri in noDupSet) {
+            triangles.Add (tri);
+        }
+        tempTriangles.Clear();
     }
 
     public void GetIndices( int triangleIndex, out int i1, out int i2, out int i3 ) {
