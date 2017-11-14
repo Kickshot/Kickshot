@@ -1,0 +1,357 @@
+fileFormatVersion: 2
+guid: a810b0e3844564d4db0d53a016433eb2
+timeCreated: 1510638897
+licenseType: Free
+ModelImporter:
+  serializedVersion: 22
+  fileIDToRecycleName:
+    100000: barrel
+    100002: barrel 1
+    100004: barrelGrip
+    100006: barrelGrip1
+    100008: barrelRing1
+    100010: barrelRing2
+    100012: barrelRing3
+    100014: barrelRing4
+    100016: barrelRingOuter
+    100018: bottomEPodCapBase
+    100020: bracer1
+    100022: bracer2
+    100024: energyPod1
+    100026: energyPod2
+    100028: energyPod3
+    100030: energyPod4
+    100032: energyPodCap
+    100034: energyPodCap 1
+    100036: energyPodCapTubeLeft
+    100038: energyPodCapTubeRIght
+    100040: energyPodCapTubeRIght1
+    100042: energyPodCapTubeRIght2
+    100044: energyPodRemover
+    100046: energyPods
+    100048: energyTube1
+    100050: energyTube2
+    100052: ePodCapBase
+    100054: ePodCapCylinder
+    100056: ePodCapRemover
+    100058: ePodRemovalBase
+    100060: grip
+    100062: grip1
+    100064: leftCylinder
+    100066: leftCylinderRing1
+    100068: leftCylinderRing2
+    100070: leftPiston
+    100072: leftPistonReciever
+    100074: mainBody
+    100076: mainBody1
+    100078: mainPiston
+    100080: //RootNode
+    100082: rightCylinder
+    100084: rightCylinderRing1
+    100086: rightCylinderRing2
+    100088: rightPiston
+    100090: rightPistonReciever
+    100092: stock
+    100094: stockShaft
+    100096: trigger
+    100098: triggerGuard
+    400000: barrel
+    400002: barrel 1
+    400004: barrelGrip
+    400006: barrelGrip1
+    400008: barrelRing1
+    400010: barrelRing2
+    400012: barrelRing3
+    400014: barrelRing4
+    400016: barrelRingOuter
+    400018: bottomEPodCapBase
+    400020: bracer1
+    400022: bracer2
+    400024: energyPod1
+    400026: energyPod2
+    400028: energyPod3
+    400030: energyPod4
+    400032: energyPodCap
+    400034: energyPodCap 1
+    400036: energyPodCapTubeLeft
+    400038: energyPodCapTubeRIght
+    400040: energyPodCapTubeRIght1
+    400042: energyPodCapTubeRIght2
+    400044: energyPodRemover
+    400046: energyPods
+    400048: energyTube1
+    400050: energyTube2
+    400052: ePodCapBase
+    400054: ePodCapCylinder
+    400056: ePodCapRemover
+    400058: ePodRemovalBase
+    400060: grip
+    400062: grip1
+    400064: leftCylinder
+    400066: leftCylinderRing1
+    400068: leftCylinderRing2
+    400070: leftPiston
+    400072: leftPistonReciever
+    400074: mainBody
+    400076: mainBody1
+    400078: mainPiston
+    400080: //RootNode
+    400082: rightCylinder
+    400084: rightCylinderRing1
+    400086: rightCylinderRing2
+    400088: rightPiston
+    400090: rightPistonReciever
+    400092: stock
+    400094: stockShaft
+    400096: trigger
+    400098: triggerGuard
+    2300000: barrel 1
+    2300002: barrelGrip
+    2300004: barrelGrip1
+    2300006: barrelRing1
+    2300008: barrelRing2
+    2300010: barrelRing3
+    2300012: barrelRing4
+    2300014: barrelRingOuter
+    2300016: bottomEPodCapBase
+    2300018: bracer1
+    2300020: bracer2
+    2300022: energyPod1
+    2300024: energyPod2
+    2300026: energyPod3
+    2300028: energyPod4
+    2300030: energyPodCap 1
+    2300032: energyPodCapTubeLeft
+    2300034: energyPodCapTubeRIght
+    2300036: energyPodCapTubeRIght1
+    2300038: energyPodCapTubeRIght2
+    2300040: energyTube1
+    2300042: energyTube2
+    2300044: ePodCapBase
+    2300046: ePodCapCylinder
+    2300048: ePodCapRemover
+    2300050: ePodRemovalBase
+    2300052: grip
+    2300054: grip1
+    2300056: leftCylinder
+    2300058: leftCylinderRing1
+    2300060: leftCylinderRing2
+    2300062: leftPiston
+    2300064: leftPistonReciever
+    2300066: mainBody1
+    2300068: mainPiston
+    2300070: rightCylinder
+    2300072: rightCylinderRing1
+    2300074: rightCylinderRing2
+    2300076: rightPiston
+    2300078: rightPistonReciever
+    2300080: stock
+    2300082: stockShaft
+    2300084: trigger
+    2300086: triggerGuard
+    3300000: barrel 1
+    3300002: barrelGrip
+    3300004: barrelGrip1
+    3300006: barrelRing1
+    3300008: barrelRing2
+    3300010: barrelRing3
+    3300012: barrelRing4
+    3300014: barrelRingOuter
+    3300016: bottomEPodCapBase
+    3300018: bracer1
+    3300020: bracer2
+    3300022: energyPod1
+    3300024: energyPod2
+    3300026: energyPod3
+    3300028: energyPod4
+    3300030: energyPodCap 1
+    3300032: energyPodCapTubeLeft
+    3300034: energyPodCapTubeRIght
+    3300036: energyPodCapTubeRIght1
+    3300038: energyPodCapTubeRIght2
+    3300040: energyTube1
+    3300042: energyTube2
+    3300044: ePodCapBase
+    3300046: ePodCapCylinder
+    3300048: ePodCapRemover
+    3300050: ePodRemovalBase
+    3300052: grip
+    3300054: grip1
+    3300056: leftCylinder
+    3300058: leftCylinderRing1
+    3300060: leftCylinderRing2
+    3300062: leftPiston
+    3300064: leftPistonReciever
+    3300066: mainBody1
+    3300068: mainPiston
+    3300070: rightCylinder
+    3300072: rightCylinderRing1
+    3300074: rightCylinderRing2
+    3300076: rightPiston
+    3300078: rightPistonReciever
+    3300080: stock
+    3300082: stockShaft
+    3300084: trigger
+    3300086: triggerGuard
+    4300000: mainPiston
+    4300002: leftPistonReciever
+    4300004: rightPistonReciever
+    4300006: barrel
+    4300008: barrelRing1
+    4300010: barrelRing2
+    4300012: barrelRing3
+    4300014: barrelRing4
+    4300016: bracer1
+    4300018: bracer2
+    4300020: barrelRingOuter
+    4300022: leftPiston
+    4300024: rightPiston
+    4300026: barrelGrip
+    4300028: stockShaft
+    4300030: stock
+    4300032: rightCylinder
+    4300034: leftCylinder
+    4300036: rightCylinderRing1
+    4300038: rightCylinderRing2
+    4300040: leftCylinderRing1
+    4300042: leftCylinderRing2
+    4300044: mainBody1
+    4300046: triggerGuard
+    4300048: trigger
+    4300050: grip
+    4300052: energyPod1
+    4300054: energyPod2
+    4300056: energyPod3
+    4300058: energyPod4
+    4300060: grip1
+    4300062: ePodRemovalBase
+    4300064: ePodCapBase
+    4300066: energyPodCapTubeRIght
+    4300068: energyPodCapTubeLeft
+    4300070: energyPodCapTubeRIght1
+    4300072: energyPodCapTubeRIght2
+    4300074: ePodCapCylinder
+    4300076: ePodCapRemover
+    4300078: bottomEPodCapBase
+    4300080: energyPodCap
+    4300082: barrelGrip1
+    4300084: energyTube1
+    4300086: energyTube2
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: barrelGlow
+    second: {fileID: 2100000, guid: 23f570e50b16ada44b63d75260676874, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: basicDarkMetal
+    second: {fileID: 2100000, guid: 26bd0b8bbf703334eb32e4b9c3c6a460, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: blackMetal
+    second: {fileID: 2100000, guid: 109679a801a0ad94ea32edbe0f81724a, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: blinn3
+    second: {fileID: 2100000, guid: ffe9c82f60ff346489cd49a4ea4f7aca, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: blinn4
+    second: {fileID: 2100000, guid: f140ddc662c160c4ba42118050bd2872, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: blinn5
+    second: {fileID: 2100000, guid: 40e8529ab1c723a4db712d10b248842b, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: gripRubber
+    second: {fileID: 2100000, guid: 6465588f676ab37459b92b6810e68f87, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: lambert1
+    second: {fileID: 2100000, guid: 50695f335f9bc9f49a4b0bff1b7009ee, type: 2}
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 0
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 0
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

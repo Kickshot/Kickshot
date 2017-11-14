@@ -19,6 +19,17 @@ public class MovingPlatform : Movable {
     public float CycleLength = 3;
     float lastProgress;
     void Start() {
+        // Prevent triggers from getting casted on Move
+        foreach (Collider col in GetComponentsInChildren<Collider>()) {
+            if (col.isTrigger) {
+                if (col.GetComponent<Rigidbody> () == null) {
+                    Debug.LogError ("Triggers on moving platforms don't work properly unless you add a rigidbody to them!\nUnfortunately I can't add it for you for various reasons.");
+                    /*Rigidbody r = col.gameObject.AddComponent<Rigidbody> ();
+                    r.useGravity = false;
+                    r.constraints = RigidbodyConstraints.FreezeAll;*/
+                }
+            }
+        }
         body = GetComponent<Rigidbody> ();
         body.isKinematic = true;
         body.useGravity = false;

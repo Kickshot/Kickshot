@@ -30,6 +30,8 @@ public static class ResourceManager {
         resources.Add ("MarioMusic",        new string[]{"Sounds/Super Mario 64 - Main Theme Music - Bob-Omb Battlefield"});
         // DK Mountain music
         resources.Add ("DKMusic",           new string[]{"Sounds/Mario Kart Double Dash - DK Mountain Music"});
+        // Luis' level music
+        resources.Add ("drum&bass",           new string[]{"Sounds/Paul SG & Carter - A Lot To Talk About"});
         generated = true;
     }
     // Randomly returns a resource with the given name.

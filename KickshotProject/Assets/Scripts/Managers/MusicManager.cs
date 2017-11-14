@@ -5,6 +5,8 @@ using UnityEngine.SceneManagement;
 
 public class MusicManager : MonoBehaviour {
     public static MusicManager manager;
+    private GameObject musicPlayer = null;
+    private AudioSource audioSource;
     private Dictionary<int, string> music;
     void Awake() {
         if (!manager) {
@@ -16,15 +18,19 @@ public class MusicManager : MonoBehaviour {
         music = new Dictionary<int, string> ();
         //music [2] = "MarioMusic"; // Music to be played during level index x (whomp fortress). Music IDs are handled by the Resource Manager.
         //music [1] = "DKMusic";
+        music [3] = "drum&bass";
         SceneManager.sceneLoaded += SceneLoaded;
     }
     void SceneLoaded(Scene scene, LoadSceneMode mode) {
         if (!music.ContainsKey (scene.buildIndex)) {
             return;
         }
-        AudioSource m = Camera.main.gameObject.AddComponent<AudioSource> ();
-        m.clip = ResourceManager.GetResource<AudioClip> (music [scene.buildIndex]);
-        m.loop = true;
-        m.Play ();
+        if (musicPlayer == null) {
+            musicPlayer = new GameObject ();
+            audioSource = musicPlayer.AddComponent<AudioSource> ();
+        }
+        audioSource.clip = ResourceManager.GetResource<AudioClip> (music [scene.buildIndex]);
+        audioSource.loop = true;
+        audioSource.Play ();
     }
 }
