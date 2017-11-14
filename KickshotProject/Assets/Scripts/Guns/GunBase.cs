@@ -18,7 +18,8 @@ public class GunBase : MonoBehaviour {
     public bool reloading = false; // Reload doesn't complete until we're no longer busy, this tells the clip to fill up after we're no longer busy.
     public bool autoReload = true; // Checks if the gun is out of ammo and not busy, then reloads it automatically. Otherwise the player has to press the reload key.
     public bool autoFire = true; // Determines if the player can just hold down the mouse to fire, rather than spam clicks.
-
+    public bool flashMuzzle = true;
+    public ParticleSystem muzzleFlash; // Particles to be emmitted out of guns muzzle. If Null, no particles to emit.
     [HideInInspector]
     public SourcePlayer player = null;
     [HideInInspector]
@@ -27,6 +28,7 @@ public class GunBase : MonoBehaviour {
     public Transform childView = null;
     [HideInInspector]
     public bool equipped = false; // This is used internally to turn on/off the actual gun stuff. If we're unequipped we're either on the floor in in someone's pockets.
+
     private bool pfiring = false; // These dumb booleans just keep track to make sure that OnPrimaryRelease doesn't get called before OnPrimaryFire.
     private bool sfiring = false;
 
@@ -73,6 +75,15 @@ public class GunBase : MonoBehaviour {
         Helper.SetLayerRecursively(gameObject, LayerMask.NameToLayer ("Default"));
         gameObject.SetActive (false);
     }
+    virtual public void EmitMuzzleFlash()
+    {
+        if(muzzleFlash != null && flashMuzzle)
+        {
+            ParticleSystem particles = Instantiate(muzzleFlash, view.position + view.forward, Quaternion.Euler(view.forward));
+            particles.transform.localRotation = Quaternion.LookRotation(view.forward);
+            Destroy(particles,muzzleFlash.main.duration);
+        }
+    }
 
     virtual public void Update() {
         if ((view == null || player == null) && equipped) {
@@ -116,12 +127,14 @@ public class GunBase : MonoBehaviour {
             busy = primaryFireCooldown;
             pfiring = true;
             OnPrimaryFire ();
+            EmitMuzzleFlash();
         }
         if (((Input.GetButtonDown ("Fire2") && !autoFire) || (Input.GetButton("Fire2") && autoFire)) && ammo >= secondaryFireAmmoCost) {
             ammo -= secondaryFireAmmoCost;
             busy = secondaryFireCooldown;
             sfiring = true;
             OnSecondaryFire ();
+            EmitMuzzleFlash();
         }
     }
 }
