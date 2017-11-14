@@ -9,6 +9,7 @@ public class Rocket : MonoBehaviour {
     public GameObject owner = null;
     public float speed = 10f;
     public float power = 10f;
+    public float damage = 50f;
     public float radius = 5f;
     public float inheritPercentage = .5f;
     public Vector3 inheritedVel;
@@ -46,7 +47,7 @@ public class Rocket : MonoBehaviour {
         Destroy (gameObject.GetComponent<Rigidbody> ());
         Destroy (gameObject.GetComponent<AudioSource> ());
         Destroy (gameObject, 1f);
-        GameRules.RadiusDamage (25f, power, position, radius, true, owner);
+        GameRules.RadiusDamage (damage, power, position, radius, true, owner);
         exploded = true;
     }
     void OnCollisionEnter( Collision other ) {

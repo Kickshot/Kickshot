@@ -987,7 +987,7 @@ public class SourcePlayer : MonoBehaviour {
     
 
     // Either the character controller moved into something, or something moved into the supercollider spheres.
-    private void HandleCollision (GameObject obj, Vector3 hitNormal, Vector3 hitPos) {
+    public void HandleCollision (GameObject obj, Vector3 hitNormal, Vector3 hitPos) {
         if (ignoreCollisions) {
             //Debug.Log ("Ignoring collsion because we're ignorin."+Time.time);
             return;
@@ -1007,6 +1007,7 @@ public class SourcePlayer : MonoBehaviour {
         //Helper.DrawLine(hitPos,hitPos+hitNormal, Color.red, 10f);
         float mag = velocity.magnitude;
         velocity = ClipVelocity (velocity, hitNormal);
+        float change = Mathf.Abs (mag - velocity.magnitude);
         Movable check = obj.GetComponent<Movable> ();
         if (check != null) {
             Vector3 vel = check.velocity;
@@ -1014,16 +1015,16 @@ public class SourcePlayer : MonoBehaviour {
             if (d > 0.01f) { // If the velocity should be applied
                 velocity += hitNormal * d * overbounce; // We apply it with some overbounce, to keep us from getting stuck.
             }
-        }
-        float change = Mathf.Abs (mag - velocity.magnitude);
-        Rigidbody rigidcheck = obj.GetComponent<Rigidbody> ();
-        if (rigidcheck != null) {
-            Vector3 vel = rigidcheck.GetPointVelocity (hitPos);
-            float d = Vector3.Dot (vel, hitNormal);
-            if (d > 0.01f) {
-                velocity += hitNormal * d * overbounce;
+        } else {
+            Rigidbody rigidcheck = obj.GetComponent<Rigidbody> ();
+            if (rigidcheck != null) {
+                Vector3 vel = rigidcheck.GetPointVelocity (hitPos);
+                float d = Vector3.Dot (vel, hitNormal);
+                if (d > 0.01f) {
+                    velocity += hitNormal * d * overbounce;
+                }
+                rigidcheck.AddForceAtPosition (-hitNormal * change * mass, hitPos);
             }
-            rigidcheck.AddForceAtPosition (-hitNormal * change * mass, hitPos);
         }
         if (change > fallSoundThreshold) {
             float fvol = Mathf.Min (change / (maxSafeFallSpeed - fallSoundThreshold), 1f);
