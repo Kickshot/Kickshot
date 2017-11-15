@@ -49,6 +49,10 @@ public class SourcePlayer : MonoBehaviour {
     public bool autoBhop = false;
     public float jumpBufferTime = 0.1f; // How long a jump will be "queued" for, if the player presses jump too early.
     public float crouchAcceleration = 8f;
+    public float DodgeSpeed = 20f;
+	public bool StopPlayer = false;
+    public float DodgeHeight = 5.0f;
+
 
     [HideInInspector]
     public Vector3 wishDir;
@@ -60,6 +64,8 @@ public class SourcePlayer : MonoBehaviour {
     public bool wishSuicideDown;
     [HideInInspector]
     public bool wishCrouch;
+    [HideInInspector]
+    public bool wishDodge;
 
     // Accessible because it's useful
     [HideInInspector]
@@ -74,11 +80,12 @@ public class SourcePlayer : MonoBehaviour {
     public bool wantCrouch = false;
     [HideInInspector]
     public bool crouched = false;
-
     [HideInInspector]
     public GameObject wallEntity = null;
     [HideInInspector]
     public bool wallRunning = false;
+	[HideInInspector]
+	public GameObject jumpGround = null;
 
     [HideInInspector]
     public float airBrakeStun = 0f;
@@ -121,6 +128,9 @@ public class SourcePlayer : MonoBehaviour {
 	private bool wallRunStarted = false;
 	private Vector3 wallPoint;
     private SmartCamera CameraControls;
+    private Vector3 DodgeDirection;
+    private Vector3 DodgeCross;
+
 
     void Awake () {
         // Not sure how audio is supposed to work in unity, I just have a list of them on the player to have the jump, pain, and break sounds.
@@ -155,7 +165,8 @@ public class SourcePlayer : MonoBehaviour {
         originalBodyPosition = body.localPosition;
         collider = GetComponent<CapsuleCollider> ();
 
-        CameraControls = Camera.main.GetComponent<SmartCamera>();
+        CameraControls = GetComponentInChildren<SmartCamera>();
+       
     }
 
     private bool TryJump(bool Jumping = false) {
@@ -379,6 +390,9 @@ public class SourcePlayer : MonoBehaviour {
     }
 
     void Update () {
+
+		if (StopPlayer)
+			stopPlayer();
         // assume we haven't jumped and that we haven't taken damage.
         // assume we also haven't hit the ground.
         justJumped = false;
@@ -417,6 +431,7 @@ public class SourcePlayer : MonoBehaviour {
             groundEntity = null;
             groundFriction = 1f;
             groundNormal = Vector3.up;
+			jumpGround = null;
             //groundVelocity = new Vector3 (0f, 0f, 0f); Shouldn't set this, need to remember how fast we were launched off of a moving object.
         }
 
@@ -504,6 +519,7 @@ public class SourcePlayer : MonoBehaviour {
                 lastGrunt = Time.time;
             }
             velocity.y = crouched ? crouchJumpSpeed : jumpSpeed;
+			jumpGround = groundEntity;
             groundEntity = null;
             velocity += groundVelocity;
             groundVelocity = Vector3.zero;
@@ -522,6 +538,7 @@ public class SourcePlayer : MonoBehaviour {
                 flSpeedAddition *= -1.0f;
             }
             velocity += transform.forward * flSpeedAddition;
+
             justJumped = true;
         }
         // We were standing on the ground, then suddenly are not.
@@ -667,7 +684,6 @@ public class SourcePlayer : MonoBehaviour {
     // Detect which movement code we should run, and set up our parameters for it.
     private void PlayerMove () {
 
-
         CheckFalling ();
         // If we are not on ground, store off how fast we are moving down
         if (groundEntity == null) {
@@ -799,6 +815,8 @@ public class SourcePlayer : MonoBehaviour {
         velocity -= groundVelocity;
 
         StayOnGround ();
+        if (wishDodge)
+            PerformDodge();
     }
     public void StunAirBrake( float time = 0.25f ) {
         airBrakeStun = time;
@@ -971,18 +989,54 @@ public class SourcePlayer : MonoBehaviour {
 			oldVelocity = velocity;
 			wallRunStarted = !wallRunning;
             wallRunning = true;
-            CameraControls.AddWallVector(wallNormal);
+            if(CameraControls != null)
+                CameraControls.AddWallVector(wallNormal);
         } else {
             wallRunning = false;
         }
 
     }
 
+
+    private void PerformDodge() {
+
+        if (groundEntity == null)
+            return;
+
+        if (wishDir == new Vector3(0, 0, 0))
+            return;
+
+        Vector3 forward, right;
+
+        forward = transform.forward;
+        right = transform.right;
+
+        // Zero out z components of movement vectors
+        forward.y = 0;
+        right.y = 0;
+
+        forward = Vector3.Normalize(forward);  // Normalize remainder of vectors.
+        right = Vector3.Normalize(right);    //
+
+        // Determine x and y parts of velocity
+        DodgeDirection = forward * wishDir.z + right * wishDir.x;
+
+        float speed = DodgeSpeed;
+
+      
+        velocity = new Vector3(DodgeDirection.x * speed, DodgeHeight,DodgeDirection.z * speed);
+        groundEntity = null;
+    }
+
     private void UpdateWallCamera() {
+        if (CameraControls == null)
+            return;
+
         if (wallEntity == null || wallRunning == false)
             CameraControls.UpdateWallRunning(false);
         else
             CameraControls.UpdateWallRunning(true);
+ 
     }
     
 
@@ -1076,14 +1130,14 @@ public class SourcePlayer : MonoBehaviour {
 				EndWallRun ();
 			}
         }
-			
-		foreach(ContactPoint point in contacts) {
+        foreach (ContactPoint point in contacts) {
 			// TODO Mutiple collision points.
 			if (point.hitNormal.y < 0.1f && point.hitNormal.y > -0.1f) {
 				wallEntity = point.obj;
 				wallNormal = point.hitNormal;
 				wallPoint = point.point;
 			}
+            
 		}
 			
 		if (Vector3.Dot (wallNormal, transform.forward) < -.75 && !wallRunning)
@@ -1148,6 +1202,11 @@ public class SourcePlayer : MonoBehaviour {
         }
     }
 
+	public void stopPlayer()
+	{
+		wishDir = new Vector3 (0, 0, 0);
+	}
+		
     public void OnCollisionEnter(Collision c ) {
         // This completely ignores the ignoreCollisions flag. So we can't have it running for now..
         //foreach( UnityEngine.ContactPoint p in c.contacts ) {

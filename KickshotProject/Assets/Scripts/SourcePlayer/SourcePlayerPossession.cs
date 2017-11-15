@@ -20,5 +20,6 @@ public class SourcePlayerPossession : MonoBehaviour {
         player.wishJumpDown = Input.GetButtonDown ("Jump");
         player.wishCrouch = Input.GetButton ("Crouch");
         player.wishSuicideDown = Input.GetButton ("Suicide");
+        player.wishDodge = Input.GetButtonDown("Dodge");
 	}
 }
