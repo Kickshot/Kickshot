@@ -229,6 +229,9 @@ public class SourcePlayer : MonoBehaviour {
         List<Vector3> floors = new List<Vector3> ();
         foreach (ContactPoint c in contacts) {
             // We don't care about casual collisions.
+            if (c.obj == null) {
+                continue;
+            }
             if (c.obj.GetComponent<Rigidbody> () != null) {
                 if (c.obj.GetComponent<Rigidbody> ().mass <= 5 && c.obj.GetComponent<Movable> () == null) {
                     continue;
