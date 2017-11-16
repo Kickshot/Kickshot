@@ -97,4 +97,29 @@ public class MovingPlatform : Movable {
         Move (lastPosition, newPosition);
         lastProgress = progress;
     }
+    void Reset()
+    {
+        if (transform.parent == null)
+        {
+            GameObject newRoot = new GameObject(name + " Root");
+            newRoot.transform.position = transform.position;
+            transform.parent = newRoot.transform;
+        }
+
+        Target1 = transform.parent.Find("PathTarget 1");
+        if(Target1 == null)
+        {
+            Object t1 = Resources.Load("EditorGizmos/PathTarget 1");
+            Target1 = (Instantiate(t1, transform.position, Quaternion.identity, transform.parent) as GameObject).transform;
+            Target1.gameObject.name = "PathTarget 1";
+        }
+        Target2 = transform.parent.Find("PathTarget 2");
+        if (Target2 == null)
+        {
+            Object t2 = Resources.Load("EditorGizmos/PathTarget 2");
+            Target2 = (Instantiate(t2, transform.position + 5 * Vector3.right, Quaternion.identity, transform.parent) as GameObject).transform;
+            Target2.gameObject.name = "PathTarget 2";
+            Target2.GetComponent<PlatformPathGizmo>().OtherTarget = Target1;
+        }
+    }
 }
