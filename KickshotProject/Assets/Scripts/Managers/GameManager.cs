@@ -18,9 +18,14 @@ public class GameManager : MonoBehaviour
     {
         get
         {
-            if (_player == null)
-                _player = GameObject.FindGameObjectWithTag("Player").GetComponent<SourcePlayer>();
-            return _player;
+            if (_player == null) {
+                GameObject p = GameObject.FindGameObjectWithTag ("Player");
+                if (p != null) {
+                    _player = p.GetComponent<SourcePlayer> ();
+                    return _player;
+                }
+            }
+            return null;
         }
     }
     public LevelTimer GameTimer

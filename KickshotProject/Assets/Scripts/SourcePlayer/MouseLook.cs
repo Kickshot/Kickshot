@@ -5,10 +5,11 @@ using UnityEngine;
 public class MouseLook : MonoBehaviour {
     public Transform  view;
     private Vector3 viewOffset;
-    private Quaternion offset;
     public float xMouseSensitivity = 35.0f;
     public float yMouseSensitivity = 35.0f;
+    [HideInInspector]
     public float rotX;
+    [HideInInspector]
     public float rotY;
     private Vector3 shakePos;
     private float shakeTimer;
@@ -33,9 +34,12 @@ public class MouseLook : MonoBehaviour {
         shakeTimerMax = shakeTimer;
     }
     public void SetRotation( Quaternion r ) {
-        rotX = 0f;
-        rotY = 0f;
-        offset = r;
+        rotX = r.eulerAngles.x;
+        rotY = r.eulerAngles.y;
+        while (rotX > 90) {
+            rotX -= 360;
+        }
+        view.rotation = Quaternion.Euler (rotX, rotY, 0);
     }
     void Start()
     {
@@ -76,8 +80,8 @@ public class MouseLook : MonoBehaviour {
             } else if (rotX > 90f) {
                 rotX = 90f;
             }
-            this.transform.rotation = offset * Quaternion.Euler (0, rotY, 0); // Rotates the collider
-            view.rotation = offset * Quaternion.Euler (rotX, rotY, 0); // Rotates the camera
+            this.transform.rotation = Quaternion.Euler (0, rotY, 0); // Rotates the collider
+            view.rotation = Quaternion.Euler (rotX, rotY, 0); // Rotates the camera
         } else {
             view.rotation = wishDir;
             transform.rotation = Quaternion.Euler (0, wishDir.eulerAngles.y, 0);
