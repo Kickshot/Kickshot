@@ -6,7 +6,10 @@ public class DeathTrigger : MonoBehaviour
 {
     void OnTriggerEnter(Collider other)
     {
-		if (other.tag == "Player")
-			other.SendMessage ("Damage", 99999999);
+        other.SendMessage ("Damage", 99999, SendMessageOptions.DontRequireReceiver);
+    }
+    void OnCollisionEnter(Collision other)
+    {
+        other.gameObject.SendMessage ("Damage", 99999, SendMessageOptions.DontRequireReceiver);
     }
 }

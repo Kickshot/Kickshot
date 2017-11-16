@@ -6,6 +6,7 @@ public class RocketLauncher : GunBase {
     public Rocket rocket;
     public Transform gunBarrelFront;
     public Transform gunBarrelBack;
+    public Animator rocketLauncher;
     override public void Update() {
         base.Update ();
         if (!equipped) {
@@ -24,7 +25,7 @@ public class RocketLauncher : GunBase {
     public override void OnPrimaryFire()
     {
         RaycastHit hit;
-
+        rocketLauncher.SetTrigger ("Fire");
         Vector3 hitpos = view.position + view.forward * 1000f;
         // We ignore player collisions.
         if (Physics.Raycast (view.position, view.forward, out hit, 1000f, Helper.GetHitScanLayerMask())) {
@@ -39,6 +40,7 @@ public class RocketLauncher : GunBase {
         Camera.main.GetComponent<SmartCamera>().AddRecoil(3f);
     }
     public override void OnSecondaryFire() {
+        //rocketLauncher.SetTrigger ("Fire");
         RaycastHit hit;
         Vector3 hitpos = view.position - view.forward * 1000f;
         // We ignore player collisions.
