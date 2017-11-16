@@ -17,10 +17,10 @@ public class ConstantRotation : MonoBehaviour {
         body = GetComponent<Rigidbody>();
     }
 
-    void Update () {
+    void FixedUpdate () {
         float degPerSecond = 360 / CycleTime;
-        degPerSecond *= Reverse ? -1 : 1; 
-        Quaternion delta = Quaternion.AngleAxis(degPerSecond * Time.deltaTime, rotAxis);
+        degPerSecond *= Reverse ? -1 : 1;
+        Quaternion delta = Quaternion.AngleAxis(degPerSecond * Time.fixedDeltaTime, rotAxis);
         body.MoveRotation(transform.rotation * delta);
 	}
 
