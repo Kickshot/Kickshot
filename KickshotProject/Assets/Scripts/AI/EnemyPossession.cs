@@ -23,7 +23,7 @@ public class EnemyPossession : MonoBehaviour {
         if (updateTimer > .3f) {
             updateTimer = 0;
 
-            SourcePlayer p = GameManager.instance.Player;
+            SourcePlayer p = GameObject.FindGameObjectsWithTag("Player")[0].GetComponent<SourcePlayer>();
             if (p == null) {
                 return;
             } else {
@@ -43,9 +43,9 @@ public class EnemyPossession : MonoBehaviour {
             targetPos = path.corners [node];
         }
         Vector3 pos = transform.position - new Vector3 (0, 1, 0);
-        //Helper.DrawLine (pos, targetPos, Color.red, 0.2f);
+        Helper.DrawLine (pos, targetPos, Color.red, 0.2f);
         Vector3 dir = (targetPos - pos);
-        if (dir.magnitude < 0.5f) {
+        if ((new Vector3(dir.x, 0, dir.z)).magnitude < 1f && dir.y <= 1f) {
             //transform.position = targetPos + new Vector3 (0, 1, 0);
             node++;
             return;

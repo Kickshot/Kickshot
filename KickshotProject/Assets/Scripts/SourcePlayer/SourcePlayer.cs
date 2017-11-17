@@ -436,7 +436,8 @@ public class SourcePlayer : MonoBehaviour {
             groundFriction = 1f;
             groundNormal = Vector3.up;
 			jumpGround = null;
-            //groundVelocity = new Vector3 (0f, 0f, 0f); Shouldn't set this, need to remember how fast we were launched off of a moving object.
+            velocity += groundVelocity;
+            groundVelocity = new Vector3 (0f, 0f, 0f);
         }
 
         //RaycastHit headHit;
