@@ -7,7 +7,7 @@ using System.Threading;
 [RequireComponent( typeof(MeshRenderer) )]
 public class Decal : MonoBehaviour {
     public Material decal;
-    public float offset = 0.01f;
+    public float offset = 0.005f;
     public bool randomRotateOnSpawn = false;
     public LayerMask layerMask;
     public List<GameObject> affectedObjects;
@@ -190,19 +190,13 @@ public class Decal : MonoBehaviour {
     private List<GameObject> GetAffectedObjects() {
         List<GameObject> objects = new List<GameObject>();
         foreach( Collider col in Physics.OverlapBox(transform.position, transform.lossyScale/2f, transform.rotation, layerMask, QueryTriggerInteraction.Ignore) ) {
-            Renderer r = col.gameObject.GetComponent<Renderer>();
-            // If the object doesn't render anything, ignore.
-            if (r == null ) continue;
             if (objects.Contains (col.gameObject)) continue;
-            if ( r.GetComponent<BSPTree>() == null ) continue;
-            // If we're trying to apply to a disabled object, ignore.
-            if( !r.enabled ) continue;
+            if ( col.gameObject.GetComponent<BSPTree>() == null ) continue;
             // If we are trying to apply ourselves to another decal, ignore.
-            if( r.GetComponent<Decal>() != null ) continue;
-            if ( r.GetComponent<MeshFilter>() == null ) continue;
+            if( col.gameObject.GetComponent<Decal>() != null ) continue;
             // If we're a trigger, ignore.
             if( col.isTrigger ) continue;
-            objects.Add(r.gameObject);
+            objects.Add(col.gameObject);
         }
         return objects;
     }

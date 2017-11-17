@@ -435,9 +435,11 @@ public class SourcePlayer : MonoBehaviour {
             groundEntity = null;
             groundFriction = 1f;
             groundNormal = Vector3.up;
-			jumpGround = null;
+            jumpGround = null;
             velocity += groundVelocity;
             groundVelocity = new Vector3 (0f, 0f, 0f);
+        } else {
+            velocity.y = 0;
         }
 
         //RaycastHit headHit;
