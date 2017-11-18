@@ -452,7 +452,6 @@ public class SourcePlayer : MonoBehaviour {
        
         // Push ourselves out of nearby objects.
         RecursivePushback (0, MaxPushbackIterations);
-
         PlayerMove ();
 		wallEntity = null;
         if (velocity.magnitude < 0.001f) {
@@ -701,9 +700,6 @@ public class SourcePlayer : MonoBehaviour {
         CheckJump ();
         // Make sure we're standing on solid ground
 
-        if (Vector3.Angle (groundNormal, new Vector3 (0f, 1f, 0f)) > controller.slopeLimit) {
-            groundEntity = null;
-        }
         if (frictionStun > 0f) {
             frictionStun -= Time.deltaTime;
         }
