@@ -290,6 +290,10 @@ public class SourcePlayer : MonoBehaviour {
     // This is necessary to grab material frictions, moving ground velocities, and normals.
     // It also returns if the raycast hit valid ground or not.
     private bool CalculateGround (RaycastHit hit) {
+        // Make sure we're not flying upward before deciding we're "standing"
+        if (velocity.y > jumpSpeed / 4f) {
+            return false;
+        }
         // Check to see if it's valid solid ground.
         if (hit.normal.y <= .7f) {
             return false;
@@ -438,8 +442,6 @@ public class SourcePlayer : MonoBehaviour {
             jumpGround = null;
             velocity += groundVelocity;
             groundVelocity = new Vector3 (0f, 0f, 0f);
-        } else {
-            velocity.y = 0;
         }
 
         //RaycastHit headHit;
@@ -548,10 +550,12 @@ public class SourcePlayer : MonoBehaviour {
             justJumped = true;
         }
         // We were standing on the ground, then suddenly are not.
-        if (velocity.y >= jumpSpeed / 2f) {
+        if (velocity.y + groundVelocity.y >= jumpSpeed/4f) {
             // We don't inherit the groundVelocity here, because if we just were bumped slightly off of a moving ground
             // that would allow us to accelerate crazily by just being on unstable ground (like a rigidbody).
             groundEntity = null;
+            velocity += groundVelocity;
+            groundVelocity = Vector3.zero;
         }
     }
     // This is ran ONLY when you hit the ground. Calculates hit sounds and fall damage values.
@@ -1058,14 +1062,19 @@ public class SourcePlayer : MonoBehaviour {
             return;
         }
         contacts.Add( new ContactPoint( obj, hitNormal, hitPos ) );
+        Movable check = obj.GetComponent<Movable> ();
+        Rigidbody rigidcheck = obj.GetComponent<Rigidbody> ();
         if (hitNormal.y > 0.7) { // We ignore collisions of valid ground.
-            return;
+            // We actually accept it if the ground is moving towards us...
+            if (check != null && check.velocity.y > 0 || rigidcheck != null && check.velocity.y > 0 ) {
+            } else {
+                return;
+            }
         }
         //Helper.DrawLine(hitPos,hitPos+hitNormal, Color.red, 10f);
         float mag = velocity.magnitude;
         velocity = ClipVelocity (velocity, hitNormal);
         float change = Mathf.Abs (mag - velocity.magnitude);
-        Movable check = obj.GetComponent<Movable> ();
         if (check != null) {
             Vector3 vel = check.velocity;
             float d = Vector3.Dot (vel, hitNormal); // How similar is our velocity to our hitnormal (perp = 0, backwards = -1, same = 1)
@@ -1073,7 +1082,6 @@ public class SourcePlayer : MonoBehaviour {
                 velocity += hitNormal * d * overbounce; // We apply it with some overbounce, to keep us from getting stuck.
             }
         } else {
-            Rigidbody rigidcheck = obj.GetComponent<Rigidbody> ();
             if (rigidcheck != null) {
                 Vector3 vel = rigidcheck.GetPointVelocity (hitPos);
                 float d = Vector3.Dot (vel, hitNormal);

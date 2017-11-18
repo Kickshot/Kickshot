@@ -17,6 +17,7 @@ public class MovingPlatform : Movable {
     public Transform Target1;
     public Transform Target2;
     public float CycleLength = 3;
+    public float LinearZipperPauseFraction = 0.1f;
     float lastProgress;
     void Start() {
         // Prevent triggers from getting casted on Move
@@ -81,14 +82,14 @@ public class MovingPlatform : Movable {
         case MFunc.LinearZipper:
             float cyc2 = Helper.fmod (timer, CycleLength);
             float cyc2Progress = cyc2 / CycleLength;
-            if (cyc2Progress < 0.1f || cyc2Progress > 0.9f) {
+            if (cyc2Progress < LinearZipperPauseFraction || cyc2Progress > 1f - LinearZipperPauseFraction) {
                 progress = 0f;
-            } else if (cyc2Progress >= 0.1f && cyc2Progress <= 0.4f) {
-                progress = (cyc2Progress-0.1f)/0.3f;
-            } else if (cyc2Progress >= 0.4f && cyc2Progress <= 0.6f) {
+            } else if (cyc2Progress >= LinearZipperPauseFraction && cyc2Progress <= 0.5f - LinearZipperPauseFraction) {
+                progress = (cyc2Progress - LinearZipperPauseFraction) / (0.5f - LinearZipperPauseFraction * 2f);
+            } else if (cyc2Progress >= 0.5f - LinearZipperPauseFraction && cyc2Progress <= 0.5f + LinearZipperPauseFraction) {
                 progress = 1f;
             } else {
-                progress = 1f - (cyc2Progress - .6f)/0.3f;
+                progress = 1f - (cyc2Progress - (0.5f + LinearZipperPauseFraction)) / (0.5f - LinearZipperPauseFraction * 2f);
             }
             break;
         }

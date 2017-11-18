@@ -20,7 +20,13 @@ public class DecalEditor : Editor {
         Decal decal = (Decal)target;
         if (decal.transform.hasChanged) {
             foreach (GameObject obj in decal.subDecals) {
+                if (obj == null) {
+                    continue;
+                }
                 for (int i = 0; i < obj.transform.childCount; i++) {
+                    if (obj.transform.GetChild (i) == null) {
+                        continue;
+                    }
                     DestroyImmediate (obj.transform.GetChild (i).gameObject, true);
                 }
                 DestroyImmediate (obj, true);
