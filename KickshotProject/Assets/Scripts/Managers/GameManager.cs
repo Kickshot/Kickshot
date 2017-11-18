@@ -65,9 +65,9 @@ public class GameManager : MonoBehaviour
     {
         if(_postLevelState)
         {
-            if (Player != null) {
-                playerVelocity = Player.velocity;
-            }
+            //if (Player != null) {
+                //playerVelocity = Player.velocity;
+            //}
             if(Input.GetButtonDown("Fire1"))
             {
                 _postLevelState = false;

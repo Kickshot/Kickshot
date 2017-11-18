@@ -14,8 +14,9 @@ public class ProceduralInflator : MonoBehaviour {
         extrudeAmount = 0;
         inflatorShader = Shader.Find ("Custom/Fatten");
         mesh = GetComponentInChildren<SkinnedMeshRenderer> ();
-        material = GetComponentInChildren<Renderer> ().material;
-        material.shader = inflatorShader;
+        foreach (Material m in GetComponentInChildren<Renderer> ().materials) {
+            m.shader = inflatorShader;
+        }
 	}
     public void FitToPlayer( GameObject obj, Vector3 vel) {
         if (mesh == null) {
@@ -43,11 +44,13 @@ public class ProceduralInflator : MonoBehaviour {
     }
 	void Update () {
         if (extrudeAmount < inflateAmount) {
-            extrudeAmount += Time.deltaTime*inflateAmount*12f;
+            extrudeAmount += Time.deltaTime*inflateAmount*10f;
         } else {
             extrudeAmount = inflateAmount;
         }
-        material.SetFloat ("_Amount", extrudeAmount);
+        foreach (Material m in GetComponentInChildren<Renderer> ().materials) {
+            m.SetFloat ("_Amount", extrudeAmount);
+        }
         if (extrudeAmount == inflateAmount) {
             GameObject g = Instantiate(gibs,transform.position,transform.rotation);
             g.GetComponent<GibPile>().FitToPlayer (gameObject, velocity);
