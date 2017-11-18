@@ -186,7 +186,7 @@ public class SourcePlayer : MonoBehaviour {
         Vector3 castPos = transform.position;
         float castLength = distToGround;
         if (controller.isGrounded) { // This keeps us attached better to stairs, and other similarly complex geometry near the feet.
-            castLength += stepSize;
+            castLength += stepSize*2f;
         }
         Vector3 halfExtents = new Vector3 (radius, 0.1f, radius);
         for ( float i = 0; i < radius; i += radius/4f ) { // Since we can hit something under us, but have it report as outside of our "cylinder" randomly, we have to try multiple times with different radiuses.
@@ -620,11 +620,11 @@ public class SourcePlayer : MonoBehaviour {
 
     // Cast a ray to determine materials, then play the appropriate sounds at the location.
     private void PlayerRoughLandingEffects (float volume, Vector3 hitpos, Vector3 hitnormal) {
-        RaycastHit hit;
-        if (Physics.Raycast (hitpos + hitnormal * 0.1f, -hitnormal, out hit, 1f)) {
-            AudioSource.PlayClipAtPoint (ImpactSounds.GetSound (Helper.getMaterial (hit)), hitpos, volume);
-        }
         if (dustSpawnCooldown <= 0f) {
+            RaycastHit hit;
+            if (Physics.Raycast (hitpos + hitnormal * 0.1f, -hitnormal, out hit, 1f)) {
+                AudioSource.PlayClipAtPoint (ImpactSounds.GetSound (Helper.getMaterial (hit)), hitpos, volume);
+            }
             Instantiate (landSpawn, hitpos, Quaternion.LookRotation (hitnormal));
             dustSpawnCooldown = 0.3f;
         }
