@@ -10,6 +10,7 @@ public class GameManager : MonoBehaviour
 
     SourcePlayer _player;
     LevelTimer _timer;
+    float _postLevelTimer;
     public Vector3 playerVelocity;
 
     bool _postLevelState = false;
@@ -68,11 +69,12 @@ public class GameManager : MonoBehaviour
             //if (Player != null) {
                 //playerVelocity = Player.velocity;
             //}
-            if(Input.GetButtonDown("Fire1"))
+            if(Input.GetButtonDown("Fire1") || _postLevelTimer <= 0 )
             {
                 _postLevelState = false;
                 LoadNext();
             }
+            _postLevelTimer -= Time.deltaTime;
         }
     }
 
@@ -85,6 +87,7 @@ public class GameManager : MonoBehaviour
     public void LevelFinished()
     {
         _postLevelState = true;
+        _postLevelTimer = 4f;
     }
 
     public void LoadNext()
