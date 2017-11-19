@@ -52,6 +52,8 @@ public class SourcePlayer : MonoBehaviour {
     public float DodgeSpeed = 20f;
 	public bool StopPlayer = false;
     public float DodgeHeight = 5.0f;
+	public float WallRunMaxFallingSpeed = 5.0f; // Can not wall run if falling >= this speed.
+	public float WallRunMinSpeed = 7.5f; // Speed in which you must meet to wall run.
 
 
     [HideInInspector]
@@ -933,25 +935,26 @@ public class SourcePlayer : MonoBehaviour {
 
     private void WallMove () {
 
-		if (wishJump && wallEntity != null) {
+		if (wishJump && wallEntity != null && (Mathf.Abs (velocity.x) >= WallRunMinSpeed|| Mathf.Abs (velocity.z) >= WallRunMinSpeed)) {
 			
 			Vector3 adjustedVelocity = velocity;
 			Vector3 adjustedOldVelocity = oldVelocity;
 			adjustedVelocity.y = 0;
 			adjustedOldVelocity.y = 0;
 
-			// Check if new velocity is trying to get off the wall.
+			if (velocity.y <=  -WallRunMaxFallingSpeed && wallRunning == false) {
+				EndWallRun ();
+				return;
+			}
+
+			// Check if new velocity is trying to get off the wall.w
 			if (Vector3.Dot (adjustedOldVelocity.normalized, adjustedVelocity.normalized) < 0.98f && wallRunning) {
 				EndWallRun ();
 				return;
 			}
 				
 			adjustedVelocity = velocity;
-			// The player is going to slow stop wall running.
-			if(adjustedVelocity.magnitude <= 2.0f &&  adjustedVelocity.magnitude >= 0.0f) {
-				EndWallRun ();
-				return;
-			}
+		
 
 			Vector3 wishdir;
 			float fmove;
