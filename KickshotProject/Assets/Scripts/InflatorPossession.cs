@@ -10,6 +10,7 @@ public class InflatorPossession : MonoBehaviour {
     }
 	// Update is called once per frame
 	void Update () {
+        Camera.main.GetComponent<SmartCamera>().AddShake (Time.deltaTime*10f);
         look.wishXAxis = Input.GetAxisRaw ("Mouse X");
         look.wishYAxis = Input.GetAxisRaw ("Mouse Y");
 	}

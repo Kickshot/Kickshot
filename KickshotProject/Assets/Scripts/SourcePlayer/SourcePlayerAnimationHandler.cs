@@ -19,7 +19,11 @@ public class SourcePlayerAnimationHandler : MonoBehaviour {
         animator.SetBool ("crouched", player.crouched);
 		animator.SetFloat ("forward", smoothcommand.z);
 		animator.SetFloat ("strafe", smoothcommand.x);
-		animator.SetFloat ("speed", player.velocity.magnitude/10f);
+        Vector3 flatvel = new Vector3 (player.velocity.x, 0, player.velocity.z);
+        if (commandvel.magnitude == 0) {
+            flatvel = Vector3.zero;
+        }
+		animator.SetFloat ("speed", flatvel.magnitude/10f);
 		if (player.justJumped) {
 			animator.SetTrigger ("jump");
 		}

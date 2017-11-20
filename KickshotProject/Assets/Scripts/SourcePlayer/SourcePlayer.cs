@@ -828,10 +828,10 @@ public class SourcePlayer : MonoBehaviour {
             PerformDodge();
     }
     public void StunAirBrake( float time = 0.25f ) {
-        airBrakeStun = time;
+        airBrakeStun = Mathf.Max(time, airBrakeStun);
     }
     public void StunFriction( float time = 0.5f ) {
-        frictionStun = time;
+        frictionStun = Mathf.Max(time, airBrakeStun);
     }
     // Movement code for when we're in the air.
     private void AirMove()
@@ -930,7 +930,7 @@ public class SourcePlayer : MonoBehaviour {
 
     private void WallMove () {
 
-		if (wishJump && wallEntity != null && (Mathf.Abs (velocity.x) >= WallRunMinSpeed|| Mathf.Abs (velocity.z) >= WallRunMinSpeed)) {
+        if (wishJump && wallEntity != null && (Mathf.Abs (velocity.x) >= WallRunMinSpeed|| Mathf.Abs (velocity.z) >= WallRunMinSpeed)) {
 			
 			Vector3 adjustedVelocity = velocity;
 			Vector3 adjustedOldVelocity = oldVelocity;
@@ -1115,7 +1115,7 @@ public class SourcePlayer : MonoBehaviour {
 	}
 
     void HandleWallRunCollision () {
-        if (!wishJump) {
+        if (!wishJump || velocity.y < -10f) {
             EndWallRun ();
             return;
         }
