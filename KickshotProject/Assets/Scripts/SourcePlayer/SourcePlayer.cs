@@ -54,6 +54,8 @@ public class SourcePlayer : MonoBehaviour {
     public float DodgeHeight = 5.0f;
 	public float WallRunMaxFallingSpeed = 5.0f; // Can not wall run if falling >= this speed.
 	public float WallRunMinSpeed = 7.5f; // Speed in which you must meet to wall run.
+    public string jumpGrunt = "AceGrunt";
+    public string painGrunt = "AcePainGrunt";
 
 
     [HideInInspector]
@@ -122,9 +124,7 @@ public class SourcePlayer : MonoBehaviour {
     private const string TemporaryLayer = "TempCast";
     private const int MaxPushbackIterations = 0;
     private int TemporaryLayerIndex;
-    private AudioSource jumpGrunt;
-    private AudioSource painGrunt;
-    private AudioSource hardLand;
+    private AudioSource audio;
     new private CapsuleCollider collider;
 	private Vector3 oldVelocity;
 	private bool wallRunStarted = false;
@@ -135,12 +135,9 @@ public class SourcePlayer : MonoBehaviour {
 
 
     void Awake () {
-        // Not sure how audio is supposed to work in unity, I just have a list of them on the player to have the jump, pain, and break sounds.
+        audio = GetComponent<AudioSource> ();
+        audio.loop = false;
         contacts = new List<ContactPoint>();
-        var aSources = GetComponents<AudioSource> ();
-        jumpGrunt = aSources [0];
-        painGrunt = aSources [1];
-        hardLand = aSources [2];
 
         // This generates our layermask, making sure we only collide with stuff that's specified by the physics engine.
         // This makes it so that if we specify in-engine layers to not collide with the player, that we actually abide to it.
@@ -229,6 +226,8 @@ public class SourcePlayer : MonoBehaviour {
     private bool CheckCrushed() {
         List<Vector3> walls = new List<Vector3> ();
         List<Vector3> floors = new List<Vector3> ();
+        List<bool> wallMovable = new List<bool> ();
+        List<bool> floorMovable = new List<bool> ();
         foreach (ContactPoint c in contacts) {
             // We don't care about casual collisions.
             if (c.obj == null) {
@@ -241,23 +240,25 @@ public class SourcePlayer : MonoBehaviour {
             }
             if (Mathf.Abs (c.hitNormal.y) > 0.7) {
                 floors.Add (c.hitNormal);
+                floorMovable.Add (c.obj.GetComponent<Movable> () != null);
             } else {
                 walls.Add (c.hitNormal);
+                wallMovable.Add (c.obj.GetComponent<Movable> () != null);
             }
         }
         Vector3 check;
         if (walls.Count > 1) {
             check = walls [0];
-            foreach (Vector3 n in walls) {
-                if (Vector3.Dot (check, n) < -0.9) {
+            for( int i=1;i<walls.Count;i++ ) {
+                if (Vector3.Dot (check, walls[i]) < -0.9 && (wallMovable[0] || wallMovable[i])) {
                     return true;
                 }
             }
         }
         if (floors.Count > 1) {
             check = floors [0];
-            foreach (Vector3 n in floors) {
-                if (Vector3.Dot (check, n) < -0.9) {
+            for ( int i=1;i<floors.Count;i++ ) {
+                if (Vector3.Dot (check, floors[i]) < -0.9 && (floorMovable[0] || floorMovable[i])) {
                     return true;
                 }
             }
@@ -525,7 +526,8 @@ public class SourcePlayer : MonoBehaviour {
             }
             // Play a grunt sound, but only so often.
             if (Time.time - lastGrunt > 0.3) {
-                jumpGrunt.Play ();
+                audio.clip = ResourceManager.GetResource<AudioClip> (jumpGrunt);
+                audio.Play ();
                 lastGrunt = Time.time;
             }
             velocity.y = crouched ? crouchJumpSpeed : jumpSpeed;
@@ -607,7 +609,7 @@ public class SourcePlayer : MonoBehaviour {
                 // If they hit the ground going this fast they may take damage (and die).
                 //
                 justTookFallDamage = true;
-                hardLand.Play ();
+                AudioSource.PlayClipAtPoint (ResourceManager.GetResource<AudioClip> ("BoneSnap"), transform.position);
                 //gameObject.SendMessage("Damage", (fallVelocity - maxSafeFallSpeed)*5f );
             }
             // Linearly scale the impact volume with how fast we hit.
@@ -1234,16 +1236,30 @@ public class SourcePlayer : MonoBehaviour {
         controller.Move (velocity * Time.deltaTime);
         Vector3 groundMove = transform.position;
         Vector3 groundMoveVelocity = velocity;
+        List<ContactPoint> groundContacts = new List<ContactPoint> (contacts);
         // Reset
         transform.position = savePos;
         velocity = saveVelocity;
         // Move straight up,
-        //controller.Move (new Vector3 (0f, stepSize, 0f));
-        transform.position += new Vector3(0f,stepSize+0.05f,0f);
+        controller.Move (new Vector3 (0f, stepSize, 0f));
+        // Bumped our head, discard the step move...
+        if (new Vector3 (savePos.x, 0, savePos.z) != new Vector3 (transform.position.x, 0, transform.position.z)) {
+            transform.position = groundMove;
+            velocity = groundMoveVelocity;
+            contacts = groundContacts;
+            return;
+        }
         // Then move normally.
-        controller.Move (velocity * Time.deltaTime - new Vector3(0f,stepSize+0.05f,0f));
+        controller.Move (velocity * Time.deltaTime);
+        // We hit something (besides another step), give up on stepping.
+        if (saveVelocity != velocity) {
+            transform.position = groundMove;
+            velocity = groundMoveVelocity;
+            contacts = groundContacts;
+            return;
+        }
         // Snap back to the ground
-        //controller.Move (new Vector3 (0f, -(stepSize+0.05f), 0f));
+        controller.Move (new Vector3 (0f, -stepSize, 0f));
         // Save this position
         Vector3 stepMove = transform.position;
         Vector3 stepMoveVelocity = velocity;
@@ -1266,6 +1282,7 @@ public class SourcePlayer : MonoBehaviour {
         if (!RaycastForGround (out hit) || wentBackwards || hit.collider.gameObject.layer == LayerMask.NameToLayer("Ignore Raycast")) {
             transform.position = groundMove;
             velocity = groundMoveVelocity;
+            contacts = groundContacts;
             return;
         }
             
@@ -1283,7 +1300,8 @@ public class SourcePlayer : MonoBehaviour {
         }
         health -= damage;
         // play a pain grunt.
-        painGrunt.Play ();
+        audio.clip = ResourceManager.GetResource<AudioClip> (painGrunt);
+        audio.Play ();
         if (health <= 0f) {
             // die
             // gameObject.SetActive(false);

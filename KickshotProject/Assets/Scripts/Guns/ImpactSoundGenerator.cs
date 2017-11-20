@@ -28,9 +28,9 @@ public class ImpactSoundGenerator : GunBase {
         GUIStyle style = GUIStyle.none;
         style.normal.textColor = Color.black;
         style.fontSize = 24;
-        GUI.Label (new Rect (51f, Screen.height-50f, 100, 50), materialTypes[currentType], style);
+        GUI.Label (new Rect (51f, Screen.height-100f, 100, 50), materialTypes[currentType], style);
         style.normal.textColor = Color.red;
-        GUI.Label (new Rect (50f, Screen.height-50f, 100, 50), materialTypes[currentType], style);
+        GUI.Label (new Rect (50f, Screen.height-100f, 100, 50), materialTypes[currentType], style);
     }
     public override void Update() {
         base.Update();

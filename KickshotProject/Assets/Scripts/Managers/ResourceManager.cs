@@ -26,6 +26,12 @@ public static class ResourceManager {
         resources.Add ("GrappleHook",           new string[]{"Prefabs/Weapons/Grapple Hook"});
         resources.Add ("Minigun",               new string[]{"Prefabs/Weapons/Minigun"});
         resources.Add ("SequentialNadeLauncher",new string[]{"Prefabs/Weapons/SequentialNadeLauncher"});
+        resources.Add ("AceGrunt",              new string[]{"Sounds/AceGrunt1", "Sounds/AceGrunt2"});
+        resources.Add ("AcePainGrunt",          new string[]{"Sounds/AceGrunt2"});
+        resources.Add ("MedeaGrunt",            new string[]{"Sounds/jumpgrunt"});
+        resources.Add ("MedeaPainGrunt",        new string[]{"Sounds/hurtgrunt"});
+        resources.Add ("BoneSnap",              new string[]{"Sounds/bonecrack"});
+
         // Whomp Fortress music.
         resources.Add ("MarioMusic",        new string[]{"Sounds/Super Mario 64 - Main Theme Music - Bob-Omb Battlefield"});
         // DK Mountain music
