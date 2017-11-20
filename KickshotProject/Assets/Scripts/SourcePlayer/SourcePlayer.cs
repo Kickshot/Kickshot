@@ -719,6 +719,11 @@ public class SourcePlayer : MonoBehaviour {
         // Make sure velocity is valid.
         CheckVelocity ();
 
+        if (!wallRunning)
+            Gravity ();
+        else
+            WallGravity ();
+
         // Make sure we are not doing any other type of movement while
         // wall running
 		if (groundEntity != null) {
@@ -734,11 +739,6 @@ public class SourcePlayer : MonoBehaviour {
 
         // Make sure velocity is still valid.
         CheckVelocity ();
-
-		if (!wallRunning)
-			Gravity ();
-		else
-			WallGravity ();
 
 
         // If we are on ground, no downward velocity.
@@ -873,59 +873,54 @@ public class SourcePlayer : MonoBehaviour {
 
         if (airBrakeStun > 0f) {
             airBrakeStun -= Time.deltaTime;
-        }
-        if (Mathf.Abs (check) < 0.7f) { // Trying to air-strafe, do air-strafey stuff.
+            if (Vector3.Dot(Vector3.Normalize(flatvel),wishDir)*flatvel.magnitude > 1f) {
+                Accelerate (wishdir, airAccelerate, flySpeed);
+            }
+        } else {
             // Apply air breaks, this keeps our turning really REALLY **REALLY** sharp.
-            if (airBrakeStun <= 0f) {
-                // It also basically enables or disables surfing. Turning it off makes it feel really bad.
-                float airbrake = 1f / Time.deltaTime;
-                // Future Dalton, YES this needs to use velocity, not flatvel, or it doesn't bring the character to a complete stop on that axis. (+-.1)
-                // You've tested it a thousand times stop changing it back to flatvel. You think "OH IT SHOULDN'T MATTER BECAUSE OF wishdir.y == 0"
-                // but Vector3.Dot() uses some approximation mumbo jumbo that makes it much more accurate to use velocity.
-                float airBrakeMag = -Vector3.Dot (velocity, wishdir);
-                Accelerate (wishdir, airbrake, airBrakeMag);
+            // It also basically enables or disables surfing. Turning it off makes it feel really bad.
+            float airbrake = 1f / Time.deltaTime;
+            // Future Dalton, YES this needs to use velocity, not flatvel, or it doesn't bring the character to a complete stop on that axis. (+-.1)
+            // You've tested it a thousand times stop changing it back to flatvel. You think "OH IT SHOULDN'T MATTER BECAUSE OF wishdir.y == 0"
+            // but Vector3.Dot() uses some approximation mumbo jumbo that makes it much more accurate to use velocity.
+            float airBrakeMag = -Vector3.Dot (velocity, wishdir);
+            Accelerate (wishdir, airbrake, airBrakeMag);
+            airBrakeStun = 0f;
+            if (Mathf.Abs (check) < 0.7f) { // Trying to air-strafe, do air-strafey stuff.
                 // Then calculate how much we should air-strafe.
                 float airStrafe = (1f - Mathf.Abs (check)) * airStrafeAccelerate;
                 // We don't want to accelerate just because they pressed A or D, we need them to move their mouse a little also.
                 float wishStrafeSpeed = (Mathf.Abs (check) + airStrafePercentage) / (1f + airStrafePercentage);
                 Accelerate (wishdir, airStrafe, wishStrafeSpeed * flySpeed);
-                airBrakeStun = 0f;
-            } else {
+                // The stuff commented out here is used to cheat and give the player speed if they airstrafe
+                // The player already recieves speed, but that bonus decreases naturally as you hit a certain threshold.
+                // This eliminates that threshold and continues to accelerate the player regardless of what speed they're at.
+                // That's not really something we want so, it's gone now.
+                //float fcheck = Mathf.Abs (check);
+                /*Vector3 pvel = velocity;
+                pvel.y = 0f;
+                // Give the player a speed bonus based on how they move a mouse.
+                if (fcheck > 0.001f && pvel.magnitude > 0.1f) { // Only give the speed bonus if we're moving, otherwise we oscillate like crazy.
+                    fcheck -= 0.001f;
+                    fcheck /= 0.999f;
+                    fcheck *= 5f;
+                    float speedFunc;
+                    // Use a disjointed function to check how much speed to gain.
+                    if (fcheck > 0 && fcheck <= 0.1f) { // Exponentially scales up
+                        speedFunc = (fcheck * 10f) * (fcheck * 10f);
+                    } else { // Logarithmically scales down
+                        speedFunc = -Mathf.Log (fcheck);
+                    }
+                    float bonusSpeed = airSpeedBonus * speedFunc;
+                    float yvel = velocity.y;
+                    velocity = Vector3.Normalize (pvel) * (pvel.magnitude + bonusSpeed);
+                    velocity.y = yvel;
+                }*/
+            } else if ( flatvel.magnitude > 1f ) {
                 Accelerate (wishdir, airAccelerate, flySpeed);
             }
-                
-
-            // The stuff commented out here is used to cheat and give the player speed if they airstrafe
-            // The player already recieves speed, but that bonus decreases naturally as you hit a certain threshold.
-            // This eliminates that threshold and continues to accelerate the player regardless of what speed they're at.
-            // That's not really something we want so, it's gone now.
-            //float fcheck = Mathf.Abs (check);
-            /*Vector3 pvel = velocity;
-            pvel.y = 0f;
-            // Give the player a speed bonus based on how they move a mouse.
-            if (fcheck > 0.001f && pvel.magnitude > 0.1f) { // Only give the speed bonus if we're moving, otherwise we oscillate like crazy.
-                fcheck -= 0.001f;
-                fcheck /= 0.999f;
-                fcheck *= 5f;
-                float speedFunc;
-                // Use a disjointed function to check how much speed to gain.
-                if (fcheck > 0 && fcheck <= 0.1f) { // Exponentially scales up
-                    speedFunc = (fcheck * 10f) * (fcheck * 10f);
-                } else { // Logarithmically scales down
-                    speedFunc = -Mathf.Log (fcheck);
-                }
-                float bonusSpeed = airSpeedBonus * speedFunc;
-                float yvel = velocity.y;
-                velocity = Vector3.Normalize (pvel) * (pvel.magnitude + bonusSpeed);
-                velocity.y = yvel;
-            }*/
-        } else if ( check < -0.7f  && airBrakeStun <= 0f ) { // Give an acceleration bonus based on if they're trying to stop.
-            Accelerate (wishdir, airBrake, flySpeed);
-        } else { // Just trying to move forward, accelerate normally.
-            Accelerate (wishdir, airAccelerate, flySpeed);
         }
-
-
+            
         // Add in any base velocity to the current velocity.
         velocity += groundVelocity;
         controller.Move(velocity * Time.deltaTime);
@@ -1007,7 +1002,6 @@ public class SourcePlayer : MonoBehaviour {
 
     }
 
-
     private void PerformDodge() {
 
         if (groundEntity == null)
@@ -1073,6 +1067,12 @@ public class SourcePlayer : MonoBehaviour {
             } else {
                 return;
             }
+        }
+        // Keep the player from hugging impossibly steep "slopes" and preventing falling.
+        // Might need tweaking. This prevents a bug where the player can infinitely accumulate gravity
+        // while not moving on a steep wall...
+        if (Mathf.Abs (hitNormal.y) < 0.1f) {
+            StunAirBrake (0.01f);
         }
         //Helper.DrawLine(hitPos,hitPos+hitNormal, Color.red, 10f);
         float mag = velocity.magnitude;
