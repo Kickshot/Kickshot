@@ -936,17 +936,6 @@ public class SourcePlayer : MonoBehaviour {
 			Vector3 adjustedOldVelocity = oldVelocity;
 			adjustedVelocity.y = 0;
 			adjustedOldVelocity.y = 0;
-
-			if (velocity.y <=  -WallRunMaxFallingSpeed && wallRunning == false) {
-				EndWallRun ();
-				return;
-			}
-
-			// Check if new velocity is trying to get off the wall.w
-			if (Vector3.Dot (adjustedOldVelocity.normalized, adjustedVelocity.normalized) < 0.98f && wallRunning) {
-				EndWallRun ();
-				return;
-			}
 				
 			adjustedVelocity = velocity;
 		
@@ -996,6 +985,12 @@ public class SourcePlayer : MonoBehaviour {
             wallRunning = true;
             if(CameraControls != null)
                 CameraControls.AddWallVector(wallNormal);
+
+            // Check if new velocity is trying to get off the wall.w
+            if (Vector3.Dot (adjustedOldVelocity.normalized, adjustedVelocity.normalized) < 0.98f && wallRunning) {
+                EndWallRun ();
+                return;
+            }
         } else {
             wallRunning = false;
         }
@@ -1115,7 +1110,7 @@ public class SourcePlayer : MonoBehaviour {
 	}
 
     void HandleWallRunCollision () {
-        if (!wishJump || velocity.y < -10f) {
+        if (!wishJump || velocity.y < -Mathf.Abs(WallRunMaxFallingSpeed)) {
             EndWallRun ();
             return;
         }
