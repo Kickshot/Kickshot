@@ -95,6 +95,15 @@ public static class ImpactSounds {
         soundLookup["Ibeam002 (Instance)"] = "metalImpact";
         soundLookup["metaldoor01_192 (Instance)"] = "metalImpact";
 
+        // Sounds generated for CrouchUserStory
+        soundLookup["carpetfloor003a (Instance)"] = "dirtImpact";
+        soundLookup["woodwall_darkbrown001 (Instance)"] = "woodImpact";
+        soundLookup["concretefloor031a (Instance)"] = "stoneImpact";
+        soundLookup["metal02 (Instance)"] = "metalImpact";
+        soundLookup["glasswindow001a (Instance)"] = "glassImpact";
+        soundLookup["metalstainless01 (Instance)"] = "metalImpact";
+        soundLookup["concretefloor014a (Instance)"] = "stoneImpact";
+
         generatedList = true;
     }
 }
