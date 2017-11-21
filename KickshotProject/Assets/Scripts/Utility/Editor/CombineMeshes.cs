@@ -10,7 +10,21 @@ public class CombineMeshes
         List<CombineInstance> combine = new List<CombineInstance> ();
         Dictionary<Material,int> materials = new Dictionary<Material,int> ();
         Dictionary<int,Mesh> meshs = new Dictionary<int,Mesh> ();
+        Dictionary<GameObject,Vector3> positions = new Dictionary<GameObject,Vector3> ();
         int matcount = 0;
+        Vector3 origin = Vector3.zero;
+        // First we calculate the "center" of all the objects.
+        foreach (GameObject obj in Selection.gameObjects) {
+            positions [obj] = obj.transform.position;
+            origin += obj.transform.position;
+        }
+        origin /= positions.Keys.Count;
+        // Move the objects to be around the origin.
+        foreach (GameObject obj in Selection.gameObjects) {
+            obj.transform.position -= origin;
+        }
+
+        // Now combine each mesh, keeping track of which submesh has which material...
         foreach (GameObject obj in Selection.gameObjects) {
             foreach( MeshFilter mf in obj.GetComponentsInChildren<MeshFilter>() ) {
                 MeshRenderer mr = mf.GetComponent<MeshRenderer> ();
@@ -61,10 +75,16 @@ public class CombineMeshes
                 }
             }
         }
+        // Move all the objects back to their original position
+        foreach (KeyValuePair<GameObject,Vector3> p in positions) {
+            p.Key.transform.position = p.Value;
+        }
+        // Create our material array, since we were storing it as an unsorted dictonary.
         List<Material> matarray = new List<Material> (materials.Keys);
         foreach (KeyValuePair<Material,int> pair in materials) {
             matarray [pair.Value] = pair.Key;
         }
+        // For each mesh, as long as it has triangles in it, add it to our combined mesh.
         int tempcount = 0;
         for (int i = 0; i < matarray.Count; i++) {
             if (meshs [materials [matarray [i]]].triangles.Length <= 0) {
@@ -79,25 +99,25 @@ public class CombineMeshes
             ci.transform = Matrix4x4.identity;
             combine.Add (ci);
         }
-        foreach (Material mat in matarray) {
-            CombineInstance ci = new CombineInstance ();
-            ci.mesh = meshs [materials[mat]];
-            tempcount += ci.mesh.triangles.Length;
-            ci.transform = Matrix4x4.identity;
-            combine.Add (ci);
-        }
+        // If we didn't have anything to combine, we must have not had any valid meshes selected!
         if (combine.Count <= 0) {
             Debug.LogError ("No static meshes found in selection!");
             return;
         }
+
+        // Finally create the game object with our new mesh.
+        // Also create a mesh collider on the fly, just in case.
         GameObject combinedMesh = new GameObject ();
+        combinedMesh.name = "CombinedMesh";
         MeshFilter combinedMeshFilter = combinedMesh.AddComponent<MeshFilter> ();
         MeshRenderer combinedMeshRenderer = combinedMesh.AddComponent<MeshRenderer> ();
         MeshCollider combinedMeshCollider = combinedMesh.AddComponent<MeshCollider> ();
         combinedMeshFilter.sharedMesh = new Mesh ();
         combinedMeshFilter.sharedMesh.CombineMeshes (combine.ToArray(),false);
         combinedMeshRenderer.sharedMaterials = matarray.ToArray ();
+        // Optimize the mesh as well.
         MeshUtility.Optimize (combinedMeshFilter.sharedMesh);
         combinedMeshCollider.sharedMesh = combinedMeshFilter.sharedMesh;
+        combinedMesh.transform.position = origin;
     }
 }

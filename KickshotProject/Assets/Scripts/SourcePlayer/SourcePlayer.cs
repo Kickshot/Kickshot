@@ -149,7 +149,7 @@ public class SourcePlayer : MonoBehaviour {
 
         controller = GetComponent<CharacterController> ();
         controller.detectCollisions = false; // The default collision resolution for character controller vs rigidbody is analogus to unstoppable infinite mass vs paper. We don't want that.
-        controller.enableOverlapRecovery = false;
+        controller.enableOverlapRecovery = true;
         controller.minMoveDistance = 0f;
         controller.stepOffset = 0f; // We use our own step logic.
 
@@ -189,6 +189,24 @@ public class SourcePlayer : MonoBehaviour {
         }
         Vector3 halfExtents = new Vector3 (radius, 0.1f, radius);
         for ( float i = 0; i < radius; i += radius/4f ) { // Since we can hit something under us, but have it report as outside of our "cylinder" randomly, we have to try multiple times with different radiuses.
+            foreach (RaycastHit hit in Physics.BoxCastAll(castPos, halfExtents, -transform.up, transform.rotation*Quaternion.AngleAxis(45f,Vector3.up), castLength, layerMask, QueryTriggerInteraction.Ignore)) {
+                // This means that our initial box is already colliding with something
+                // If our initial cast position is colliding with something, we don't get any useful information, so we skip it!
+                // TODO: This would also indicate that the player is "stuck" inside of something. But this should be impossible since we actively teleport the player outside of geometry.
+                if (hit.distance == 0) {
+                    continue;
+                }
+                // Get the distance (ignoring the y axis) of the hit point and our "cylinder", if it's outside of our cylinder we ignore it.
+                float flathitDist = Mathf.Sqrt ((transform.position.x - hit.point.x) * (transform.position.x - hit.point.x) + (transform.position.z - hit.point.z) * (transform.position.z - hit.point.z));
+                if (flathitDist > radius) {
+                    continue;
+                }
+                // A hit was found of valid ground! woo!
+                if (hit.normal.y > 0.7) {
+                    resultHit = hit;
+                    return true;
+                }
+            }
             foreach (RaycastHit hit in Physics.BoxCastAll(castPos, halfExtents, -transform.up, transform.rotation, castLength, layerMask, QueryTriggerInteraction.Ignore)) {
                 // This means that our initial box is already colliding with something
                 // If our initial cast position is colliding with something, we don't get any useful information, so we skip it!

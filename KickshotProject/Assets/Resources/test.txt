@@ -66,3 +66,15 @@ soundLookup["wall016d (Instance)"] = "metalImpact";
 soundLookup["Ibeam002 (Instance)"] = "metalImpact";
 // Sounds generated for plr_hightower
 soundLookup["metaldoor01_192 (Instance)"] = "metalImpact";
+// Sounds generated for CrouchUserStory
+soundLookup["carpetfloor003a (Instance)"] = "dirtImpact";
+soundLookup["woodwall_darkbrown001 (Instance)"] = "woodImpact";
+soundLookup["concretefloor031a (Instance)"] = "stoneImpact";
+soundLookup["metal02 (Instance)"] = "metalImpact";
+soundLookup["glasswindow001a (Instance)"] = "glassImpact";
+soundLookup["metalstainless01 (Instance)"] = "metalImpact";
+soundLookup["concretefloor014a (Instance)"] = "stoneImpact";
+// Sounds generated for 
+soundLookup["wood_wall006 (Instance)"] = "woodImpact";
+soundLookup["carpetfloor003a (Instance)"] = "dirtImpact";
+soundLookup["metaltrack001 (Instance)"] = "metalImpact";

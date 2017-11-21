@@ -104,6 +104,11 @@ public static class ImpactSounds {
         soundLookup["metalstainless01 (Instance)"] = "metalImpact";
         soundLookup["concretefloor014a (Instance)"] = "stoneImpact";
 
+        // Sounds generated for 
+        soundLookup["wood_wall006 (Instance)"] = "woodImpact";
+        soundLookup["carpetfloor003a (Instance)"] = "dirtImpact";
+        soundLookup["metaltrack001 (Instance)"] = "metalImpact";
+
         generatedList = true;
     }
 }
