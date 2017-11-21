@@ -55,12 +55,9 @@ public class CombineMeshes
                         vertices.Add (v1);
                         vertices.Add (v2);
                         vertices.Add (v3);
-                        Vector3 side1 = v2 - v1;
-                        Vector3 side2 = v3 - v1;
-                        Vector3 normal = Vector3.Cross(side1, side2).normalized;
-                        normals.Add (normal);
-                        normals.Add (normal);
-                        normals.Add (normal);
+                        normals.Add( mf.transform.rotation*mf.sharedMesh.normals[i1] );
+                        normals.Add( mf.transform.rotation*mf.sharedMesh.normals[i2] );
+                        normals.Add( mf.transform.rotation*mf.sharedMesh.normals[i3] );
                         uvs.Add (mf.sharedMesh.uv [i1]);
                         uvs.Add (mf.sharedMesh.uv [i2]);
                         uvs.Add (mf.sharedMesh.uv [i3]);
