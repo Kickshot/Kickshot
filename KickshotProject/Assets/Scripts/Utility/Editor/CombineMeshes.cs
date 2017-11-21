@@ -113,7 +113,7 @@ public class CombineMeshes
         combinedMeshFilter.sharedMesh.CombineMeshes (combine.ToArray(),false);
         combinedMeshRenderer.sharedMaterials = matarray.ToArray ();
         // Optimize the mesh as well.
-        MeshUtility.Optimize (combinedMeshFilter.sharedMesh);
+        Helper.OptimizeMesh (combinedMeshFilter.sharedMesh);
         combinedMeshCollider.sharedMesh = combinedMeshFilter.sharedMesh;
         combinedMesh.transform.position = origin;
     }

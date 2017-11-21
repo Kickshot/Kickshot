@@ -4,6 +4,9 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Runtime.Serialization;
 using System.IO;
 using UnityEngine;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 public static class Helper {
     public static void DrawLine(Vector3 start, Vector3 end, Color color, float duration = 0.2f) {
@@ -196,6 +199,92 @@ public static class Helper {
             localFrontBottomRight = RotatePointAroundPivot(localFrontBottomRight, Vector3.zero, orientation);
         }
     }*/
+    private class VertexData {
+        public Vector3 position;
+        public Vector3 normal;
+        public Vector2 uv;
+        public VertexData( Vector3 pos, Vector3 norm, Vector2 u ) {
+            position = pos;
+            normal = norm;
+            uv = u;
+        }
+        public override int GetHashCode()
+        {
+            return position.GetHashCode() ^ normal.GetHashCode() ^ uv.GetHashCode();
+        }
+        public override bool Equals (object obj) {
+            VertexData b = (VertexData)obj;
+            return position.Equals (b.position) && normal.Equals (b.normal) && uv.Equals (b.uv);
+        }
+    }
+
+    #if UNITY_EDITOR
+    // Welds similar vertices, saves memory. Then uses MeshUtility to optimize it.
+    // It's pretty much only useful if you generate some really lazy meshes...
+    public static void OptimizeMesh(Mesh m) {
+        Debug.Log ("Optimizing mesh with " + m.vertices.Length + " vertices...");
+        Dictionary<VertexData, int> memory = new Dictionary<VertexData, int> ();
+        int vertexCount = 0;
+        List<List<int>> newTriangles = new List<List<int>> ();
+        for (int i = 0; i < m.subMeshCount; i++) {
+            int[] subtriangles = m.GetTriangles (i);
+            List<int> newSubTriangles = new List<int> ();
+            for (int tri = 0; tri < subtriangles.Length; tri += 3) {
+                int i1 = subtriangles [tri];
+                int i2 = subtriangles [tri+1];
+                int i3 = subtriangles [tri+2];
+                VertexData v1 = new VertexData (m.vertices [i1], m.normals [i1], m.uv [i1]);
+                VertexData v2 = new VertexData (m.vertices [i2], m.normals [i2], m.uv [i2]);
+                VertexData v3 = new VertexData (m.vertices [i3], m.normals [i3], m.uv [i3]);
+                int n1, n2, n3;
+                if (!memory.TryGetValue (v1, out n1)) {
+                    n1 = vertexCount;
+                    memory.Add (v1, vertexCount);
+                    vertexCount++;
+                }
+                newSubTriangles.Add (n1);
+                if (!memory.TryGetValue (v2, out n2)) {
+                    n2 = vertexCount;
+                    memory.Add (v2, vertexCount);
+                    vertexCount++;
+                }
+                newSubTriangles.Add (n2);
+                if (!memory.TryGetValue (v3, out n3)) {
+                    n3 = vertexCount;
+                    memory.Add (v3, vertexCount);
+                    vertexCount++;
+                }
+                newSubTriangles.Add (n3);
+            }
+            newTriangles.Add (newSubTriangles);
+        }
+        // Sort our dictionary
+        List<VertexData> data = new List<VertexData> (memory.Keys);
+        foreach (KeyValuePair<VertexData,int> p in memory) {
+            data [p.Value] = p.Key;
+        }
+        // Generate our lists from the organized data.
+        List<Vector3> newVertices = new List<Vector3>();
+        List<Vector3> newNormals = new List<Vector3>();
+        List<Vector2> newUVs = new List<Vector2>();
+        foreach( VertexData v in data ) {
+            newVertices.Add (v.position);
+            newNormals.Add (v.normal);
+            newUVs.Add (v.uv);
+        }
+        m.Clear ();
+        m.vertices = newVertices.ToArray ();
+        m.normals = newNormals.ToArray ();
+        m.uv = newUVs.ToArray ();
+        m.subMeshCount = newTriangles.Count;
+        for (int i = 0; i < newTriangles.Count; i++) {
+            m.SetTriangles (newTriangles [i].ToArray(), i);
+        }
+        MeshUtility.Optimize (m);
+        Debug.Log ("Done! It's down to " + m.vertices.Length + " now!");
+    }
+
+    #endif
 
     //This should work for all cast types
     static Vector3 CastCenterOnCollision(Vector3 origin, Vector3 direction, float hitInfoDistance)
