@@ -86,6 +86,15 @@ public class Decal : MonoBehaviour {
         subDecals.Clear ();
     }
 
+    // Radius
+    private float GetScale(GameObject obj ) {
+        Vector3 scale = transform.lossyScale;
+        Vector3 otherScale = obj.transform.lossyScale;
+        float maxScale = Mathf.Max(Mathf.Max(scale.x,scale.y),scale.z)/2f;
+        float minScale = Mathf.Min(Mathf.Min(otherScale.x,otherScale.y),otherScale.z);
+        return maxScale / minScale;
+    }
+
     // Try our best to determine how to apply our mesh.
     public void BuildDecal() {
         buildingMesh = true;
@@ -96,7 +105,7 @@ public class Decal : MonoBehaviour {
         List<GameObject> movingObjects = new List<GameObject> ();
         List<GameObject> staticObjects = new List<GameObject> ();
         foreach (GameObject obj in affectedObjects) {
-            if (obj.GetComponent<Movable> () != null || obj.GetComponent<Rigidbody> () != null) {
+            if (obj.GetComponent<Movable> () != null || obj.GetComponent<Rigidbody> () != null || obj.GetComponentInParent<Movable> () != null || obj.GetComponentInParent<Rigidbody> () != null ) {
                 movingObjects.Add (obj);
             } else {
                 staticObjects.Add (obj);
@@ -113,7 +122,7 @@ public class Decal : MonoBehaviour {
             DecalBuilder builder = new DecalBuilder ();
             builder.mat = transform.worldToLocalMatrix * obj.transform.localToWorldMatrix;
             builder.position = affectedMesh.transform.InverseTransformPoint(transform.position);
-            builder.scale = (transform.lossyScale.magnitude/2f)/affectedMesh.transform.lossyScale.magnitude;
+            builder.scale = GetScale (obj);
             builder.tree = affectedMesh;
             builder.offset = offset*Random.Range(0.1f,1f);
             builder.decal = this;
@@ -129,7 +138,7 @@ public class Decal : MonoBehaviour {
             DecalBuilder builder = new DecalBuilder ();
             builder.mat = transform.worldToLocalMatrix * obj.transform.localToWorldMatrix;
             builder.position = affectedMesh.transform.InverseTransformPoint(transform.position);
-            builder.scale = (transform.lossyScale.magnitude/2f)/affectedMesh.transform.lossyScale.magnitude;
+            builder.scale = GetScale (obj);
             builder.tree = affectedMesh;
             builder.offset = offset*Random.Range(0.1f,1f);
             builder.decal = this;
