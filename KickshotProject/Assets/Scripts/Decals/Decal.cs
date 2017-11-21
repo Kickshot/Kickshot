@@ -105,7 +105,7 @@ public class Decal : MonoBehaviour {
         List<GameObject> movingObjects = new List<GameObject> ();
         List<GameObject> staticObjects = new List<GameObject> ();
         foreach (GameObject obj in affectedObjects) {
-            if (obj.GetComponent<Movable> () != null || obj.GetComponent<Rigidbody> () != null || obj.GetComponentInParent<Movable> () != null || obj.GetComponentInParent<Rigidbody> () != null ) {
+            if (obj.GetComponentInParent<Movable> () != null || obj.GetComponentInParent<Rigidbody> () != null ) {
                 movingObjects.Add (obj);
             } else {
                 staticObjects.Add (obj);

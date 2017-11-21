@@ -233,17 +233,17 @@ public class SourcePlayer : MonoBehaviour {
             if (c.obj == null) {
                 continue;
             }
-            if (c.obj.GetComponent<Rigidbody> () != null) {
-                if (c.obj.GetComponent<Rigidbody> ().mass <= 5 && c.obj.GetComponent<Movable> () == null) {
+            if (c.obj.GetComponentInParent<Rigidbody> () != null) {
+                if (c.obj.GetComponentInParent<Rigidbody> ().mass <= 5 && c.obj.GetComponentInParent<Movable> () == null) {
                     continue;
                 }
             }
             if (Mathf.Abs (c.hitNormal.y) > 0.7) {
                 floors.Add (c.hitNormal);
-                floorMovable.Add (c.obj.GetComponent<Movable> () != null);
+                floorMovable.Add (c.obj.GetComponentInParent<Movable> () != null);
             } else {
                 walls.Add (c.hitNormal);
-                wallMovable.Add (c.obj.GetComponent<Movable> () != null);
+                wallMovable.Add (c.obj.GetComponentInParent<Movable> () != null);
             }
         }
         Vector3 check;
@@ -316,13 +316,13 @@ public class SourcePlayer : MonoBehaviour {
         // We need to see if we have a velocity now, in order for the player to stay on moving conveyors and stuff.
         groundVelocity = Vector3.zero;
         // A movable just gives us a velocity. (most basic platforms, or conveyors should be movable)
-        Movable check = groundEntity.GetComponent<Movable> ();
+        Movable check = groundEntity.GetComponentInParent<Movable> ();
         if (check != null) {
             groundVelocity = check.velocity;
 			return true;
         }
         // A rigidbody we have to calculate the velocity of the ground immediately below us.
-        Rigidbody cccheck = groundEntity.GetComponent<Rigidbody> ();
+        Rigidbody cccheck = groundEntity.GetComponentInParent<Rigidbody> ();
         if (cccheck != null) {
             groundVelocity = cccheck.GetPointVelocity (hit.point);
 			return true;
@@ -968,12 +968,12 @@ public class SourcePlayer : MonoBehaviour {
 			// We need to see if we have a velocity now, in order for the player to stay on moving conveyors and stuff.
 			Vector3 wallVelocity = Vector3.zero;
 			// A movable just gives us a velocity. (most basic platforms, or conveyors should be movable)
-			Movable check = wallEntity.GetComponent<Movable> ();
+            Movable check = wallEntity.GetComponentInParent<Movable> ();
 			if (check != null) {
 				wallVelocity = check.velocity;
 			}
 
-			Rigidbody cccheck = wallEntity.GetComponent<Rigidbody> ();
+            Rigidbody cccheck = wallEntity.GetComponentInParent<Rigidbody> ();
 			if (cccheck != null) {
 				wallVelocity = cccheck.GetPointVelocity (wallPoint);
 			}
@@ -1056,11 +1056,11 @@ public class SourcePlayer : MonoBehaviour {
             return;
         }
         contacts.Add( new ContactPoint( obj, hitNormal, hitPos ) );
-        Movable check = obj.GetComponent<Movable> ();
-        Rigidbody rigidcheck = obj.GetComponent<Rigidbody> ();
+        Movable check = obj.GetComponentInParent<Movable> ();
+        Rigidbody rigidcheck = obj.GetComponentInParent<Rigidbody> ();
         if (hitNormal.y > 0.7) { // We ignore collisions of valid ground.
             // We actually accept it if the ground is moving towards us...
-            if (check != null && check.velocity.y > 0 || rigidcheck != null && check.velocity.y > 0 ) {
+            if (check != null && check.velocity.y > 0 || rigidcheck != null && rigidcheck.velocity.y > 0 ) {
             } else {
                 return;
             }
