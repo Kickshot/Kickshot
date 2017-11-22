@@ -57,7 +57,9 @@ public class MovingPlatform : Movable {
             Vector3 diff = p.transform.position - bodyPositionAtHit;
             Vector3 pointDiff = hit.point - bodyPositionAtHit;
             p.transform.position = newPos + diff;
-            p.HandleCollision (gameObject, -hit.normal, newPos + pointDiff);
+            if (-hit.normal.y <= 0.7f || velocity.y <= 0f) {
+                p.HandleCollision (gameObject, -hit.normal, newPos + pointDiff);
+            }
         }
         body.position = newPos;
     }

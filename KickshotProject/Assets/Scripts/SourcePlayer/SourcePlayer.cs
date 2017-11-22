@@ -78,6 +78,7 @@ public class SourcePlayer : MonoBehaviour {
     public bool justTookFallDamage = false;
     [HideInInspector]
     public Vector3 groundVelocity;
+    private Vector3 lastGroundVelocity;
     [HideInInspector]
     public GameObject groundEntity = null;
     [HideInInspector]
@@ -446,6 +447,8 @@ public class SourcePlayer : MonoBehaviour {
             Explode ();
             return;
         }
+            
+        lastGroundVelocity = groundVelocity;  
 
         bool hitGround = false;
         // We only check for ground under us if we're moving downwards.
@@ -462,7 +465,7 @@ public class SourcePlayer : MonoBehaviour {
             groundNormal = Vector3.up;
             jumpGround = null;
             velocity += groundVelocity;
-            groundVelocity = new Vector3 (0f, 0f, 0f);
+            groundVelocity = Vector3.zero;
         }
 
         //RaycastHit headHit;
@@ -570,15 +573,20 @@ public class SourcePlayer : MonoBehaviour {
             velocity += transform.forward * flSpeedAddition;
 
             justJumped = true;
+            return;
         }
         // We were standing on the ground, then suddenly are not.
-        if (velocity.y + groundVelocity.y >= jumpSpeed/4f) {
-            // We don't inherit the groundVelocity here, because if we just were bumped slightly off of a moving ground
-            // that would allow us to accelerate crazily by just being on unstable ground (like a rigidbody).
+        if ( groundVelocity.y - lastGroundVelocity.y <= -jumpSpeed/2f) {
             groundEntity = null;
-            velocity += groundVelocity;
+            velocity += lastGroundVelocity;
             groundVelocity = Vector3.zero;
         }
+            
+        //if (velocity.y + groundVelocity.y >= jumpSpeed/4f) {
+            //groundEntity = null;
+            //velocity += groundVelocity;
+            //groundVelocity = Vector3.zero;
+        //}
     }
     // This is ran ONLY when you hit the ground. Calculates hit sounds and fall damage values.
     private void CheckFalling () {
