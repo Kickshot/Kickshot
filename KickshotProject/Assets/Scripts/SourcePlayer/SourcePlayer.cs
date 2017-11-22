@@ -1252,8 +1252,6 @@ public class SourcePlayer : MonoBehaviour {
     }
 
     private void StepMove () {
-        //Temporarily ignore collisions.
-        ignoreFootCollisions = true;
         // Try sliding forward both on ground and slide forward after being offset by stepSize
         //  take the move that goes farthest
         Vector3 savePos = transform.position;
@@ -1266,6 +1264,8 @@ public class SourcePlayer : MonoBehaviour {
         // Reset
         transform.position = savePos;
         velocity = saveVelocity;
+        //Temporarily ignore collisions.
+        ignoreFootCollisions = true;
         // Move straight up,
         controller.Move (new Vector3 (0f, stepSize, 0f));
         // Bumped our head, discard the step move...
@@ -1273,6 +1273,7 @@ public class SourcePlayer : MonoBehaviour {
             transform.position = groundMove;
             velocity = groundMoveVelocity;
             contacts = groundContacts;
+            ignoreFootCollisions = false;
             return;
         }
         // Then move normally.
@@ -1282,6 +1283,7 @@ public class SourcePlayer : MonoBehaviour {
             transform.position = groundMove;
             velocity = groundMoveVelocity;
             contacts = groundContacts;
+            ignoreFootCollisions = false;
             return;
         }
         // Snap back to the ground
