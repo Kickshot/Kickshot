@@ -183,8 +183,8 @@ public class SourcePlayer : MonoBehaviour {
 
     private bool RaycastForGround (out RaycastHit resultHit) {
         // Loop through everything in our make-shift cylinder cast, checking for if there's a ground below us.
-        Vector3 castPos = transform.position;
-        float castLength = distToGround;
+        Vector3 castPos = transform.position-new Vector3(0f,distToGround/2f,0f);
+        float castLength = distToGround/2f;
         if (controller.isGrounded) { // This keeps us attached better to stairs, and other similarly complex geometry near the feet.
             castLength += stepSize*2f;
         }
@@ -740,7 +740,6 @@ public class SourcePlayer : MonoBehaviour {
         // Friction is handled before we add in any base velocity. That way, if we are on a conveyor,
         //  we don't slow when standing still, relative to the conveyor.
         if (groundEntity != null) {
-            velocity.y = 0;
             Friction ();
         }
 
@@ -770,7 +769,7 @@ public class SourcePlayer : MonoBehaviour {
 
 
         // If we are on ground, no downward velocity.
-		if (groundEntity != null) {
+        if (groundEntity != null && velocity.y < 0) {
             velocity.y = 0;
         }
         UpdateWallCamera();
@@ -1068,18 +1067,18 @@ public class SourcePlayer : MonoBehaviour {
     
 
     // Either the character controller moved into something, or something moved into the supercollider spheres.
-    public void HandleCollision (GameObject obj, Vector3 hitNormal, Vector3 hitPos) {
+    public bool HandleCollision (GameObject obj, Vector3 hitNormal, Vector3 hitPos) {
         if (ignoreCollisions) {
             //Debug.Log ("Ignoring collsion because we're ignorin."+Time.time);
-            return;
+            return false;
         }
         if ((layerMask & (1 << obj.layer)) == 0) {
             //Debug.Log ("Ignoring collsion of object with " + obj.layer);
-            return;
+            return false;
         }
         if (ignoreFootCollisions && hitPos.y - stepSize < transform.position.y - distToGround) {
             //Debug.Log ("Ignoring collsion because its feet."+hitPos.y+0.01f + " " + (transform.position.y - distToGround + stepSize));
-            return;
+            return false;
         }
         contacts.Add( new ContactPoint( obj, hitNormal, hitPos ) );
         Movable check = obj.GetComponentInParent<Movable> ();
@@ -1088,7 +1087,7 @@ public class SourcePlayer : MonoBehaviour {
             // We actually accept it if the ground is moving towards us...
             if (check != null && check.velocity.y > 0 || rigidcheck != null && rigidcheck.velocity.y > 0 ) {
             } else {
-                return;
+                return false;
             }
         }
         // Keep the player from hugging impossibly steep "slopes" and preventing falling.
@@ -1125,6 +1124,7 @@ public class SourcePlayer : MonoBehaviour {
             float shakeIntensity = Mathf.Min ((change - fallPunchThreshold) / (maxSafeFallSpeed - fallPunchThreshold), 1f);
             gameObject.SendMessage ("ShakeImpact", -hitNormal * shakeIntensity);
         }
+        return true;
     }
 
     void OnControllerColliderHit (ControllerColliderHit hit) {
@@ -1278,14 +1278,6 @@ public class SourcePlayer : MonoBehaviour {
         }
         // Then move normally.
         controller.Move (velocity * Time.deltaTime);
-        // We hit something (besides another step), give up on stepping.
-        if (saveVelocity != velocity) {
-            transform.position = groundMove;
-            velocity = groundMoveVelocity;
-            contacts = groundContacts;
-            ignoreFootCollisions = false;
-            return;
-        }
         // Snap back to the ground
         controller.Move (new Vector3 (0f, -stepSize, 0f));
         // Save this position
@@ -1307,7 +1299,8 @@ public class SourcePlayer : MonoBehaviour {
         Vector3 flatVelocity = new Vector3(velocity.x,0f,velocity.z).normalized;
 
         bool wentBackwards = Mathf.Abs (Vector3.Dot (Vector3.Normalize (flatStepMove - flatSavePos), flatVelocity)) < Mathf.Abs (Vector3.Dot (Vector3.Normalize (flatGroundMove - flatSavePos), flatVelocity));
-        if (!RaycastForGround (out hit) || wentBackwards || hit.collider.gameObject.layer == LayerMask.NameToLayer("Ignore Raycast")) {
+        bool wentFurther = Vector3.Distance (flatSavePos, flatGroundMove) > Vector3.Distance (flatSavePos, flatStepMove);
+        if (!RaycastForGround (out hit) || wentBackwards || hit.collider.gameObject.layer == LayerMask.NameToLayer("Ignore Raycast") || wentFurther) {
             transform.position = groundMove;
             velocity = groundMoveVelocity;
             contacts = groundContacts;
