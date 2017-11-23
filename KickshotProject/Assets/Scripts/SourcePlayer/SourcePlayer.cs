@@ -186,7 +186,7 @@ public class SourcePlayer : MonoBehaviour {
         Vector3 castPos = transform.position-new Vector3(0f,distToGround/2f,0f);
         float castLength = distToGround/2f;
         if (controller.isGrounded) { // This keeps us attached better to stairs, and other similarly complex geometry near the feet.
-            castLength += stepSize*2f;
+            castLength += .1f;
         }
         Vector3 halfExtents = new Vector3 (radius, 0.1f, radius);
         for ( float i = 0; i < radius; i += radius/4f ) { // Since we can hit something under us, but have it report as outside of our "cylinder" randomly, we have to try multiple times with different radiuses.
@@ -528,8 +528,9 @@ public class SourcePlayer : MonoBehaviour {
     }
 
 	private void WallGravity() {
-		if (wallRunStarted && velocity.y < 0)
-			velocity.y = 0;
+        // No free lunches
+		//if (wallRunStarted && velocity.y < 0)
+			//velocity.y = 0;
 		velocity.y += wallGravity * Time.deltaTime;
 	}
 
@@ -963,7 +964,12 @@ public class SourcePlayer : MonoBehaviour {
 			Vector3 adjustedOldVelocity = oldVelocity;
 			adjustedVelocity.y = 0;
 			adjustedOldVelocity.y = 0;
-				
+            // Check if new velocity is trying to get off the wall.w
+            if (Vector3.Dot (adjustedOldVelocity.normalized, adjustedVelocity.normalized) < 0.98f && wallRunning) {
+                EndWallRun ();
+                AirMove ();
+                return;
+            }
 			adjustedVelocity = velocity;
 		
 
@@ -1012,12 +1018,6 @@ public class SourcePlayer : MonoBehaviour {
             wallRunning = true;
             if(CameraControls != null)
                 CameraControls.AddWallVector(wallNormal);
-
-            // Check if new velocity is trying to get off the wall.w
-            if (Vector3.Dot (adjustedOldVelocity.normalized, adjustedVelocity.normalized) < 0.98f && wallRunning) {
-                EndWallRun ();
-                return;
-            }
         } else {
             wallRunning = false;
         }
@@ -1093,7 +1093,7 @@ public class SourcePlayer : MonoBehaviour {
         // Keep the player from hugging impossibly steep "slopes" and preventing falling.
         // Might need tweaking. This prevents a bug where the player can infinitely accumulate gravity
         // while not moving on a steep wall...
-        if (Mathf.Abs (hitNormal.y) < 0.1f) {
+        if (Mathf.Abs (hitNormal.y) < 0.19f) {
             StunAirBrake (0.01f);
         }
         //Helper.DrawLine(hitPos,hitPos+hitNormal, Color.red, 10f);
@@ -1139,8 +1139,8 @@ public class SourcePlayer : MonoBehaviour {
 
     void HandleWallRunCollision () {
         if (!wishJump || velocity.y < -Mathf.Abs(WallRunMaxFallingSpeed)) {
-            EndWallRun ();
-            return;
+            //EndWallRun ();
+            //return;
         }
 		// We have been wall running but there are now no contacts.
 		// Do a capsule cast to see if there is a wall near us.
