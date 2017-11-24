@@ -7,16 +7,17 @@ public class DecalClipper : ThreadedJob {
     // Indata
     public List<Vector3> newVerts;
     public List<Vector2> newUV;
+    public List<Vector3> newNormals;
     public LinkedList<int> newTri;
 
     protected override void ThreadFunction()
     {
-        ClipPlane( newVerts, newUV, newTri, new Plane( Vector3.right, Vector3.right/2f ));
-        ClipPlane( newVerts, newUV, newTri, new Plane( -Vector3.right, -Vector3.right/2f ));
-        ClipPlane( newVerts, newUV, newTri, new Plane( Vector3.forward, Vector3.forward/2f ));
-        ClipPlane( newVerts, newUV, newTri, new Plane( -Vector3.forward, -Vector3.forward/2f ));
-        ClipPlane( newVerts, newUV, newTri, new Plane( Vector3.up, Vector3.up/2f ));
-        ClipPlane( newVerts, newUV, newTri, new Plane( -Vector3.up, -Vector3.up/2f ));
+        ClipPlane( newVerts, newNormals, newUV, newTri, new Plane( Vector3.right, Vector3.right/2f ));
+        ClipPlane( newVerts, newNormals, newUV, newTri, new Plane( -Vector3.right, -Vector3.right/2f ));
+        ClipPlane( newVerts, newNormals, newUV, newTri, new Plane( Vector3.forward, Vector3.forward/2f ));
+        ClipPlane( newVerts, newNormals, newUV, newTri, new Plane( -Vector3.forward, -Vector3.forward/2f ));
+        ClipPlane( newVerts, newNormals, newUV, newTri, new Plane( Vector3.up, Vector3.up/2f ));
+        ClipPlane( newVerts, newNormals, newUV, newTri, new Plane( -Vector3.up, -Vector3.up/2f ));
     }
 
     protected override void OnFinished()
@@ -27,7 +28,7 @@ public class DecalClipper : ThreadedJob {
     // Then it tries to clip the triangle by the plane, creating new
     // triangles if needed. It returns how many triangle indices have
     // been removed (and thus, if iterating, would use that value to offset the current index pointer.)
-    private LinkedListNode<int> ClipTriangle( List<Vector3> verts, List<Vector2> uvs, LinkedList<int> tris, LinkedListNode<int> triangle, Plane plane) {
+    private LinkedListNode<int> ClipTriangle( List<Vector3> verts, List<Vector3> norms, List<Vector2> uvs, LinkedList<int> tris, LinkedListNode<int> triangle, Plane plane) {
         // Detect violating vertices.
         bool[] violating = new bool[3];
         int violationCount = 0;
@@ -53,23 +54,28 @@ public class DecalClipper : ThreadedJob {
             // It was difficult for me to think of a general solution
             // So I first find which of the three vertices are the violating one.
             Vector3 v1 = Vector3.zero, v2 = Vector3.zero, v3 = Vector3.zero;
+            Vector3 n1 = Vector3.zero, n2 = Vector3.zero, n3 = Vector3.zero;
             int i1 = -1, i2 = -1, i3 = -1;
             for (int i = 0; i < 3; i++) {
                 // Once found, I record their indices, and vertex locations while keeping
                 // their order intact.
                 if (violating [i]) {
-                    i1 = tids[i];
-                    i2 = tids[(i+1)%3];
-                    i3 = tids[(i+2)%3];
+                    i1 = tids [i];
+                    i2 = tids [(i + 1) % 3];
+                    i3 = tids [(i + 2) % 3];
                     v1 = verts [i1];
                     v2 = verts [i2];
                     v3 = verts [i3];
+                    n1 = norms [i1];
+                    n2 = norms [i2];
+                    n3 = norms [i3];
                     break;
                 }
             }
             // Create triangle number one
             Vector3 nv = LineCast (plane, v1, v2);
             verts.Add (nv);
+            norms.Add (n2);
             uvs.Add (new Vector2 (nv.x + 0.5f, nv.z + 0.5f));
             int i4 = verts.Count - 1;
             tris.AddLast (i4);
@@ -80,6 +86,7 @@ public class DecalClipper : ThreadedJob {
             tris.AddLast (i3);
             nv = LineCast (plane, v3, v1);
             verts.Add (nv);
+            norms.Add (n3);
             uvs.Add (new Vector2 (nv.x + 0.5f, nv.z + 0.5f));
             tris.AddLast (verts.Count - 1);
             tris.AddLast (i4);
@@ -100,6 +107,7 @@ public class DecalClipper : ThreadedJob {
                     // If we did cross a plane, we create a new vertex and use that as part of our triangle.
                     Vector3 v = LineCast (plane, verts [tids[i]], verts [tids[(i + 1) % 3]]);
                     verts.Add (v);
+                    norms.Add (norms [tids[(i + 1) % 3]]);
                     uvs.Add (new Vector2 (v.x + 0.5f, v.z + 0.5f));
                     tris.AddLast (verts.Count - 1);
                 }
@@ -120,12 +128,12 @@ public class DecalClipper : ThreadedJob {
         return nextnode;
     }
     // Clips the given mesh to fit entirely on one side of the plane.
-    private void ClipPlane( List<Vector3> verts, List<Vector2> uvs, LinkedList<int> tris, Plane plane ) {
+    private void ClipPlane( List<Vector3> verts, List<Vector3> norms, List<Vector2> uvs, LinkedList<int> tris, Plane plane ) {
         int triCount = tris.Count/3;
         int i = 0;
         LinkedListNode<int> node = tris.First;
         while (i < triCount) {
-            node = ClipTriangle (verts, uvs, tris, node, plane);
+            node = ClipTriangle (verts, norms, uvs, tris, node, plane);
             i++;
         }
     }

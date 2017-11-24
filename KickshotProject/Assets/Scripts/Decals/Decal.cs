@@ -12,6 +12,7 @@ public class Decal : MonoBehaviour {
     public LayerMask layerMask;
     public List<GameObject> affectedObjects;
     private List<Vector3> newVerts = new List<Vector3> ();
+    private List<Vector3> newNorms = new List<Vector3> ();
     private List<Vector2> newUV = new List<Vector2>();
     private List<int> newTri = new List<int> ();
     [HideInInspector]
@@ -58,6 +59,7 @@ public class Decal : MonoBehaviour {
             GetComponent<MeshFilter> ().mesh = newMesh;
             newMesh.vertices = newVerts.ToArray ();
             newMesh.uv = newUV.ToArray ();
+            newMesh.normals = newNorms.ToArray ();
             newMesh.triangles = newTri.ToArray();
         }
     }
@@ -122,6 +124,7 @@ public class Decal : MonoBehaviour {
             DecalBuilder builder = new DecalBuilder ();
             builder.mat = transform.worldToLocalMatrix * obj.transform.localToWorldMatrix;
             builder.position = affectedMesh.transform.InverseTransformPoint(transform.position);
+            builder.rotation = obj.transform.rotation*Quaternion.Inverse(transform.rotation);
             builder.scale = GetScale (obj);
             builder.tree = affectedMesh;
             builder.offset = offset*Random.Range(0.1f,1f);
@@ -138,6 +141,7 @@ public class Decal : MonoBehaviour {
             DecalBuilder builder = new DecalBuilder ();
             builder.mat = transform.worldToLocalMatrix * obj.transform.localToWorldMatrix;
             builder.position = affectedMesh.transform.InverseTransformPoint(transform.position);
+            builder.rotation = obj.transform.rotation*Quaternion.Inverse(transform.rotation);
             builder.scale = GetScale (obj);
             builder.tree = affectedMesh;
             builder.offset = offset*Random.Range(0.1f,1f);
@@ -169,10 +173,11 @@ public class Decal : MonoBehaviour {
         subDecals.Clear ();
         newVerts.Clear ();
         newUV.Clear ();
+        newNorms.Clear ();
         newTri.Clear ();
     }
 
-    public void FinishMesh( bool isStatic, GameObject obj, List<Vector3> verts, List<Vector2> uvs, LinkedList<int> tris, GameObject target = null) {
+    public void FinishMesh( bool isStatic, GameObject obj, List<Vector3> verts, List<Vector3> norms, List<Vector2> uvs, LinkedList<int> tris, GameObject target = null) {
         if (tris.Count <= 0) {
             return;
         }
@@ -183,16 +188,18 @@ public class Decal : MonoBehaviour {
             newMesh.name = "DecalMesh";
             mf.mesh = newMesh;
             newMesh.vertices = verts.ToArray ();
+            newMesh.normals = norms.ToArray ();
             newMesh.uv = uvs.ToArray ();
             int[] triangles = new int[tris.Count];
             tris.CopyTo (triangles, 0);
             newMesh.triangles = triangles;
             return;
         }
-        // For everything else, we collect all of the mesh data from our jobs, then finally collapse them into a singleton mesh.
+        // For everything else, we collect all of the mesh data from our jobs, then finally collapse them into a singleton mesh on Update();
         int offset = newVerts.Count;
         newVerts.AddRange (verts);
         newUV.AddRange (uvs);
+        newNorms.AddRange (norms);
         int[] triangles1 = new int[tris.Count];
         tris.CopyTo (triangles1, 0);
         for (int i = 0; i < triangles1.Length; i++) {

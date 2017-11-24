@@ -13,11 +13,13 @@ public class DecalBuilder : ThreadedJob {
     public float offset;
     public Decal decal;
     public GameObject target;
+    public Quaternion rotation;
     public bool isStatic;
     public GameObject targetPos = null;
 
     // Outdata
     private List<Vector3> verts = new List<Vector3> ();
+    private List<Vector3> normals = new List<Vector3>();
     private List<Vector2> uvs = new List<Vector2>();
     private LinkedList<int> tri = new LinkedList<int> ();
     private Dictionary<int, int> indexLookup;//= new Dictionary<int, int>();
@@ -45,6 +47,9 @@ public class DecalBuilder : ThreadedJob {
             v2 = mat.MultiplyPoint (v2);
             v3 = mat.MultiplyPoint (v3);
 
+            Vector3 n1, n2, n3;
+            tree.GetNormals (triangles [i], out n1, out n2, out n3);
+
             // We do a quick normal calculation to see if the triangle is mostly facing us.
             // we have to recalculate it since the normal is different in our local space
             // (maybe we could just transform the original bsptree's precomputed normals with the matrix ?)
@@ -55,7 +60,7 @@ public class DecalBuilder : ThreadedJob {
             if (normal.y <= 0.2f) {
                 continue;
             }
-
+                
             // To prevent z-fighting, I randomly offset each vertex by the normal.
             v1 += normal * offset;
             v2 += normal * offset;
@@ -70,18 +75,21 @@ public class DecalBuilder : ThreadedJob {
             if (!indexLookup.TryGetValue (i1, out ni1)) {
                 verts.Add (v1);
                 uvs.Add (new Vector2 (v1.x + 0.5f, v1.z + 0.5f));
+                normals.Add (rotation*n1);
                 ni1 = verts.Count - 1;
                 indexLookup [i1] = ni1;
             }
             if (!indexLookup.TryGetValue (i2, out ni2)) {
                 verts.Add (v2);
                 uvs.Add (new Vector2 (v2.x + 0.5f, v2.z + 0.5f));
+                normals.Add (rotation*n2);
                 ni2 = verts.Count - 1;
                 indexLookup [i2] = ni2;
             }
             if (!indexLookup.TryGetValue (i3, out ni3)) {
                 verts.Add (v3);
                 uvs.Add (new Vector2 (v3.x + 0.5f, v3.z + 0.5f));
+                normals.Add (rotation*n3);
                 ni3 = verts.Count - 1;
                 indexLookup [i3] = ni3;
             }
@@ -100,6 +108,7 @@ public class DecalBuilder : ThreadedJob {
         clipper.newTri = tri;
         clipper.newUV = uvs;
         clipper.newVerts = verts;
+        clipper.newNormals = normals;
         clipper.Start ();
         while (!clipper.IsDone) {
             Thread.Sleep (1);
@@ -108,6 +117,6 @@ public class DecalBuilder : ThreadedJob {
     }
     protected override void OnFinished()
     {
-        decal.FinishMesh (isStatic, target, verts, uvs, tri, targetPos);
+        decal.FinishMesh (isStatic, target, verts, normals, uvs, tri, targetPos);
     }
 }

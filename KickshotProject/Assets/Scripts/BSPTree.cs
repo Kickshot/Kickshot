@@ -24,6 +24,7 @@ public class BSPTree : MonoBehaviour {
     private int triangleCount;
     private int vertexCount;
     private Vector3[] vertices;
+    private Vector3[] normals;
     private int[] tris;
     private Vector3[] triangleNormals;
 
@@ -46,6 +47,7 @@ public class BSPTree : MonoBehaviour {
 
         tris = mesh.triangles;
         vertices = mesh.vertices;
+        normals = mesh.normals;
 
         vertexCount = mesh.vertices.Length;
         triangleCount = mesh.triangles.Length / 3;
@@ -106,14 +108,16 @@ public class BSPTree : MonoBehaviour {
         i3 = tris[triangleIndex + 2];
     }
 
-    public Vector3 GetNormal( int triangleIndex) {
-        return triangleNormals[triangleIndex];
-    }
-
     public void GetVertices( int triangleIndex, out Vector3 v1, out Vector3 v2, out Vector3 v3 ) {
         v1 = vertices[tris[triangleIndex]];
         v2 = vertices[tris[triangleIndex + 1]];
         v3 = vertices[tris[triangleIndex + 2]];
+    }
+
+    public void GetNormals( int triangleIndex, out Vector3 n1, out Vector3 n2, out Vector3 n3 ) {
+        n1 = normals[tris[triangleIndex]];
+        n2 = normals[tris[triangleIndex + 1]];
+        n3 = normals[tris[triangleIndex + 2]];
     }
 
     void FindClosestTriangles(Node node, Vector3 to, float radius, List<int> triangles)
