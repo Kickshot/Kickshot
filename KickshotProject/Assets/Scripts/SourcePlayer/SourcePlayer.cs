@@ -1032,6 +1032,7 @@ public class SourcePlayer : MonoBehaviour {
         if (wishDir == new Vector3(0, 0, 0))
             return;
 
+        Vector3 commandVel = GetCommandVelocity ();
         Vector3 forward, right;
 
         forward = transform.forward;
@@ -1045,7 +1046,7 @@ public class SourcePlayer : MonoBehaviour {
         right = Vector3.Normalize(right);    //
 
         // Determine x and y parts of velocity
-        DodgeDirection = forward * wishDir.z + right * wishDir.x;
+        DodgeDirection = forward * commandVel.z + right * commandVel.x;
 
         float speed = DodgeSpeed;
 

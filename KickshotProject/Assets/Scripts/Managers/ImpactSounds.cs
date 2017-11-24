@@ -109,6 +109,28 @@ public static class ImpactSounds {
         soundLookup["carpetfloor003a (Instance)"] = "dirtImpact";
         soundLookup["metaltrack001 (Instance)"] = "metalImpact";
 
+        // Sounds generated for MovementTutorial
+        soundLookup["tilefloor021a (Instance)"] = "stoneImpact";
+        soundLookup["carpetfloor001a (Instance)"] = "dirtImpact";
+        soundLookup["concretefloor011a (Instance)"] = "stoneImpact";
+        soundLookup["concretewall074a (Instance)"] = "stoneImpact";
+        soundLookup["nuke_metalgrate_01 (Instance)"] = "metalImpact";
+        soundLookup["metaldoor046a (Instance)"] = "metalImpact";
+        soundLookup["dev_hazzardstripe01a (Instance)"] = "metalImpact";
+        soundLookup["rubberfloor004a (Instance)"] = "metalImpact";
+        soundLookup["metalgrate013b (Instance)"] = "metalImpact";
+        soundLookup["wall026 (Instance)"] = "metalImpact";
+        soundLookup["train_metalceiling_01 (Instance)"] = "metalImpact";
+        soundLookup["metaltruss012b (Instance)"] = "metalImpact";
+        soundLookup["wall011g (Instance)"] = "metalImpact";
+        soundLookup["carpet-sn03 (Instance)"] = "dirtImpact";
+        soundLookup["TexturesCom_WoodPlanksBare0464_5_seamless_S (Instance)"] = "woodImpact";
+        soundLookup["wood_wall002 (Instance)"] = "woodImpact";
+        soundLookup["wallpaper02a (Instance)"] = "dirtImpact";
+        soundLookup["stonecolumn001a (Instance)"] = "stoneImpact";
+        soundLookup["Floor_Planks (Instance)"] = "woodImpact";
+
+
         generatedList = true;
     }
 }
