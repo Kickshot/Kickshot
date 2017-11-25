@@ -1170,7 +1170,7 @@ public class SourcePlayer : MonoBehaviour {
         }
         foreach (ContactPoint point in contacts) {
 			// TODO Mutiple collision points.
-			if (point.hitNormal.y < 0.1f && point.hitNormal.y > -0.1f) {
+            if (Mathf.Abs(point.hitNormal.y) < 0.025f) {
 				wallEntity = point.obj;
 				wallNormal = point.hitNormal;
 				wallPoint = point.point;
