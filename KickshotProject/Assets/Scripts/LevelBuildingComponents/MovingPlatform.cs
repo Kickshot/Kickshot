@@ -18,7 +18,11 @@ public class MovingPlatform : Movable {
     public Transform Target2;
     public float CycleLength = 3;
     public float LinearZipperPauseFraction = 0.1f;
+	public bool Activated = true;
+	public bool DeactivateAtEnd = false;
     float lastProgress;
+	float timer;
+	bool movingForward = true;
     void Start() {
         // Prevent triggers from getting casted on Move
         foreach (Collider col in GetComponentsInChildren<Collider>()) {
@@ -64,11 +68,11 @@ public class MovingPlatform : Movable {
         body.position = newPos;
     }
     void Update () {
-        float timer = Time.timeSinceLevelLoad + TimerOffset;
+		updateTimer ();
         float progress = 0f;
         switch (MovementFunction) {
         case MFunc.Sin:
-            progress = (Mathf.Sin (timer * 2f * Mathf.PI / CycleLength) + 1f) / 2f;
+            progress = (Mathf.Cos (timer * 2f * Mathf.PI / CycleLength) + 1f) / 2f;
             break;
         case MFunc.Linear:
             float cyc = Helper.fmod (timer, CycleLength);
@@ -81,25 +85,46 @@ public class MovingPlatform : Movable {
         case MFunc.SinZipper:
             progress = (Mathf.Clamp (Mathf.Sin (timer * 2f * Mathf.PI / CycleLength) * 1.5f, -1f, 1f) + 1f) / 2f;
             break;
-        case MFunc.LinearZipper:
-            float cyc2 = Helper.fmod (timer, CycleLength);
-            float cyc2Progress = cyc2 / CycleLength;
-            if (cyc2Progress < LinearZipperPauseFraction || cyc2Progress > 1f - LinearZipperPauseFraction) {
-                progress = 0f;
-            } else if (cyc2Progress >= LinearZipperPauseFraction && cyc2Progress <= 0.5f - LinearZipperPauseFraction) {
-                progress = (cyc2Progress - LinearZipperPauseFraction) / (0.5f - LinearZipperPauseFraction * 2f);
-            } else if (cyc2Progress >= 0.5f - LinearZipperPauseFraction && cyc2Progress <= 0.5f + LinearZipperPauseFraction) {
-                progress = 1f;
-            } else {
-                progress = 1f - (cyc2Progress - (0.5f + LinearZipperPauseFraction)) / (0.5f - LinearZipperPauseFraction * 2f);
-            }
-            break;
-        }
+		case MFunc.LinearZipper:
+			float cyc2 = Helper.fmod (timer, CycleLength);
+			float cyc2Progress = cyc2 / CycleLength;
+			if (cyc2Progress < LinearZipperPauseFraction || cyc2Progress > 1f - LinearZipperPauseFraction) {
+				progress = 0f;
+			} else if (cyc2Progress >= LinearZipperPauseFraction && cyc2Progress <= 0.5f - LinearZipperPauseFraction) {
+				progress = (cyc2Progress - LinearZipperPauseFraction) / (0.5f - LinearZipperPauseFraction * 2f);
+			} else if (cyc2Progress >= 0.5f - LinearZipperPauseFraction && cyc2Progress <= 0.5f + LinearZipperPauseFraction) {
+				progress = 1f;
+			} else {
+				progress = 1f - (cyc2Progress - (0.5f + LinearZipperPauseFraction)) / (0.5f - LinearZipperPauseFraction * 2f);
+			}
+			break;
+		}
         Vector3 lastPosition = Target1.position * lastProgress + Target2.position * (1f - lastProgress);
         Vector3 newPosition = Target1.position * progress + Target2.position * (1f - progress);
         Move (lastPosition, newPosition);
         lastProgress = progress;
     }
+	void updateTimer()
+	{
+		if (Activated) {
+			timer += Time.deltaTime + TimerOffset;
+			timer = Mathf.Clamp (timer, 0, CycleLength);
+			if (movingForward && timer >= CycleLength / 2) {
+				movingForward = false;
+				if (DeactivateAtEnd) {
+					timer = CycleLength / 2;
+					Activated = false;
+				}
+			}
+			if (!movingForward && timer >= CycleLength) {
+				movingForward = true;
+				if (DeactivateAtEnd) {
+					timer = 0;
+					Activated = false;
+				}
+			}
+		}
+	}
     void Reset()
     {
         if (transform.parent == null)

@@ -4,7 +4,8 @@ using UnityEngine;
 
 [RequireComponent( typeof(Rigidbody) )]
 public class RemoveSpinCap : MonoBehaviour {
+	public float MaxAngularSpeed = 7f;
 	void Start () {
-        GetComponent<Rigidbody> ().maxAngularVelocity = 100f;
+		GetComponent<Rigidbody> ().maxAngularVelocity = MaxAngularSpeed;
 	}
 }

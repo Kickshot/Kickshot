@@ -211,7 +211,7 @@ public class Decal : MonoBehaviour {
     // Use the physics engine to get nearby affected objects.
     private List<GameObject> GetAffectedObjects() {
         List<GameObject> objects = new List<GameObject>();
-        foreach( Collider col in Physics.OverlapBox(transform.position, transform.lossyScale/2f, transform.rotation, layerMask, QueryTriggerInteraction.Ignore) ) {
+		foreach( Collider col in Physics.OverlapBox(transform.position, transform.lossyScale/2f, transform.rotation, layerMask, QueryTriggerInteraction.Collide) ) {
             if (objects.Contains (col.gameObject)) continue;
             if ( col.gameObject.GetComponent<BSPTree>() == null ) continue;
             // If we are trying to apply ourselves to another decal, ignore.

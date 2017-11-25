@@ -1110,9 +1110,13 @@ public class SourcePlayer : MonoBehaviour {
         } else {
             if (rigidcheck != null) {
                 Vector3 vel = rigidcheck.GetPointVelocity (hitPos);
+				Vector3 angVel = rigidcheck.angularVelocity;
                 float d = Vector3.Dot (vel, hitNormal);
                 if (d > 0.01f) {
                     velocity += hitNormal * d * overbounce;
+					if (d > 1f) {
+						StunFriction (0.5f);
+					}
                 }
                 rigidcheck.AddForceAtPosition (-hitNormal * change * mass, hitPos);
             }
