@@ -52,6 +52,7 @@ public class SourcePlayer : MonoBehaviour {
     public float DodgeSpeed = 20f;
 	public bool StopPlayer = false;
     public float DodgeHeight = 5.0f;
+	public float WallDodgeHeight = 2.5f;
 	public float WallRunMaxFallingSpeed = 5.0f; // Can not wall run if falling >= this speed.
 	public float WallRunMinSpeed = 7.5f; // Speed in which you must meet to wall run.
     public string jumpGrunt = "AceGrunt";
@@ -70,7 +71,8 @@ public class SourcePlayer : MonoBehaviour {
     public bool wishCrouch;
     [HideInInspector]
     public bool wishDodge;
-
+	[HideInInspector]
+	public bool wishWallDodge;
     // Accessible because it's useful
     [HideInInspector]
     public bool justJumped = false;
@@ -132,7 +134,8 @@ public class SourcePlayer : MonoBehaviour {
 	private Vector3 wallPoint;
     private SmartCamera CameraControls;
     private Vector3 DodgeDirection;
-    private Vector3 DodgeCross;
+	private GameObject DodgeWall;
+	private Vector3 DodgeNormal;
 
 
     void Awake () {
@@ -762,6 +765,8 @@ public class SourcePlayer : MonoBehaviour {
 			AirMove ();
 		}
 
+
+
         // Set final flags.
         //CategorizePosition();
 
@@ -954,11 +959,24 @@ public class SourcePlayer : MonoBehaviour {
         controller.Move(velocity * Time.deltaTime);
         // Now pull the base velocity back out.   Base velocity is set if you are on a moving object, like a conveyor (or maybe another monster?)
         velocity -= groundVelocity;
+
+		if (wishWallDodge && DodgeWall != null)
+			PerformWallDodge ();
+
+	
     }
 
     private void WallMove () {
+		
 
         if (wishJump && wallEntity != null && (Mathf.Abs (velocity.x) >= WallRunMinSpeed|| Mathf.Abs (velocity.z) >= WallRunMinSpeed)) {
+
+			if (wishWallDodge) {
+				PerformWallDodge ();
+				EndWallRun ();
+				AirMove ();
+				return;
+			}
 			
 			Vector3 adjustedVelocity = velocity;
 			Vector3 adjustedOldVelocity = oldVelocity;
@@ -1016,8 +1034,12 @@ public class SourcePlayer : MonoBehaviour {
 			oldVelocity = velocity;
 			wallRunStarted = !wallRunning;
             wallRunning = true;
+
             if(CameraControls != null)
                 CameraControls.AddWallVector(wallNormal);
+
+
+			
         } else {
             wallRunning = false;
         }
@@ -1049,11 +1071,45 @@ public class SourcePlayer : MonoBehaviour {
         DodgeDirection = forward * commandVel.z + right * commandVel.x;
 
         float speed = DodgeSpeed;
-
       
         velocity = new Vector3(DodgeDirection.x * speed, DodgeHeight,DodgeDirection.z * speed);
         groundEntity = null;
     }
+
+	private void PerformWallDodge() {
+
+
+		if (DodgeWall == null)
+			return;
+
+		if (Vector3.Dot (wallNormal, transform.forward) < -.75 && !wallRunning) {
+			DodgeDirection = wallNormal;
+		} else {
+			DodgeDirection = wallNormal + velocity.normalized;
+			DodgeDirection = DodgeDirection.normalized;
+		}
+
+		float speed = DodgeSpeed;
+
+		if (wallRunning) {
+			Vector3 adjustedVel = velocity;
+			adjustedVel.y = 0;
+			float mag = adjustedVel.magnitude;
+			if (mag < speed)
+				mag = speed;
+			velocity = new Vector3 (DodgeDirection.x * mag, WallDodgeHeight, DodgeDirection.z * mag);
+		} else {
+			velocity = new Vector3 (DodgeDirection.x * speed, WallDodgeHeight, DodgeDirection.z * speed);
+		}
+
+		if(!wallRunning)
+			StunAirBrake (2.0f);
+		
+		wallEntity = null;
+		DodgeWall = null;
+	}
+
+
 
     private void UpdateWallCamera() {
         if (CameraControls == null)
@@ -1160,10 +1216,12 @@ public class SourcePlayer : MonoBehaviour {
 				// Why is it 0.998? Cause unity.
 				if (Vector3.Dot (wallNormal, hitInfo.normal) < 0.998) {
 					// The normals are too different; end wall run.
+					DodgeWall = hitInfo.collider.gameObject;
 					EndWallRun ();
 				} else {
 					// Continue wall running with new normal.
 					wallEntity = hitInfo.collider.gameObject;
+					DodgeWall = wallEntity;
 					wallNormal = hitInfo.normal;
 					wallPoint = hitInfo.point;
 				}
@@ -1176,6 +1234,7 @@ public class SourcePlayer : MonoBehaviour {
 			// TODO Mutiple collision points.
             if (Mathf.Abs(point.hitNormal.y) < 0.025f) {
 				wallEntity = point.obj;
+				DodgeWall = wallEntity;
 				wallNormal = point.hitNormal;
 				wallPoint = point.point;
 			}
@@ -1184,6 +1243,7 @@ public class SourcePlayer : MonoBehaviour {
 			
 		if (Vector3.Dot (wallNormal, transform.forward) < -.75 && !wallRunning)
 		{
+			DodgeWall = wallEntity;
 			wallEntity = null;
 		}
     }
