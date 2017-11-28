@@ -75,7 +75,7 @@ public class DecalClipper : ThreadedJob {
             // Create triangle number one
             Vector3 nv = LineCast (plane, v1, v2);
             verts.Add (nv);
-            norms.Add (n2);
+            norms.Add (n1);
             uvs.Add (new Vector2 (nv.x + 0.5f, nv.z + 0.5f));
             int i4 = verts.Count - 1;
             tris.AddLast (i4);
@@ -86,7 +86,7 @@ public class DecalClipper : ThreadedJob {
             tris.AddLast (i3);
             nv = LineCast (plane, v3, v1);
             verts.Add (nv);
-            norms.Add (n3);
+            norms.Add (n1);
             uvs.Add (new Vector2 (nv.x + 0.5f, nv.z + 0.5f));
             tris.AddLast (verts.Count - 1);
             tris.AddLast (i4);

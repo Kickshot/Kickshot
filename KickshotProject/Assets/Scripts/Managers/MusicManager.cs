@@ -18,7 +18,7 @@ public class MusicManager : MonoBehaviour {
         music = new Dictionary<int, string> ();
         //music [2] = "MarioMusic"; // Music to be played during level index x (whomp fortress). Music IDs are handled by the Resource Manager.
         //music [1] = "DKMusic";
-        music [3] = "drum&bass";
+        //music [3] = "drum&bass";
         SceneManager.sceneLoaded += SceneLoaded;
     }
     void SceneLoaded(Scene scene, LoadSceneMode mode) {

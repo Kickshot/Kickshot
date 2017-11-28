@@ -19,7 +19,7 @@ public class RecoilGun : GunBase {
         blam.Play ();
         
 
-        player.velocity -= view.forward * strength;
+        player.velocity -= view.forward * strength + view.up * strength/2f;
     }
     public override void OnSecondaryFire()
     {
@@ -33,6 +33,6 @@ public class RecoilGun : GunBase {
 
             player.velocity = newdir * mag + new Vector3(0, player.velocity.y, 0);
         }
-        player.velocity += view.forward * strength;
+        player.velocity += view.forward * strength + view.up * strength/2f;
     }
 }
