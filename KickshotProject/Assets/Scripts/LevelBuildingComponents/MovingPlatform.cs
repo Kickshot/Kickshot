@@ -17,13 +17,15 @@ public class MovingPlatform : Movable {
     public Transform Target1;
     public Transform Target2;
     public float CycleLength = 3;
+    [Range(0f,0.5f)]
     public float LinearZipperPauseFraction = 0.1f;
 	public bool Activated = true;
-	public bool DeactivateAtEnd = false;
+	public bool Loop = true;
     float lastProgress;
 	float timer;
 	bool movingForward = true;
     void Start() {
+        timer = TimerOffset;
         // Prevent triggers from getting casted on Move
         foreach (Collider col in GetComponentsInChildren<Collider>()) {
             if (col.isTrigger) {
@@ -107,22 +109,10 @@ public class MovingPlatform : Movable {
 	void updateTimer()
 	{
 		if (Activated) {
-			timer += Time.deltaTime + TimerOffset;
-			timer = Mathf.Clamp (timer, 0, CycleLength);
-			if (movingForward && timer >= CycleLength / 2) {
-				movingForward = false;
-				if (DeactivateAtEnd) {
-					timer = CycleLength / 2;
-					Activated = false;
-				}
-			}
-			if (!movingForward && timer >= CycleLength) {
-				movingForward = true;
-				if (DeactivateAtEnd) {
-					timer = 0;
-					Activated = false;
-				}
-			}
+			timer += Time.deltaTime;
+            if (!Loop) {
+                timer = Mathf.Clamp (timer, 0, CycleLength/2f);
+            }
 		}
 	}
     void Reset()
