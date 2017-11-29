@@ -857,6 +857,7 @@ public class SourcePlayer : MonoBehaviour {
         velocity -= groundVelocity;
 
         StayOnGround ();
+		DodgeWall = null;
         if (wishDodge)
             PerformDodge();
     }
