@@ -17,7 +17,13 @@ public class Rocket : MonoBehaviour {
     private int layerMask;
     void Start() {
         body = GetComponent<Rigidbody> ();
-        body.velocity = (inheritedVel*inheritPercentage + transform.forward * speed);
+        
+		if (inheritedVel.magnitude > speed) {
+			body.velocity = (transform.forward * inheritedVel.magnitude);
+		} else {
+			body.velocity = (inheritedVel * inheritPercentage + transform.forward * speed);
+		}
+
         layerMask = Helper.GetLayerMask (gameObject);
         Destroy (gameObject, 15f);
     }
