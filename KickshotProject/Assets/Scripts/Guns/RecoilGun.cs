@@ -18,7 +18,6 @@ public class RecoilGun : GunBase {
     public override void OnPrimaryFire() {
         blam.Play ();
         
-
         player.velocity -= view.forward * strength + view.up * strength/2f;
     }
     public override void OnSecondaryFire()
@@ -27,7 +26,6 @@ public class RecoilGun : GunBase {
 
         if (player.wallRunning)
         {
-
             float mag = Vector3.ProjectOnPlane(player.velocity, Vector3.up).magnitude;
             Vector3 newdir = Vector3.ProjectOnPlane(view.forward, Vector3.up).normalized;
 
