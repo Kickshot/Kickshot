@@ -10,7 +10,7 @@ public class GrappleHook: GunBase {
     private float hitDist;
     private float fade = 0f;
     public float fadeTime = 1f;
-    public float range = 12f;
+	public float range = 12f;
     private Vector3 missStart;
     private Vector3 missEnd;
     private AudioSource shotSound;
@@ -43,7 +43,13 @@ public class GrappleHook: GunBase {
             //player.transform.position = hitPosition.position - player.view.forward * hitDist;
             //Vector3 desiredPosition = hitPosition.position - view.forward * hitDist;
             //player.velocity = (desiredPosition - player.transform.position) / Time.deltaTime;
-            Vector3 dir = Vector3.Normalize(hitPosition.position - player.transform.position);
+			Vector3 dir;
+			if (Vector3.Distance(hitPosition.position, player.transform.position) > hitDist)
+			{
+				dir = Vector3.Normalize(hitPosition.position - player.transform.position);
+				player.Accelerate (dir, 10f, 100f);
+			}
+            dir = Vector3.Normalize(hitPosition.position - player.transform.position);
             player.Accelerate (dir, 1f / Time.deltaTime, -Vector3.Dot (player.velocity, dir));
             linerender.SetPosition (0, gunBarrelFront.position);
             linerender.SetPosition (1, hitPosition.position);
