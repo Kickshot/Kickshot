@@ -31,9 +31,9 @@ public class Rocket : MonoBehaviour {
         if (exploded) {
             return;
         }
-        if (body.velocity != (inheritedVel * inheritPercentage + transform.forward * speed)) {
-            body.velocity += ((inheritedVel * inheritPercentage + transform.forward * speed) - body.velocity) * Time.deltaTime * 3f;
-        }
+        //if (body.velocity != (inheritedVel * inheritPercentage + transform.forward * speed)) {
+        //    body.velocity += ((inheritedVel * inheritPercentage + transform.forward * speed) - body.velocity) * Time.deltaTime * 3f;
+        //}
         //foreach (Collider col in Physics.OverlapSphere(transform.position,GetComponent<SphereCollider>().radius+0.01f,layerMask,QueryTriggerInteraction.Ignore)) {
             
         //}

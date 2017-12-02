@@ -50,23 +50,54 @@ public class SequentialNadeLauncher : GunBase
         ammo++;
         if (nades.Count > 0)
         {
-            if (ReverseOrder)
-            {
-                GameObject exp = Instantiate(Explosion, nades[0].transform.position, Quaternion.identity);
-                Destroy(nades[0]);
-				GameRules.RadiusDamage(100f, Knockback, nades[0].transform.position, Radius, true,player.gameObject);
+			float minDist = float.MaxValue;
+			GameObject closestNade = null;
 
-                nades.RemoveAt(0);
-            }
-            else
-            {
-                GameObject exp = Instantiate(Explosion, nades[nades.Count - 1].transform.position, Quaternion.identity);
-                Destroy(nades[nades.Count - 1]);
-				print (player.gameObject.name);
-				GameRules.RadiusDamage(100f, Knockback, nades[nades.Count - 1].transform.position, Radius, true, player.gameObject);
+			foreach (var nade in nades)
+			{
+				if(Vector3.Distance(player.transform.position, nade.transform.position) < minDist)
+				{
+					minDist = Vector3.Distance(player.transform.position, nade.transform.position);
+					closestNade = nade;
+				}
+			}
 
-                nades.RemoveAt(nades.Count - 1);
-            }
+			GameObject exp = Instantiate(Explosion, closestNade.transform.position, Quaternion.identity);
+
+			GameRules.RadiusDamage(100f, Knockback, closestNade.transform.position, Radius, true ,player.gameObject);
+			nades.Remove(closestNade);
+
+			foreach (Collider col in Physics.OverlapSphere(closestNade.transform.position, Radius, ~0 , QueryTriggerInteraction.Collide)) 
+			{
+				print (col.gameObject.name);
+				if (col.gameObject.tag == "Combustible")
+				{
+					exp = Instantiate(Explosion, col.gameObject.transform.position, Quaternion.identity);
+					Destroy(col.gameObject);
+					GameRules.RadiusDamage(100f, Knockback, col.gameObject.transform.position, Radius, true ,player.gameObject);
+					nades.Remove(col.gameObject);
+				}
+			}
+			Destroy(closestNade);
+
+
+//            if (ReverseOrder)
+//            {
+//                GameObject exp = Instantiate(Explosion, nades[0].transform.position, Quaternion.identity);
+//                Destroy(nades[0]);
+//				  GameRules.RadiusDamage(100f, Knockback, nades[0].transform.position, Radius, true,player.gameObject);
+//
+//                nades.RemoveAt(0);
+//            }
+//            else
+//            {
+//                GameObject exp = Instantiate(Explosion, nades[nades.Count - 1].transform.position, Quaternion.identity);
+//                Destroy(nades[nades.Count - 1]);
+//				print (player.gameObject.name);
+//				GameRules.RadiusDamage(100f, Knockback, nades[nades.Count - 1].transform.position, Radius, true, player.gameObject);
+//
+//                nades.RemoveAt(nades.Count - 1);
+//            }
         }
     }
 }
