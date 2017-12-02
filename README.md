@@ -11,6 +11,7 @@
 | Left Click  | Primary Fire   |
 | Right Click | Secondary Fire |
 | Mouse Wheel | Change Weapons |
+| Escape      | Exit game      |
 
 ## Video Content
 
