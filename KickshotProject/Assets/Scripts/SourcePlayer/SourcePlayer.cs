@@ -1016,7 +1016,7 @@ public class SourcePlayer : MonoBehaviour {
 			float wallBreakMag = -Vector3.Dot (wishdir, velocity);
 
 			velocity = ClipVelocity (velocity, wallNormal);
-            Vector3 flatvel = new Vector3 (velocity.x, 0f, velocity.y).normalized;
+            Vector3 flatvel = new Vector3 (velocity.x, 0f, velocity.z).normalized;
 
             Accelerate (flatvel, WallRunAcceleration, 100f);
 			Accelerate (wishdir, 10, wallBreakMag);
@@ -1105,7 +1105,7 @@ public class SourcePlayer : MonoBehaviour {
 		} else {
 			velocity = new Vector3 (DodgeDirection.x * speed, WallDodgeHeight, DodgeDirection.z * speed);
 		}
-        velocity += velocity.normalized * WallDodgeSpeedBonus;
+		velocity += velocity.normalized * WallDodgeSpeedBonus *Time.deltaTime;
 
 		if(!wallRunning)
 			StunAirBrake (2.0f);
