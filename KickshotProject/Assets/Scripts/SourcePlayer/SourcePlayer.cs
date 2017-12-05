@@ -57,6 +57,8 @@ public class SourcePlayer : MonoBehaviour {
 	public float WallRunMinSpeed = 7.5f; // Speed in which you must meet to wall run.
     public string jumpGrunt = "AceGrunt";
     public string painGrunt = "AcePainGrunt";
+    public float WallRunAcceleration = 1.0f;
+    public float WallDodgeSpeedBonus = 10f;
 
 
     [HideInInspector]
@@ -489,8 +491,8 @@ public class SourcePlayer : MonoBehaviour {
     }
     // Slide off of impacting surface
     // This is just projecting a vector onto a plane (our velocity), check wikipedia or purple math if you want to confirm.
-    private Vector3 ClipVelocity (Vector3 vel, Vector3 normal) {
-        float overbounce = 1.0f; // How much to bounce off the surface, 1.0 means we just slide normally. 2.0 would bounce us off.
+    private Vector3 ClipVelocity (Vector3 vel, Vector3 normal, float overbounce = 1.0f) {
+        // Overbounce is how much to bounce off the surface, 1.0 means we just slide normally. 2.0 would bounce us off.
         float backoff;
         Vector3 change;
         Vector3 outvel;
@@ -548,6 +550,8 @@ public class SourcePlayer : MonoBehaviour {
             // Only use the new velocity if it made us faster! Don't punish players for trying to go up slopes...
             if (vels.magnitude > velocity.magnitude) {
                 velocity = vels;
+            } else {
+                velocity.y = ClipVelocity (velocity, groundNormal).y;
             }
             // Play a grunt sound, but only so often.
             if (Time.time - lastGrunt > 0.3) {
@@ -555,7 +559,7 @@ public class SourcePlayer : MonoBehaviour {
                 audio.Play ();
                 lastGrunt = Time.time;
             }
-            velocity.y = crouched ? crouchJumpSpeed : jumpSpeed;
+            velocity.y += crouched ? crouchJumpSpeed : jumpSpeed;
 			jumpGround = groundEntity;
             groundEntity = null;
             velocity += groundVelocity;
@@ -1012,7 +1016,9 @@ public class SourcePlayer : MonoBehaviour {
 			float wallBreakMag = -Vector3.Dot (wishdir, velocity);
 
 			velocity = ClipVelocity (velocity, wallNormal);
+            Vector3 flatvel = new Vector3 (velocity.x, 0f, velocity.y).normalized;
 
+            Accelerate (flatvel, WallRunAcceleration, 100f);
 			Accelerate (wishdir, 10, wallBreakMag);
 
 			// We need to see if we have a velocity now, in order for the player to stay on moving conveyors and stuff.
@@ -1038,9 +1044,6 @@ public class SourcePlayer : MonoBehaviour {
 
             if(CameraControls != null)
                 CameraControls.AddWallVector(wallNormal);
-
-
-			
         } else {
             wallRunning = false;
         }
@@ -1083,7 +1086,7 @@ public class SourcePlayer : MonoBehaviour {
 		if (DodgeWall == null)
 			return;
 
-		if (Vector3.Dot (wallNormal, transform.forward) < -.75 && !wallRunning) {
+        if (Vector3.Dot (wallNormal, velocity.normalized) < -.75 && !wallRunning) {
 			DodgeDirection = wallNormal;
 		} else {
 			DodgeDirection = wallNormal + velocity.normalized;
@@ -1102,6 +1105,7 @@ public class SourcePlayer : MonoBehaviour {
 		} else {
 			velocity = new Vector3 (DodgeDirection.x * speed, WallDodgeHeight, DodgeDirection.z * speed);
 		}
+        velocity += velocity.normalized * WallDodgeSpeedBonus;
 
 		if(!wallRunning)
 			StunAirBrake (2.0f);
@@ -1156,7 +1160,12 @@ public class SourcePlayer : MonoBehaviour {
         }
         //Helper.DrawLine(hitPos,hitPos+hitNormal, Color.red, 10f);
         float mag = velocity.magnitude;
+        bool quickDot = Vector3.Dot (Vector3.Normalize(velocity), hitNormal) > -0.75f;
         velocity = ClipVelocity (velocity, hitNormal);
+        // If the collision is wall-runnable, and we are attempting to wall-run, don't slow us down!
+        if (Mathf.Abs (hitNormal.y) < 0.025f && wishJump && quickDot) {
+            velocity = Vector3.Normalize(velocity) * mag;
+        }
         float change = Mathf.Abs (mag - velocity.magnitude);
         if (check != null) {
             Vector3 vel = check.velocity;
@@ -1201,8 +1210,8 @@ public class SourcePlayer : MonoBehaviour {
 
     void HandleWallRunCollision () {
         if (!wishJump || velocity.y < -Mathf.Abs(WallRunMaxFallingSpeed)) {
-            //EndWallRun ();
-            //return;
+            EndWallRun ();
+            return;
         }
 		// We have been wall running but there are now no contacts.
 		// Do a capsule cast to see if there is a wall near us.
