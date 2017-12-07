@@ -1256,7 +1256,7 @@ public class SourcePlayer : MonoBehaviour {
 			if (Physics.BoxCast (transform.position, new Vector3 (radius/2,controller.height/2, radius/2) , -wallNormal, out hitInfo, Quaternion.LookRotation(-wallNormal), 1.0f, layerMask, QueryTriggerInteraction.Ignore)) {
 				// Why is it 0.998? Cause unity.
 
-				if (Vector3.Dot (wallNormal, hitInfo.normal) <= 0) {
+				if (Vector3.Dot (wallNormal, hitInfo.normal) <= 0.5) {
 					// The normals are too different; end wall run.
 					DodgeWall = hitInfo.collider.gameObject;
 					EndWallRun ();
