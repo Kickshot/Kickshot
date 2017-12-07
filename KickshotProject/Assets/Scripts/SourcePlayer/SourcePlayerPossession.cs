@@ -22,5 +22,9 @@ public class SourcePlayerPossession : MonoBehaviour {
         player.wishSuicideDown = Input.GetButton ("Suicide");
         player.wishDodge = Input.GetButtonDown("Dodge");
 		player.wishWallDodge = Input.GetButton("Dodge");
+        // CHEATER
+        if (Input.GetButtonDown ("Skip Level")) {
+            GameManager.instance.LevelFinished();
+        }
 	}
 }
