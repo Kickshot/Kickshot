@@ -1207,8 +1207,22 @@ public class SourcePlayer : MonoBehaviour {
 		wallEntity = null;
 		wallRunning = false;
 	}
+		
 
     void HandleWallRunCollision () {
+		
+		if (contacts.Count == 0)
+			DodgeWall = null;
+		else {
+
+			foreach (ContactPoint point in contacts) {
+				if (Mathf.Abs (point.hitNormal.y) < 0.025f) {
+					DodgeWall = point.obj;
+					wallNormal = point.hitNormal;
+				}
+			}
+		}
+	
         if (!wishJump || velocity.y < -Mathf.Abs(WallRunMaxFallingSpeed)) {
             EndWallRun ();
             return;
@@ -1240,16 +1254,18 @@ public class SourcePlayer : MonoBehaviour {
 				EndWallRun ();
 			}
         }
+
         foreach (ContactPoint point in contacts) {
 			// TODO Mutiple collision points.
             if (Mathf.Abs(point.hitNormal.y) < 0.025f) {
 				wallEntity = point.obj;
-				DodgeWall = wallEntity;
+				DodgeWall =  point.obj;
 				wallNormal = point.hitNormal;
 				wallPoint = point.point;
 			}
             
 		}
+
 		if (Vector3.Dot (wallNormal, transform.forward) < -.80 && !wallRunning)
 		{
 			DodgeWall = wallEntity;
