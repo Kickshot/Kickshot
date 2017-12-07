@@ -7,7 +7,6 @@ using UnityEngine;
 [RequireComponent( typeof(AudioSource) )]
 [RequireComponent( typeof(CharacterController) )]
 [RequireComponent( typeof(Rigidbody) )]
-[RequireComponent( typeof(CapsuleCollider) )]
 [RequireComponent( typeof(MouseLook) )]
 public class SourcePlayer : MonoBehaviour {
     // Accessible because it's configurable
@@ -155,7 +154,7 @@ public class SourcePlayer : MonoBehaviour {
 
         controller = GetComponent<CharacterController> ();
         controller.detectCollisions = false; // The default collision resolution for character controller vs rigidbody is analogus to unstoppable infinite mass vs paper. We don't want that.
-        controller.enableOverlapRecovery = true;
+        controller.enableOverlapRecovery = false; // If we set this to true, we can get stuck on corners ( outward corners ).
         controller.minMoveDistance = 0f;
         controller.stepOffset = 0f; // We use our own step logic.
 
@@ -965,15 +964,12 @@ public class SourcePlayer : MonoBehaviour {
         // Now pull the base velocity back out.   Base velocity is set if you are on a moving object, like a conveyor (or maybe another monster?)
         velocity -= groundVelocity;
 
-		if (wishWallDodge && DodgeWall != null)
-			PerformWallDodge ();
-
-	
+        if (wishWallDodge && DodgeWall != null) {
+            PerformWallDodge ();
+        }
     }
 
     private void WallMove () {
-		
-
         if (wishJump && wallEntity != null && (Mathf.Abs (velocity.x) >= WallRunMinSpeed|| Mathf.Abs (velocity.z) >= WallRunMinSpeed)) {
 
 			if (wishWallDodge) {
