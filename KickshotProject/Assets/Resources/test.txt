@@ -109,3 +109,9 @@ soundLookup["TexturesCom_WoodPlanksBare0464_5_seamless_S (Instance)"] = "woodImp
 soundLookup["tilefloor021a (Instance)"] = "stoneImpact";
 // Sounds generated for MovementTutorial
 soundLookup["TexturesCom_WoodPlanksBare0464_5_seamless_S (Instance)"] = "woodImpact";
+// Sounds generated for Ramp jump 2
+soundLookup["concretefloor037a_color (Instance)"] = "stoneImpact";
+soundLookup["blacktop_ext_01_color (Instance)"] = "stoneImpact";
+soundLookup["brickwall045d_color (Instance)"] = "stoneImpact";
+soundLookup["brickwall045a_color (Instance)"] = "stoneImpact";
+soundLookup["hr_concrete_floor_04_color (Instance)"] = "stoneImpact";
