@@ -1094,10 +1094,10 @@ public class SourcePlayer : MonoBehaviour {
 		if (DodgeWall == null)
 			return;
 
-        if (Vector3.Dot (wallNormal, velocity.normalized) < -.75 && !wallRunning) {
-			DodgeDirection = wallNormal;
+		if (Vector3.Dot (DodgeNormal, velocity.normalized) < -.75 && !wallRunning) {
+			DodgeDirection = DodgeNormal;
 		} else {
-			DodgeDirection = wallNormal + velocity.normalized;
+			DodgeDirection = DodgeNormal + velocity.normalized;
 			DodgeDirection = DodgeDirection.normalized;
 		}
 
@@ -1175,6 +1175,7 @@ public class SourcePlayer : MonoBehaviour {
             StunAirBrake (0.01f);
         }
         //Helper.DrawLine(hitPos,hitPos+hitNormal, Color.red, 10f);
+
         float mag = velocity.magnitude;
         bool quickDot = Vector3.Dot (Vector3.Normalize(velocity), hitNormal) > -0.75f;
         velocity = ClipVelocity (velocity, hitNormal);
@@ -1234,7 +1235,7 @@ public class SourcePlayer : MonoBehaviour {
 			foreach (ContactPoint point in contacts) {
 				if (Mathf.Abs (point.hitNormal.y) < 0.025f) {
 					DodgeWall = point.obj;
-					wallNormal = point.hitNormal;
+					DodgeNormal = point.hitNormal;
 				}
 			}
 		}
@@ -1252,9 +1253,10 @@ public class SourcePlayer : MonoBehaviour {
             Vector3 p1 = transform.position + controller.center + Vector3.up * -controller.height * 0.5F;
             Vector3 p2 = p1 + Vector3.up * controller.height;
 
-			if (Physics.CapsuleCast (p1, p2, controller.radius, -wallNormal, out hitInfo,1.0f)) {
+			if (Physics.BoxCast (transform.position, new Vector3 (radius/2,controller.height/2, radius/2) , -wallNormal, out hitInfo, Quaternion.LookRotation(-wallNormal), 1.0f, layerMask, QueryTriggerInteraction.Ignore)) {
 				// Why is it 0.998? Cause unity.
-				if (Vector3.Dot (wallNormal, hitInfo.normal) < 0.998) {
+
+				if (Vector3.Dot (wallNormal, hitInfo.normal) <= 0.5) {
 					// The normals are too different; end wall run.
 					DodgeWall = hitInfo.collider.gameObject;
 					EndWallRun ();
@@ -1262,6 +1264,7 @@ public class SourcePlayer : MonoBehaviour {
 					// Continue wall running with new normal.
 					wallEntity = hitInfo.collider.gameObject;
 					DodgeWall = wallEntity;
+					DodgeNormal = hitInfo.normal;
 					wallNormal = hitInfo.normal;
 					wallPoint = hitInfo.point;
 				}
@@ -1276,6 +1279,7 @@ public class SourcePlayer : MonoBehaviour {
             if (Mathf.Abs(point.hitNormal.y) < 0.025f) {
 				wallEntity = point.obj;
 				DodgeWall =  point.obj;
+				DodgeNormal = point.hitNormal;
 				wallNormal = point.hitNormal;
 				wallPoint = point.point;
 			}
@@ -1349,6 +1353,8 @@ public class SourcePlayer : MonoBehaviour {
 	{
 		wishDir = new Vector3 (0, 0, 0);
 	}
+
+
 		
     public void OnCollisionEnter(Collision c ) {
         // This completely ignores the ignoreCollisions flag. So we can't have it running for now..
