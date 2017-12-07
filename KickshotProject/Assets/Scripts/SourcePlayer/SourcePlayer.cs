@@ -1250,8 +1250,7 @@ public class SourcePlayer : MonoBehaviour {
 			}
             
 		}
-			
-		if (Vector3.Dot (wallNormal, transform.forward) < -.75 && !wallRunning)
+		if (Vector3.Dot (wallNormal, transform.forward) < -.80 && !wallRunning)
 		{
 			DodgeWall = wallEntity;
 			wallEntity = null;

@@ -16,13 +16,27 @@ public class RecoilGun : GunBase {
         transform.rotation = view.rotation;
     }
     public override void OnPrimaryFire() {
-        blam.Play ();
+
+		blam.Play();
+
+		if (player.wallRunning)
+		{
+			float mag = Vector3.ProjectOnPlane(player.velocity, Vector3.up).magnitude;
+			Vector3 newdir = Vector3.ProjectOnPlane(view.forward, Vector3.up).normalized;
+
+			player.velocity = newdir * mag + new Vector3(0, player.velocity.y, 0);
+		}
+		player.velocity += view.forward * strength + view.up * strength/2f;
+
+		// Old primary fire.
+        /*blam.Play ();
         
         player.velocity -= view.forward * strength + view.up * strength/2f;
+        */
     }
-    public override void OnSecondaryFire()
-    {
-        blam.Play();
+    public override void OnSecondaryFire() {
+		// Old Secondary fire.
+        /*blam.Play();
 
         if (player.wallRunning)
         {
@@ -31,6 +45,6 @@ public class RecoilGun : GunBase {
 
             player.velocity = newdir * mag + new Vector3(0, player.velocity.y, 0);
         }
-        player.velocity += view.forward * strength + view.up * strength/2f;
+        player.velocity += view.forward * strength + view.up * strength/2f;*/
     }
 }
