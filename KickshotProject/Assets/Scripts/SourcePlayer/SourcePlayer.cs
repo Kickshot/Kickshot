@@ -1078,6 +1078,14 @@ public class SourcePlayer : MonoBehaviour {
       
         velocity = new Vector3(DodgeDirection.x * speed, DodgeHeight,DodgeDirection.z * speed);
         groundEntity = null;
+
+		// Play a grunt sound, but only so often.
+		if (Time.time - lastGrunt > 0.3) {
+			audio.clip = ResourceManager.GetResource<AudioClip> (jumpGrunt);
+			audio.Play ();
+			lastGrunt = Time.time;
+		}
+
     }
 
 	private void PerformWallDodge() {
@@ -1112,6 +1120,14 @@ public class SourcePlayer : MonoBehaviour {
 		
 		wallEntity = null;
 		DodgeWall = null;
+
+		// Play a grunt sound, but only so often.
+		if (Time.time - lastGrunt > 0.3) {
+			audio.clip = ResourceManager.GetResource<AudioClip> (jumpGrunt);
+			audio.Play ();
+			lastGrunt = Time.time;
+		}
+
 	}
 
 
