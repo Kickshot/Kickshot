@@ -129,7 +129,24 @@ public static class ImpactSounds {
         soundLookup["wallpaper02a (Instance)"] = "dirtImpact";
         soundLookup["stonecolumn001a (Instance)"] = "stoneImpact";
         soundLookup["Floor_Planks (Instance)"] = "woodImpact";
+        soundLookup["TexturesCom_WoodPlanksBare0464_5_seamless_S (Instance)"] = "woodImpact";
 
+        // Sounds generated for Daniel's level 2
+        soundLookup["concretefloor005a (Instance)"] = "stoneImpact";
+        soundLookup["StoneWall (Instance)"] = "stoneImpact";
+        soundLookup["metalroof006a (Instance)"] = "metalImpact";
+        soundLookup["spinning_blade (Instance)"] = "metalImpact";
+        soundLookup["rockLayeredMeshes_MAT (Instance)"] = "stoneImpact";
+        soundLookup["Wood (Instance)"] = "woodImpact";
+        soundLookup["TexturesCom_WoodPlanksBare0464_5_seamless_S (Instance)"] = "woodImpact";
+        soundLookup["tilefloor021a (Instance)"] = "stoneImpact";
+
+        // Sounds generated for Ramp jump 2
+        soundLookup["concretefloor037a_color (Instance)"] = "stoneImpact";
+        soundLookup["blacktop_ext_01_color (Instance)"] = "stoneImpact";
+        soundLookup["brickwall045d_color (Instance)"] = "stoneImpact";
+        soundLookup["brickwall045a_color (Instance)"] = "stoneImpact";
+        soundLookup["hr_concrete_floor_04_color (Instance)"] = "stoneImpact";
 
         generatedList = true;
     }
