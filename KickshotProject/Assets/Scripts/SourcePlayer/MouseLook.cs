@@ -56,8 +56,8 @@ public class MouseLook : MonoBehaviour {
                 }
             } else {
                 if (Input.GetButtonDown ("Cancel")) {
-                    Application.Quit ();
-                    Cursor.lockState = CursorLockMode.None;
+                    //Application.Quit ();
+                    //Cursor.lockState = CursorLockMode.None;
                 }
             }
 
