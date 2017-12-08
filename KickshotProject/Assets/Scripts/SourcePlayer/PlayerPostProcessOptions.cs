@@ -5,8 +5,8 @@ using UnityEngine.PostProcessing;
 
 public class PlayerPostProcessOptions : MonoBehaviour
 {
+    internal PostProcessingBehaviour ppb;
     SourcePlayer player;
-    PostProcessingBehaviour ppb;
     float baseFOV;
 
     [Header("   FOV Options\n")]
@@ -23,7 +23,7 @@ public class PlayerPostProcessOptions : MonoBehaviour
     void Start ()
     {
         ppb = Camera.main.GetComponent<PostProcessingBehaviour>();
-        player = GetComponent<SourcePlayer>();
+        player = GameObject.FindGameObjectWithTag("Player").GetComponent<SourcePlayer>();
         baseFOV = Camera.main.fieldOfView;
 	}
 	
