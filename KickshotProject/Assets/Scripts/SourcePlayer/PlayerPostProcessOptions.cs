@@ -6,7 +6,7 @@ using UnityEngine.PostProcessing;
 public class PlayerPostProcessOptions : MonoBehaviour
 {
     internal PostProcessingBehaviour ppb;
-    SourcePlayer player;
+    public SourcePlayer player;
     float baseFOV;
 
     [Header("   FOV Options\n")]
@@ -23,18 +23,21 @@ public class PlayerPostProcessOptions : MonoBehaviour
     void Start ()
     {
         ppb = Camera.main.GetComponent<PostProcessingBehaviour>();
-        player = GameObject.FindGameObjectWithTag("Player").GetComponent<SourcePlayer>();
         baseFOV = Camera.main.fieldOfView;
 	}
 	
 	// Update is called once per frame
 	void Update ()
     {
-		if(player.velocity.magnitude > FOV_minDistortionSpeed)
+        if (player == null) {
+            return;
+        }
+        Vector3 flatvel = new Vector3 (player.velocity.x, 0, player.velocity.z);
+        if(flatvel.magnitude > FOV_minDistortionSpeed)
         {
             float targetFOV;
-            if (player.velocity.magnitude < FOV_maxDistortionSpeed)
-                targetFOV = baseFOV + ((player.velocity.magnitude - FOV_minDistortionSpeed) / FOV_maxDistortionSpeed) * FOV_distortionAmount;
+            if (flatvel.magnitude < FOV_maxDistortionSpeed)
+                targetFOV = baseFOV + ((flatvel.magnitude - FOV_minDistortionSpeed) / FOV_maxDistortionSpeed) * FOV_distortionAmount;
             else
                 targetFOV = baseFOV + FOV_distortionAmount;
             Camera.main.fieldOfView = Mathf.Lerp(Camera.main.fieldOfView, targetFOV,FOV_LerpT);
