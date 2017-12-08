@@ -11,6 +11,7 @@ public class GameManager : MonoBehaviour
     SourcePlayer _player;
     LevelTimer _timer;
     float _postLevelTimer;
+    bool saveOnNextFrame = false;
     public Vector3 playerVelocity;
 
     bool _postLevelState = false;
@@ -55,15 +56,21 @@ public class GameManager : MonoBehaviour
 
         SceneManager.sceneLoaded += SceneLoaded;
     }
+        
 
     void SceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        SaveManager.Save();
+        saveOnNextFrame = true;
+        //SaveManager.Save();
         //GameTimer.Reset();
     }
 
     void Update()
     {
+        if (saveOnNextFrame) {
+            SaveManager.Save();
+            saveOnNextFrame = false;
+        }
         if(_postLevelState)
         {
             //if (Player != null) {
