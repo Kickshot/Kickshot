@@ -39,6 +39,9 @@ public class MouseLook : MonoBehaviour {
         while (rotX > 90) {
             rotX -= 360;
         }
+        while (rotX < 0) {
+            rotX += 360;
+        }
         view.rotation = Quaternion.Euler (rotX, rotY, 0);
     }
     void Start()
