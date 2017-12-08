@@ -33,6 +33,7 @@ public class GunSaveData : SaveData {
     public Vector3 pos;
     public Quaternion rot;
     public int layer;
+    public bool enabled;
 
     public GunSaveData(GameObject obj) {
         Save (obj);
@@ -60,6 +61,7 @@ public class GunSaveData : SaveData {
         this.rot = g.transform.rotation;
         this.pos = g.transform.position;
         this.layer = g.gameObject.layer;
+        this.enabled = g.isActiveAndEnabled;
         /*switch (g.GetType ()) { // C# doesn't support switches on types :v
         case RocketLauncher:
             type = GunType.RocketLauncher;
@@ -141,6 +143,7 @@ public class GunSaveData : SaveData {
         g.transform.rotation = this.rot;
         g.transform.position = this.pos;
         g.gameObject.layer = this.layer;
+        g.gameObject.SetActive (this.enabled);
         if ( g.gameObject.layer != LayerMask.NameToLayer("Player") ) {
             foreach (Collider col in g.gameObject.GetComponentsInChildren<Collider> ()) {
                 col.enabled = true;

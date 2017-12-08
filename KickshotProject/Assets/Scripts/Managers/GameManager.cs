@@ -29,7 +29,7 @@ public class GameManager : MonoBehaviour
             return null;
         }
     }
-    public LevelTimer GameTimer
+    /*public LevelTimer GameTimer
     {
         get
         {
@@ -37,7 +37,7 @@ public class GameManager : MonoBehaviour
                 _timer = GetComponent<LevelTimer>();
             return _timer;
         }
-    }
+    }*/
 
 
     void Awake()
@@ -59,7 +59,7 @@ public class GameManager : MonoBehaviour
     void SceneLoaded(Scene scene, LoadSceneMode mode)
     {
         SaveManager.Save();
-        GameTimer.Reset();
+        //GameTimer.Reset();
     }
 
     void Update()
@@ -81,7 +81,7 @@ public class GameManager : MonoBehaviour
     public void Died()
     {
         SaveManager.Load();
-        GameTimer.Reset();
+        //GameTimer.Reset();
     }
 
     public void LevelFinished()
