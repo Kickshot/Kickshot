@@ -28,6 +28,31 @@ public class SourcePlayerSaveData : SaveData
     public float health;
     public float mass;
 
+    public float wallGravity;
+    public float wallAccelerate;
+    public float wallDetachSpeed;
+    public float airStrafePercentage;
+    public float flySpeed;
+    public float wallSpeed;
+    public float crouchHeight;
+    public float crouchSpeed;
+    public float crouchJumpSpeed;
+    public float stepSize;
+    public float crouchTime;
+    public bool autoBhop;
+    public float jumpBufferTime;
+    public float crouchAcceleration;
+    public float DodgeSpeed;
+    public bool StopPlayer;
+    public float DodgeHeight;
+    public float WallDodgeHeight;
+    public float WallRunMaxFallingSpeed;
+    public float WallRunMinSpeed;
+    public string jumpGrunt;
+    public string painGrunt;
+    public float WallRunAcceleration;
+    public float WallDodgeSpeedBonus;
+
     // Mouse
     public float headrotX;
     public float headrotY;
@@ -66,6 +91,31 @@ public class SourcePlayerSaveData : SaveData
         this.jumpSpeedBonus = p.jumpSpeedBonus;
         this.health = p.health;
         this.mass = p.mass;
+
+        this.wallGravity = p.wallGravity;
+        this.wallAccelerate = p.wallAccelerate;
+        this.wallDetachSpeed = p.wallDetachSpeed;
+        this.airStrafePercentage = p.airStrafePercentage;
+        this.flySpeed = p.flySpeed;
+        this.wallSpeed = p.wallSpeed;
+        this.crouchHeight = p.crouchHeight;
+        this.crouchSpeed = p.crouchSpeed;
+        this.crouchJumpSpeed = p.crouchJumpSpeed;
+        this.stepSize = p.stepSize;
+        this.crouchTime = p.crouchTime;
+        this.autoBhop = p.autoBhop;
+        this.jumpBufferTime = p.jumpBufferTime;
+        this.crouchAcceleration = p.crouchAcceleration;
+        this.DodgeSpeed = p.DodgeSpeed;
+        this.StopPlayer = p.StopPlayer;
+        this.DodgeHeight = p.DodgeHeight;
+        this.WallDodgeHeight = p.WallDodgeHeight;
+        this.WallRunMaxFallingSpeed = p.WallRunMaxFallingSpeed;
+        this.WallRunMinSpeed = p.WallRunMinSpeed;
+        this.jumpGrunt = p.jumpGrunt;
+        this.painGrunt = p.painGrunt;
+        this.WallRunAcceleration = p.WallRunAcceleration;
+        this.WallDodgeSpeedBonus = p.WallDodgeSpeedBonus;
 
         MouseLook m = obj.GetComponent<MouseLook> ();
         if (m == null) {
@@ -114,6 +164,31 @@ public class SourcePlayerSaveData : SaveData
         ps.jumpSpeedBonus = this.jumpSpeedBonus;
         ps.health = this.health;
         ps.mass = this.mass;
+
+        ps.wallGravity = this.wallGravity;
+        ps.wallAccelerate = this.wallAccelerate;
+        ps.wallDetachSpeed = this.wallDetachSpeed;
+        ps.airStrafePercentage = this.airStrafePercentage;
+        ps.flySpeed = this.flySpeed;
+        ps.wallSpeed = this.wallSpeed;
+        ps.crouchHeight = this.crouchHeight;
+        ps.crouchSpeed = this.crouchSpeed;
+        ps.crouchJumpSpeed = this.crouchJumpSpeed;
+        ps.stepSize = this.stepSize;
+        ps.crouchTime = this.crouchTime;
+        ps.autoBhop = this.autoBhop;
+        ps.jumpBufferTime = this.jumpBufferTime;
+        ps.crouchAcceleration = this.crouchAcceleration;
+        ps.DodgeSpeed = this.DodgeSpeed;
+        ps.StopPlayer = this.StopPlayer;
+        ps.DodgeHeight = this.DodgeHeight;
+        ps.WallDodgeHeight = this.WallDodgeHeight;
+        ps.WallRunMaxFallingSpeed = this.WallRunMaxFallingSpeed;
+        ps.WallRunMinSpeed = this.WallRunMinSpeed;
+        ps.jumpGrunt = this.jumpGrunt;
+        ps.painGrunt = this.painGrunt;
+        ps.WallRunAcceleration = this.WallRunAcceleration;
+        ps.WallDodgeSpeedBonus = this.WallDodgeSpeedBonus;
 
         MouseLook m = obj.GetComponent<MouseLook> ();
         if (m == null) {
