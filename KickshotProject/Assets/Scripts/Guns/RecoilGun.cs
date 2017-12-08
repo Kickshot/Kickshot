@@ -5,8 +5,19 @@ using UnityEngine;
 public class RecoilGun : GunBase {
     private AudioSource blam;
     public float strength;
+    public Animator viewModel;
     void Start() {
         blam = GetComponent<AudioSource> ();
+    }
+    override public void OnEquip (GameObject Player) {
+        base.OnEquip (Player);
+        Player.GetComponentInChildren<Animator> ().GetBoneTransform (HumanBodyBones.RightUpperArm).localScale = new Vector3 (0, 0, 0);
+        Player.GetComponentInChildren<Animator> ().GetBoneTransform (HumanBodyBones.LeftUpperArm).localScale = new Vector3 (0, 0, 0);
+    }
+    override public void OnUnequip (GameObject Player) {
+        base.OnUnequip (Player);
+        Player.GetComponentInChildren<Animator> ().GetBoneTransform (HumanBodyBones.RightUpperArm).localScale = new Vector3 (1, 1, 1);
+        Player.GetComponentInChildren<Animator> ().GetBoneTransform (HumanBodyBones.LeftUpperArm).localScale = new Vector3 (1, 1, 1);
     }
     override public void Update() {
         base.Update ();
@@ -16,7 +27,7 @@ public class RecoilGun : GunBase {
         transform.rotation = view.rotation;
     }
     public override void OnPrimaryFire() {
-
+        viewModel.SetTrigger ("Fire");
 		blam.Play();
 
 		if (player.wallRunning)
@@ -35,6 +46,7 @@ public class RecoilGun : GunBase {
         */
     }
     public override void OnSecondaryFire() {
+        viewModel.SetTrigger ("Fire");
         // Old Secondary fire.
 		blam.Play();
 
