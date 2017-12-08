@@ -30,7 +30,6 @@ public class PlayerPostProcessOptions : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
     {
-        print(Camera.main.fieldOfView);
 		if(player.velocity.magnitude > FOV_minDistortionSpeed)
         {
             float targetFOV;
