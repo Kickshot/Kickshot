@@ -58,6 +58,10 @@ public class SourcePlayer : MonoBehaviour {
     public string painGrunt = "AcePainGrunt";
     public float WallRunAcceleration = 1.0f;
     public float WallDodgeSpeedBonus = 10f;
+	public float WallSaveAbleFallSpeed = 10f;
+	public float WallRunUpAcceleration = 1;
+	public float WallRunUpTime = 0.5f;
+	public float WallRunMaxUpVelocity = 100.0f;
 
 
     [HideInInspector]
@@ -137,6 +141,7 @@ public class SourcePlayer : MonoBehaviour {
     private Vector3 DodgeDirection;
 	private GameObject DodgeWall;
 	private Vector3 DodgeNormal;
+	private float CurrentWallUpTime = 0;
 
 
     void Awake () {
@@ -747,6 +752,7 @@ public class SourcePlayer : MonoBehaviour {
         // Friction is handled before we add in any base velocity. That way, if we are on a conveyor,
         //  we don't slow when standing still, relative to the conveyor.
         if (groundEntity != null) {
+			CurrentWallUpTime = 0;
             Friction ();
         }
 
@@ -971,7 +977,9 @@ public class SourcePlayer : MonoBehaviour {
 
     private void WallMove () {
         if (wishJump && wallEntity != null && (Mathf.Abs (velocity.x) >= WallRunMinSpeed|| Mathf.Abs (velocity.z) >= WallRunMinSpeed)) {
-
+			CurrentWallUpTime += Time.deltaTime;
+			bool saved = false;
+				
 			if (wishWallDodge) {
 				PerformWallDodge ();
 				EndWallRun ();
@@ -1014,8 +1022,20 @@ public class SourcePlayer : MonoBehaviour {
 			velocity = ClipVelocity (velocity, wallNormal);
             Vector3 flatvel = new Vector3 (velocity.x, 0f, velocity.z).normalized;
 
+			if (velocity.y >= -WallSaveAbleFallSpeed && velocity.y < 0 && wallRunning == false) {
+				saved = true;
+				velocity.y = 0;
+			}
+
             Accelerate (flatvel, WallRunAcceleration, 100f);
 			Accelerate (wishdir, 10, wallBreakMag);
+
+			if (CurrentWallUpTime < WallRunUpTime && velocity.y < WallRunMaxUpVelocity) {
+				if(!saved)
+					Accelerate (transform.up, WallRunUpAcceleration, 10);
+				else
+					Accelerate (transform.up, WallRunUpAcceleration*2, 10);
+			}
 
 			// We need to see if we have a velocity now, in order for the player to stay on moving conveyors and stuff.
 			Vector3 wallVelocity = Vector3.zero;
@@ -1033,6 +1053,8 @@ public class SourcePlayer : MonoBehaviour {
 			velocity += wallVelocity;
             controller.Move (velocity * Time.deltaTime);
 			velocity -= wallVelocity;
+
+		
 	
 			oldVelocity = velocity;
 			wallRunStarted = !wallRunning;
@@ -1041,6 +1063,7 @@ public class SourcePlayer : MonoBehaviour {
             if(CameraControls != null)
                 CameraControls.AddWallVector(wallNormal);
         } else {
+			CurrentWallUpTime = 0;
             wallRunning = false;
         }
 
@@ -1217,8 +1240,10 @@ public class SourcePlayer : MonoBehaviour {
 
 	void EndWallRun()
 	{
+		
 		wallEntity = null;
 		wallRunning = false;
+		CurrentWallUpTime = 0;
 	}
 		
 
@@ -1237,6 +1262,8 @@ public class SourcePlayer : MonoBehaviour {
 		}
 	
         if (!wishJump || velocity.y < -Mathf.Abs(WallRunMaxFallingSpeed)) {
+			//if (velocity.y < -Mathf.Abs (WallRunMaxFallingSpeed))
+				//print ("FALL");
             EndWallRun ();
             return;
         }
@@ -1249,7 +1276,7 @@ public class SourcePlayer : MonoBehaviour {
             Vector3 p1 = transform.position + controller.center + Vector3.up * -controller.height * 0.5F;
             Vector3 p2 = p1 + Vector3.up * controller.height;
 
-			if (Physics.BoxCast (transform.position, new Vector3 (radius/2,controller.height/2, radius/2) , -wallNormal, out hitInfo, Quaternion.LookRotation(-wallNormal), 1.0f, layerMask, QueryTriggerInteraction.Ignore)) {
+			if (Physics.BoxCast (transform.position, new Vector3 (radius/2,controller.height/2, radius/2) , -wallNormal, out hitInfo, Quaternion.LookRotation(-wallNormal), 0.6f, layerMask, QueryTriggerInteraction.Ignore)) {
 				// Why is it 0.998? Cause unity.
 
 				if (Vector3.Dot (wallNormal, hitInfo.normal) <= 0.5) {
