@@ -80,7 +80,6 @@ public class SourcePlayerSaveData : SaveData
         this.groundDecellerate = p.groundDecellerate;
         this.airAccelerate = p.airAccelerate;
         this.airStrafeAccelerate = p.airStrafeAccelerate;
-        this.airSpeedBonus = p.airSpeedBonus;
         this.airSpeedPunish = p.airSpeedPunish;
         this.airBrake = p.airBrake;
         this.walkSpeed = p.walkSpeed;
@@ -153,7 +152,6 @@ public class SourcePlayerSaveData : SaveData
         ps.groundDecellerate = this.groundDecellerate;
         ps.airAccelerate = this.airAccelerate;
         ps.airStrafeAccelerate = this.airStrafeAccelerate;
-        ps.airSpeedBonus = this.airSpeedBonus;
         ps.airSpeedPunish = this.airSpeedPunish;
         ps.airBrake = this.airBrake;
         ps.walkSpeed = this.walkSpeed;
