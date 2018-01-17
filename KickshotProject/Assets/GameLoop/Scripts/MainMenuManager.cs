@@ -5,14 +5,25 @@ using UnityEngine.SceneManagement;
 
 public class MainMenuManager : MonoBehaviour {
 
-    public string levelsScene;
+    public Animator uiAnimator;
 
     public void Play() {
-        SceneManager.LoadScene(levelsScene);
+        Debug.Log("Play");
+        uiAnimator.SetTrigger("Play");
     }
 
     public void Options() {
-        Debug.Log("Options Trigger");
+        Debug.Log("Options");
+        uiAnimator.SetTrigger("Options");
+    }
+
+    public void Main() {
+        Debug.Log("Main");
+        uiAnimator.SetTrigger("ToMain");
+    }
+
+    public void Start() {
+        Debug.Log("Start");
     }
 
     public void Quit() {
