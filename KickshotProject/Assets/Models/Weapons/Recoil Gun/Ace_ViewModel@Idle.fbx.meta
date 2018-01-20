@@ -1,0 +1,208 @@
+fileFormatVersion: 2
+guid: a81fd13c610f33848845a1224a0993e2
+timeCreated: 1512712752
+licenseType: Free
+ModelImporter:
+  serializedVersion: 22
+  fileIDToRecycleName:
+    100000: //RootNode
+    100002: L_Elbow
+    100004: L_Forearm
+    100006: L_Hand_Palm
+    100008: L_Index_Knuckle
+    100010: L_Index_Middle
+    100012: L_Index_Nail
+    100014: L_Index_Tip
+    100016: L_Middle_Knuckle
+    100018: L_Middle_Middle
+    100020: L_Middle_Nail
+    100022: L_Middle_Tip
+    100024: L_Pinky_Knuckle
+    100026: L_Pinky_Middle
+    100028: L_Pinky_Nail
+    100030: L_Pinky_Tip
+    100032: L_Shoulder
+    100034: L_Shoulder_Pos
+    100036: L_Thumb_Center
+    100038: L_Thumb_Knuckle
+    100040: L_Thumb_Tip
+    100042: L_Wrist
+    100044: R_Elbow
+    100046: R_Forearm
+    100048: R_Hand_Palm
+    100050: R_Index_Knuckle
+    100052: R_Index_Middle
+    100054: R_Index_Nail
+    100056: R_Index_Tip
+    100058: R_Middle_Knuckle
+    100060: R_Middle_Middle
+    100062: R_Middle_Nail
+    100064: R_Middle_Tip
+    100066: R_Pinky_Knuckle
+    100068: R_Pinky_Middle
+    100070: R_Pinky_Nail
+    100072: R_Pinky_Tip
+    100074: R_Shoulder
+    100076: R_Shoulder_Pos
+    100078: R_Thumb_Center
+    100080: R_Thumb_Knuckle
+    100082: R_Thumb_Tip
+    100084: R_Wrist
+    100086: Skeleton_Group
+    100088: transform4
+    100090: transform5
+    400000: //RootNode
+    400002: L_Elbow
+    400004: L_Forearm
+    400006: L_Hand_Palm
+    400008: L_Index_Knuckle
+    400010: L_Index_Middle
+    400012: L_Index_Nail
+    400014: L_Index_Tip
+    400016: L_Middle_Knuckle
+    400018: L_Middle_Middle
+    400020: L_Middle_Nail
+    400022: L_Middle_Tip
+    400024: L_Pinky_Knuckle
+    400026: L_Pinky_Middle
+    400028: L_Pinky_Nail
+    400030: L_Pinky_Tip
+    400032: L_Shoulder
+    400034: L_Shoulder_Pos
+    400036: L_Thumb_Center
+    400038: L_Thumb_Knuckle
+    400040: L_Thumb_Tip
+    400042: L_Wrist
+    400044: R_Elbow
+    400046: R_Forearm
+    400048: R_Hand_Palm
+    400050: R_Index_Knuckle
+    400052: R_Index_Middle
+    400054: R_Index_Nail
+    400056: R_Index_Tip
+    400058: R_Middle_Knuckle
+    400060: R_Middle_Middle
+    400062: R_Middle_Nail
+    400064: R_Middle_Tip
+    400066: R_Pinky_Knuckle
+    400068: R_Pinky_Middle
+    400070: R_Pinky_Nail
+    400072: R_Pinky_Tip
+    400074: R_Shoulder
+    400076: R_Shoulder_Pos
+    400078: R_Thumb_Center
+    400080: R_Thumb_Knuckle
+    400082: R_Thumb_Tip
+    400084: R_Wrist
+    400086: Skeleton_Group
+    400088: transform4
+    400090: transform5
+    7400000: Idle
+    9500000: //RootNode
+  externalObjects: {}
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 0
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: Idle
+      takeName: Take 001
+      firstFrame: 1
+      lastFrame: 120
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+  importAnimation: 1
+  copyAvatar: 1
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {fileID: 9000000, guid: 3cdf2c51248f3724681d504a5bd91cd0,
+    type: 3}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

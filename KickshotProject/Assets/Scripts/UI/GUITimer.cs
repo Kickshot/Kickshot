@@ -8,6 +8,6 @@ public class GUITimer : MonoBehaviour {
 
     void Update()
     {
-        GUITimerText.text = GameManager.instance.GameTimer.CurrentTime.ToString("N2");
+        //GUITimerText.text = GameManager.instance.GameTimer.CurrentTime.ToString("N2");
     }
 }

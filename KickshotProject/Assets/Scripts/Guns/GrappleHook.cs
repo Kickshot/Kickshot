@@ -29,6 +29,7 @@ public class GrappleHook: GunBase {
     }
     override public void OnUnequip(GameObject Player) {
         base.OnUnequip (Player);
+        hitSomething = false;
         player.maxSpeed = saveMaxAirSpeed;
     }
     override public void Update() {
@@ -39,7 +40,7 @@ public class GrappleHook: GunBase {
         transform.rotation = view.rotation;
         if (hitSomething) {
             // Keep us busy so we don't reload during grappling.
-            busy = 1f;
+            busy = 0.8f;
             //player.transform.position = hitPosition.position - player.view.forward * hitDist;
             //Vector3 desiredPosition = hitPosition.position - view.forward * hitDist;
             //player.velocity = (desiredPosition - player.transform.position) / Time.deltaTime;

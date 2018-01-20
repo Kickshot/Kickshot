@@ -7,7 +7,6 @@ using UnityEngine;
 [RequireComponent( typeof(AudioSource) )]
 [RequireComponent( typeof(CharacterController) )]
 [RequireComponent( typeof(Rigidbody) )]
-[RequireComponent( typeof(CapsuleCollider) )]
 [RequireComponent( typeof(MouseLook) )]
 public class SourcePlayer : MonoBehaviour {
     // Accessible because it's configurable
@@ -25,8 +24,6 @@ public class SourcePlayer : MonoBehaviour {
     public float airStrafeAccelerate = 10f; // How much the player can influence speed in the air while air-strafing, mesured in meters/sec^2.
     public float wallAccelerate = 1.0f;
 	public float wallDetachSpeed = 4.0f; // The speed in which you stop wall running.
-    [HideInInspector]
-    public float airSpeedBonus = 0.08f; // How much the player is rewarded for strafe-jumping. Great way to gain speed.
     [HideInInspector]
     public float airSpeedPunish = 1f;// How much we decelerate the player for trying to take turns too quickly while strafe jumping.
     public float airStrafePercentage = 0.1f; // How much the player actually accelerates while air strafing without moving the mouse.
@@ -59,6 +56,10 @@ public class SourcePlayer : MonoBehaviour {
     public string painGrunt = "AcePainGrunt";
     public float WallRunAcceleration = 1.0f;
     public float WallDodgeSpeedBonus = 10f;
+	public float WallSaveAbleFallSpeed = 10f;
+	public float WallRunUpAcceleration = 1;
+	public float WallRunUpTime = 0.5f;
+	public float WallRunMaxUpVelocity = 100.0f;
 
 
     [HideInInspector]
@@ -112,7 +113,6 @@ public class SourcePlayer : MonoBehaviour {
     private float originalHeight;
     private CollisionSphere[] spheres;
     private bool ignoreCollisions = false;
-    private bool ignoreFootCollisions = false;
     private const float overbounce = 1f;
     // How much to multiply incoming collision velocities, to keep us from getting stuck in moving objects.
     private int layerMask;
@@ -138,6 +138,7 @@ public class SourcePlayer : MonoBehaviour {
     private Vector3 DodgeDirection;
 	private GameObject DodgeWall;
 	private Vector3 DodgeNormal;
+	private float CurrentWallUpTime = 0;
 
 
     void Awake () {
@@ -155,7 +156,7 @@ public class SourcePlayer : MonoBehaviour {
 
         controller = GetComponent<CharacterController> ();
         controller.detectCollisions = false; // The default collision resolution for character controller vs rigidbody is analogus to unstoppable infinite mass vs paper. We don't want that.
-        controller.enableOverlapRecovery = true;
+        controller.enableOverlapRecovery = false; // If we set this to true, we can get stuck on corners ( outward corners ).
         controller.minMoveDistance = 0f;
         controller.stepOffset = 0f; // We use our own step logic.
 
@@ -748,6 +749,7 @@ public class SourcePlayer : MonoBehaviour {
         // Friction is handled before we add in any base velocity. That way, if we are on a conveyor,
         //  we don't slow when standing still, relative to the conveyor.
         if (groundEntity != null) {
+			CurrentWallUpTime = 0;
             Friction ();
         }
 
@@ -930,30 +932,6 @@ public class SourcePlayer : MonoBehaviour {
                 // We don't want to accelerate just because they pressed A or D, we need them to move their mouse a little also.
                 float wishStrafeSpeed = (Mathf.Abs (check) + airStrafePercentage) / (1f + airStrafePercentage);
                 Accelerate (wishdir, airStrafe, wishStrafeSpeed * flySpeed);
-                // The stuff commented out here is used to cheat and give the player speed if they airstrafe
-                // The player already recieves speed, but that bonus decreases naturally as you hit a certain threshold.
-                // This eliminates that threshold and continues to accelerate the player regardless of what speed they're at.
-                // That's not really something we want so, it's gone now.
-                //float fcheck = Mathf.Abs (check);
-                /*Vector3 pvel = velocity;
-                pvel.y = 0f;
-                // Give the player a speed bonus based on how they move a mouse.
-                if (fcheck > 0.001f && pvel.magnitude > 0.1f) { // Only give the speed bonus if we're moving, otherwise we oscillate like crazy.
-                    fcheck -= 0.001f;
-                    fcheck /= 0.999f;
-                    fcheck *= 5f;
-                    float speedFunc;
-                    // Use a disjointed function to check how much speed to gain.
-                    if (fcheck > 0 && fcheck <= 0.1f) { // Exponentially scales up
-                        speedFunc = (fcheck * 10f) * (fcheck * 10f);
-                    } else { // Logarithmically scales down
-                        speedFunc = -Mathf.Log (fcheck);
-                    }
-                    float bonusSpeed = airSpeedBonus * speedFunc;
-                    float yvel = velocity.y;
-                    velocity = Vector3.Normalize (pvel) * (pvel.magnitude + bonusSpeed);
-                    velocity.y = yvel;
-                }*/
             } else if ( flatvel.magnitude > 1f ) {
                 Accelerate (wishdir, airAccelerate, flySpeed);
             }
@@ -965,17 +943,17 @@ public class SourcePlayer : MonoBehaviour {
         // Now pull the base velocity back out.   Base velocity is set if you are on a moving object, like a conveyor (or maybe another monster?)
         velocity -= groundVelocity;
 
-		if (wishWallDodge && DodgeWall != null)
-			PerformWallDodge ();
-
-	
+        if (wishWallDodge && DodgeWall != null) {
+            PerformWallDodge ();
+        }
     }
 
     private void WallMove () {
-		
-
-        if (wishJump && wallEntity != null && (Mathf.Abs (velocity.x) >= WallRunMinSpeed|| Mathf.Abs (velocity.z) >= WallRunMinSpeed)) {
-
+        Vector3 flatvel = new Vector3 (velocity.x, 0, velocity.z);
+        if (wishJump && wallEntity != null && Mathf.Abs(Vector3.Dot(flatvel.normalized,wallNormal)) < 0.5f) {
+			CurrentWallUpTime += Time.deltaTime;
+			bool saved = false;
+				
 			if (wishWallDodge) {
 				PerformWallDodge ();
 				EndWallRun ();
@@ -1016,10 +994,28 @@ public class SourcePlayer : MonoBehaviour {
 			float wallBreakMag = -Vector3.Dot (wishdir, velocity);
 
 			velocity = ClipVelocity (velocity, wallNormal);
-            Vector3 flatvel = new Vector3 (velocity.x, 0f, velocity.z).normalized;
+            flatvel = new Vector3 (velocity.x, 0f, velocity.z);
+            if (flatvel.magnitude < WallRunMinSpeed) {
+                EndWallRun ();
+                AirMove ();
+                return;
+            }
+            flatvel = flatvel.normalized;
+
+			if (velocity.y >= -WallSaveAbleFallSpeed && velocity.y < 0 && wallRunning == false) {
+				saved = true;
+				velocity.y = 0;
+			}
 
             Accelerate (flatvel, WallRunAcceleration, 100f);
 			Accelerate (wishdir, 10, wallBreakMag);
+
+			if (CurrentWallUpTime < WallRunUpTime && velocity.y < WallRunMaxUpVelocity) {
+				if(!saved)
+					Accelerate (transform.up, WallRunUpAcceleration, 10);
+				else
+					Accelerate (transform.up, WallRunUpAcceleration*2, 10);
+			}
 
 			// We need to see if we have a velocity now, in order for the player to stay on moving conveyors and stuff.
 			Vector3 wallVelocity = Vector3.zero;
@@ -1037,6 +1033,8 @@ public class SourcePlayer : MonoBehaviour {
 			velocity += wallVelocity;
             controller.Move (velocity * Time.deltaTime);
 			velocity -= wallVelocity;
+
+		
 	
 			oldVelocity = velocity;
 			wallRunStarted = !wallRunning;
@@ -1045,6 +1043,7 @@ public class SourcePlayer : MonoBehaviour {
             if(CameraControls != null)
                 CameraControls.AddWallVector(wallNormal);
         } else {
+			CurrentWallUpTime = 0;
             wallRunning = false;
         }
 
@@ -1154,7 +1153,7 @@ public class SourcePlayer : MonoBehaviour {
             //Debug.Log ("Ignoring collsion of object with " + obj.layer);
             return false;
         }
-        if (ignoreFootCollisions && hitPos.y - stepSize < transform.position.y - distToGround) {
+        if (groundEntity != null && hitPos.y - stepSize < transform.position.y - distToGround) {
             //Debug.Log ("Ignoring collsion because its feet."+hitPos.y+0.01f + " " + (transform.position.y - distToGround + stepSize));
             return false;
         }
@@ -1197,9 +1196,9 @@ public class SourcePlayer : MonoBehaviour {
                 float d = Vector3.Dot (vel, hitNormal);
                 if (d > 0.01f) {
                     velocity += hitNormal * d * overbounce;
-					if (d > 1f) {
-						StunFriction (0.5f);
-					}
+                    if (d > 1f) {
+                        StunFriction (0.5f);
+                    }
                 }
                 rigidcheck.AddForceAtPosition (-hitNormal * change * mass, hitPos);
             }
@@ -1221,8 +1220,10 @@ public class SourcePlayer : MonoBehaviour {
 
 	void EndWallRun()
 	{
+		
 		wallEntity = null;
 		wallRunning = false;
+		CurrentWallUpTime = 0;
 	}
 		
 
@@ -1241,6 +1242,8 @@ public class SourcePlayer : MonoBehaviour {
 		}
 	
         if (!wishJump || velocity.y < -Mathf.Abs(WallRunMaxFallingSpeed)) {
+			//if (velocity.y < -Mathf.Abs (WallRunMaxFallingSpeed))
+				//print ("FALL");
             EndWallRun ();
             return;
         }
@@ -1253,7 +1256,7 @@ public class SourcePlayer : MonoBehaviour {
             Vector3 p1 = transform.position + controller.center + Vector3.up * -controller.height * 0.5F;
             Vector3 p2 = p1 + Vector3.up * controller.height;
 
-			if (Physics.BoxCast (transform.position, new Vector3 (radius/2,controller.height/2, radius/2) , -wallNormal, out hitInfo, Quaternion.LookRotation(-wallNormal), 1.0f, layerMask, QueryTriggerInteraction.Ignore)) {
+			if (Physics.BoxCast (transform.position, new Vector3 (radius/2,controller.height/2, radius/2) , -wallNormal, out hitInfo, Quaternion.LookRotation(-wallNormal), 0.6f, layerMask, QueryTriggerInteraction.Ignore)) {
 				// Why is it 0.998? Cause unity.
 
 				if (Vector3.Dot (wallNormal, hitInfo.normal) <= 0.5) {
@@ -1354,13 +1357,10 @@ public class SourcePlayer : MonoBehaviour {
 		wishDir = new Vector3 (0, 0, 0);
 	}
 
-
-		
     public void OnCollisionEnter(Collision c ) {
-        // This completely ignores the ignoreCollisions flag. So we can't have it running for now..
-        //foreach( UnityEngine.ContactPoint p in c.contacts ) {
-        //HandleCollision (p.otherCollider.gameObject, p.normal, p.point);
-        //}
+        foreach( UnityEngine.ContactPoint p in c.contacts ) {
+            HandleCollision (p.otherCollider.gameObject, p.normal, p.point);
+        }
     }
 
     private void StepMove () {
@@ -1376,8 +1376,6 @@ public class SourcePlayer : MonoBehaviour {
         // Reset
         transform.position = savePos;
         velocity = saveVelocity;
-        //Temporarily ignore collisions.
-        ignoreFootCollisions = true;
         // Move straight up,
         controller.Move (new Vector3 (0f, stepSize, 0f));
         // Bumped our head, discard the step move...
@@ -1385,7 +1383,6 @@ public class SourcePlayer : MonoBehaviour {
             transform.position = groundMove;
             velocity = groundMoveVelocity;
             contacts = groundContacts;
-            ignoreFootCollisions = false;
             return;
         }
         // Then move normally.
@@ -1395,8 +1392,6 @@ public class SourcePlayer : MonoBehaviour {
         // Save this position
         Vector3 stepMove = transform.position;
         Vector3 stepMoveVelocity = velocity;
-        // Enable collisions
-        ignoreFootCollisions = false;
 
         RaycastHit hit;
         // If we step-moved onto unstable ground, or into the air.. use the original move.

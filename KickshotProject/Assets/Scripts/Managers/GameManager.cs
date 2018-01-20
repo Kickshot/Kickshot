@@ -11,6 +11,7 @@ public class GameManager : MonoBehaviour
     SourcePlayer _player;
     LevelTimer _timer;
     float _postLevelTimer;
+    bool saveOnNextFrame = false;
     public Vector3 playerVelocity;
 
     bool _postLevelState = false;
@@ -29,7 +30,7 @@ public class GameManager : MonoBehaviour
             return null;
         }
     }
-    public LevelTimer GameTimer
+    /*public LevelTimer GameTimer
     {
         get
         {
@@ -37,7 +38,7 @@ public class GameManager : MonoBehaviour
                 _timer = GetComponent<LevelTimer>();
             return _timer;
         }
-    }
+    }*/
 
 
     void Awake()
@@ -55,15 +56,21 @@ public class GameManager : MonoBehaviour
 
         SceneManager.sceneLoaded += SceneLoaded;
     }
+        
 
     void SceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        SaveManager.Save();
-        GameTimer.Reset();
+        saveOnNextFrame = true;
+        //SaveManager.Save();
+        //GameTimer.Reset();
     }
 
     void Update()
     {
+        if (saveOnNextFrame) {
+            SaveManager.Save();
+            saveOnNextFrame = false;
+        }
         if(_postLevelState)
         {
             //if (Player != null) {
@@ -81,7 +88,7 @@ public class GameManager : MonoBehaviour
     public void Died()
     {
         SaveManager.Load();
-        GameTimer.Reset();
+        //GameTimer.Reset();
     }
 
     public void LevelFinished()
