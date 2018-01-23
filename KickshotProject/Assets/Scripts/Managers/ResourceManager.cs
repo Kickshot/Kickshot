@@ -21,6 +21,7 @@ public static class ResourceManager {
         resources.Add ("Player",                new string[]{"Prefabs/Characters/SourcePlayer"});
         resources.Add ("RocketLauncher",        new string[]{"Prefabs/Weapons/RocketLauncher"});
         resources.Add ("TractorGrapple",        new string[]{"Prefabs/Weapons/TractorGrapple"});
+		resources.Add ("DoubleGun",        		new string[]{"Prefabs/Weapons/DoubleGun"});
         resources.Add ("RecoilGun",             new string[]{"Prefabs/Weapons/RecoilGun"});
         resources.Add ("GroundReloadRecoilGun", new string[]{"Prefabs/Weapons/Testing/GroundReloadRecoilGun"});
         resources.Add ("GrappleHook",           new string[]{"Prefabs/Weapons/Grapple Hook"});

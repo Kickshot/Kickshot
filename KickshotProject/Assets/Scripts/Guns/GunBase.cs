@@ -97,8 +97,8 @@ public class GunBase : MonoBehaviour {
             return;
         }
         // We can reload even while we're busy.
-        if (!reloading && ((Input.GetButtonDown ("Reload") && ammo < magSize) || ( autoReload && ammo <= 0f ))) {
-            busy = reloadDelay;
+        if (!reloading && ((Input.GetButtonDown ("Reload")) || ( autoReload && ammo <= 0f ))) {
+            //busy = reloadDelay;
             reloading = true;
             OnReload ();
         }
@@ -128,7 +128,7 @@ public class GunBase : MonoBehaviour {
             curAmmo = Mathf.Max (curAmmo - magSize+ammo, 0f);
             ammo = Mathf.Min (curAmmo, magSize);
             reloading = false;
-            return;
+            //return;
         }
         // We check if we should fire, meaning we're not busy (line 49), we've just clicked (!autoFire) or we're holding down the fire button (autofire), and that we have ammo available to fire.
         if (((Input.GetButtonDown ("Fire1") && !autoFire) || (Input.GetButton("Fire1") && autoFire)) && ammo >= primaryFireAmmoCost && busy <= 0f) {

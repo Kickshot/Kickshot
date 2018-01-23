@@ -11,7 +11,8 @@ public class GunSaveData : SaveData {
         GroundReloadRecoilGun,
         GrappleHook,
         Minigun,
-        SequentialNadeLauncher
+        SequentialNadeLauncher,
+		DoubleGun
     }
     public GunType type;
     public string gunName;
@@ -87,6 +88,9 @@ public class GunSaveData : SaveData {
         } else if (g.GetType () == typeof(SequentialNadeLauncher)) {
             type = GunType.SequentialNadeLauncher;
         }
+		else if (g.GetType () == typeof(DoubleGun)) {
+			type = GunType.DoubleGun;
+		}
     }
     public override GameObject Load () {
         GameObject obj = null;
@@ -120,6 +124,10 @@ public class GunSaveData : SaveData {
             obj = GameObject.Instantiate (ResourceManager.GetResource<GameObject>("SequentialNadeLauncher"));
             g = obj.GetComponent<SequentialNadeLauncher> ();
             break;
+		case GunType.DoubleGun:
+			obj = GameObject.Instantiate (ResourceManager.GetResource<GameObject>("DoubleGun"));
+			g = obj.GetComponent<DoubleGun> ();
+			break;
         }
         if (obj == null || g == null) {
             throw new UnityException ("Whoa nelly this shouldn't happen, fix up your prefabs boy.");
