@@ -36,4 +36,9 @@ public class MenuManager : MonoBehaviour {
         Debug.Log("Islands");
         SceneManager.LoadScene("Islands_1");
     }
+
+    public void LevelSelect(string sceneName)
+    {
+        SceneManager.LoadScene(sceneName);
+    }
 }
