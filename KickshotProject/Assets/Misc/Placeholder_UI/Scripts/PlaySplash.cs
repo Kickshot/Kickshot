@@ -12,6 +12,7 @@ public class PlaySplash : MonoBehaviour {
 	void Awake () {
         vp.Play();
         vp.loopPointReached += LoadMainMenu;
+        Cursor.visible = false;
 	}
 	
 	// Update is called once per frame
@@ -20,7 +21,8 @@ public class PlaySplash : MonoBehaviour {
 
     void LoadMainMenu( VideoPlayer vp)
     {
-        //TODO: Load in Main Menu here.
-        //SceneManager.LoadScene(1);
+        Cursor.visible = true;
+        //Load in Main Menu here.
+        SceneManager.LoadScene("MainMenuIslands");
     }
 }
