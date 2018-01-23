@@ -1,6 +1,11 @@
 fileFormatVersion: 2
+<<<<<<< HEAD
 guid: 010d70a4f821f4c46aac7020166ef192
 timeCreated: 1516646541
+=======
+guid: 4e9974e5720b94fbda228f0224da6352
+timeCreated: 1516413216
+>>>>>>> 9a2966af4f07e8e61aaab866fb6154bf20184bb4
 licenseType: Free
 ModelImporter:
   serializedVersion: 22
@@ -19,6 +24,15 @@ ModelImporter:
     400008: Group61412
     400010: Group8411
     400012: //RootNode
+<<<<<<< HEAD
+=======
+    2100000: Group26079Mat
+    2100002: Group26634Mat
+    2100004: Group43746Mat
+    2100006: Group56277Mat
+    2100008: Group61412Mat
+    2100010: Group8411Mat
+>>>>>>> 9a2966af4f07e8e61aaab866fb6154bf20184bb4
     2300000: Group26079
     2300002: Group26634
     2300004: Group43746
@@ -37,6 +51,7 @@ ModelImporter:
     4300006: Group56277
     4300008: Group61412
     4300010: Group8411
+<<<<<<< HEAD
   externalObjects:
   - first:
       type: UnityEngine:Material
@@ -68,11 +83,18 @@ ModelImporter:
       assembly: UnityEngine.CoreModule
       name: Group8411Mat
     second: {fileID: 2100000, guid: aa9bbeca0246680438e7b15e08bd038d, type: 2}
+=======
+  externalObjects: {}
+>>>>>>> 9a2966af4f07e8e61aaab866fb6154bf20184bb4
   materials:
     importMaterials: 1
     materialName: 0
     materialSearch: 1
+<<<<<<< HEAD
     materialLocation: 0
+=======
+    materialLocation: 1
+>>>>>>> 9a2966af4f07e8e61aaab866fb6154bf20184bb4
   animations:
     legacyGenerateAnimations: 4
     bakeSimulation: 0
@@ -110,6 +132,11 @@ ModelImporter:
     optimizeMeshForGPU: 1
     keepQuads: 0
     weldVertices: 1
+<<<<<<< HEAD
+=======
+    preserveHierarchy: 0
+    indexFormat: 0
+>>>>>>> 9a2966af4f07e8e61aaab866fb6154bf20184bb4
     secondaryUVAngleDistortion: 8
     secondaryUVAreaDistortion: 15.000001
     secondaryUVHardAngle: 88
