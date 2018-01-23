@@ -973,7 +973,7 @@ public class SourcePlayer : MonoBehaviour {
 			adjustedVelocity.y = 0;
 			adjustedOldVelocity.y = 0;
             // Check if new velocity is trying to get off the wall.w
-            if (Vector3.Dot (adjustedOldVelocity.normalized, adjustedVelocity.normalized) < 0.91f && wallRunning) {
+            if (Vector3.Dot (adjustedOldVelocity.normalized, adjustedVelocity.normalized) < 0.98f && wallRunning) {
                 print(Vector3.Dot(adjustedOldVelocity.normalized, adjustedVelocity.normalized));
                 EndWallRun ();
                 AirMove ();
