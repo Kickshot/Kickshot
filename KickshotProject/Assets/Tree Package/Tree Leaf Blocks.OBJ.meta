@@ -1,12 +1,5 @@
 fileFormatVersion: 2
-<<<<<<< HEAD
 guid: 010d70a4f821f4c46aac7020166ef192
-timeCreated: 1516646541
-=======
-guid: 4e9974e5720b94fbda228f0224da6352
-timeCreated: 1516413216
->>>>>>> 9a2966af4f07e8e61aaab866fb6154bf20184bb4
-licenseType: Free
 ModelImporter:
   serializedVersion: 22
   fileIDToRecycleName:
@@ -24,15 +17,12 @@ ModelImporter:
     400008: Group61412
     400010: Group8411
     400012: //RootNode
-<<<<<<< HEAD
-=======
     2100000: Group26079Mat
     2100002: Group26634Mat
     2100004: Group43746Mat
     2100006: Group56277Mat
     2100008: Group61412Mat
     2100010: Group8411Mat
->>>>>>> 9a2966af4f07e8e61aaab866fb6154bf20184bb4
     2300000: Group26079
     2300002: Group26634
     2300004: Group43746
@@ -51,50 +41,13 @@ ModelImporter:
     4300006: Group56277
     4300008: Group61412
     4300010: Group8411
-<<<<<<< HEAD
-  externalObjects:
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Group26079Mat
-    second: {fileID: 2100000, guid: eb9e5ba4e7cf51c40a4d7149a4c2c5d5, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Group26634Mat
-    second: {fileID: 2100000, guid: 7025e77ce351b1e4095cbd89c53b0e30, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Group43746Mat
-    second: {fileID: 2100000, guid: 48cfbeb499d2b4d4db8378c5c5e33293, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Group56277Mat
-    second: {fileID: 2100000, guid: c066613d5e2c7f24ba2112e21c7331bd, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Group61412Mat
-    second: {fileID: 2100000, guid: 23e6fd3bdfed6c34fab4e736b9479de1, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Group8411Mat
-    second: {fileID: 2100000, guid: aa9bbeca0246680438e7b15e08bd038d, type: 2}
-=======
+    9500000: //RootNode
   externalObjects: {}
->>>>>>> 9a2966af4f07e8e61aaab866fb6154bf20184bb4
   materials:
     importMaterials: 1
     materialName: 0
     materialSearch: 1
-<<<<<<< HEAD
-    materialLocation: 0
-=======
     materialLocation: 1
->>>>>>> 9a2966af4f07e8e61aaab866fb6154bf20184bb4
   animations:
     legacyGenerateAnimations: 4
     bakeSimulation: 0
@@ -132,11 +85,8 @@ ModelImporter:
     optimizeMeshForGPU: 1
     keepQuads: 0
     weldVertices: 1
-<<<<<<< HEAD
-=======
     preserveHierarchy: 0
     indexFormat: 0
->>>>>>> 9a2966af4f07e8e61aaab866fb6154bf20184bb4
     secondaryUVAngleDistortion: 8
     secondaryUVAreaDistortion: 15.000001
     secondaryUVHardAngle: 88
@@ -166,7 +116,7 @@ ModelImporter:
     hasExtraRoot: 0
     skeletonHasParents: 1
   lastHumanDescriptionAvatarSource: {instanceID: 0}
-  animationType: 0
+  animationType: 2
   humanoidOversampling: 1
   additionalBone: 0
   userData: 

@@ -17,7 +17,7 @@ public class MainMenuManager : MonoBehaviour {
         uiAnimator.SetTrigger("Options");
     }
 
-    public void Main() {
+    public void MainMenu() {
         Debug.Log("Main");
         uiAnimator.SetTrigger("ToMain");
     }

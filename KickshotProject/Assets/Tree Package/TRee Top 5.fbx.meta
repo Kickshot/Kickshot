@@ -1,44 +1,21 @@
 fileFormatVersion: 2
-<<<<<<< HEAD
 guid: 37054886c0020264aa8c06a84cbc0013
-timeCreated: 1516646543
-=======
-guid: 893f9df2849714bedb78ab0b947aae06
-timeCreated: 1516413216
->>>>>>> 9a2966af4f07e8e61aaab866fb6154bf20184bb4
-licenseType: Free
 ModelImporter:
   serializedVersion: 22
   fileIDToRecycleName:
     100000: //RootNode
     400000: //RootNode
-<<<<<<< HEAD
-=======
     2100000: lambert2
->>>>>>> 9a2966af4f07e8e61aaab866fb6154bf20184bb4
     2300000: //RootNode
     3300000: //RootNode
     4300000: Group8411
     9500000: //RootNode
-<<<<<<< HEAD
-  externalObjects:
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: lambert2
-    second: {fileID: 2100000, guid: ee7c3a216f3e0a64ba62022634dc8ddc, type: 2}
-=======
   externalObjects: {}
->>>>>>> 9a2966af4f07e8e61aaab866fb6154bf20184bb4
   materials:
     importMaterials: 1
     materialName: 0
     materialSearch: 1
-<<<<<<< HEAD
-    materialLocation: 0
-=======
     materialLocation: 1
->>>>>>> 9a2966af4f07e8e61aaab866fb6154bf20184bb4
   animations:
     legacyGenerateAnimations: 4
     bakeSimulation: 0
@@ -76,11 +53,8 @@ ModelImporter:
     optimizeMeshForGPU: 1
     keepQuads: 0
     weldVertices: 1
-<<<<<<< HEAD
-=======
     preserveHierarchy: 0
     indexFormat: 0
->>>>>>> 9a2966af4f07e8e61aaab866fb6154bf20184bb4
     secondaryUVAngleDistortion: 8
     secondaryUVAreaDistortion: 15.000001
     secondaryUVHardAngle: 88
