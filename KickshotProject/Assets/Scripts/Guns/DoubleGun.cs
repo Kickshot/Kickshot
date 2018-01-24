@@ -6,12 +6,9 @@ public class DoubleGun : GunBase
 {
 
 	public Transform gunBarrelFront;
-	private LineRenderer linerender;
 	private bool hitSomething = false;
 	private Transform hitPosition;
 	private float hitDist;
-	private float fade = 0f;
-	public float fadeTime = 1f;
 	public float range = 12f;
 	private Vector3 missStart;
 	private Vector3 missEnd;
@@ -20,6 +17,9 @@ public class DoubleGun : GunBase
 	private float exhaust = 1f;
 	private float exhaustBusy = 0f;
 	public float exhaustBusyTime = 1f;
+
+	public GameObject ropePrefab;
+	private RopeSim rope;
 
 	public Rocket rocket;
 	public Animator rocketLauncher;
@@ -30,8 +30,6 @@ public class DoubleGun : GunBase
 		exhaustBusy = 0f;
 		// Copy a transform for use.
 		hitPosition = Transform.Instantiate(gunBarrelFront);
-		linerender = GetComponent<LineRenderer>();
-		linerender.enabled = false;
 		shotSound = GetComponent<AudioSource>();
 		//saveMaxAirSpeed = player.maxSpeed;
 	}
@@ -79,27 +77,19 @@ public class DoubleGun : GunBase
 				//player.Accelerate (dir, 5f, 100f);
 			//}
 			if (player.velocity.magnitude != 0f) {
+				rope.start.position = gunBarrelFront.position;
+				rope.end.position = hitPosition.position;
 				player.Accelerate (dir, 1f / Time.deltaTime, -Vector3.Dot (player.velocity, dir));
-				linerender.SetPosition (0, gunBarrelFront.position);
-				linerender.SetPosition (1, hitPosition.position);
-				fade = fadeTime;
 				missStart = gunBarrelFront.position;
 				missEnd = hitPosition.position;
 			}
 		}
 		else
 		{
+			if (rope != null) {
+				rope.start.position = gunBarrelFront.position;
+			}
 			player.maxSpeed = saveMaxAirSpeed;
-			if (fade > 0)
-			{
-				linerender.SetPosition(0, missStart);
-				linerender.SetPosition(1, missEnd);
-				fade -= Time.deltaTime;
-			}
-			else
-			{
-				linerender.enabled = false;
-			}
 		}
 
 
@@ -121,6 +111,8 @@ public class DoubleGun : GunBase
 	}
 	public override void OnSecondaryFireRelease()
 	{
+		rope.staticStart = false;
+		rope = null;
 		player.maxSpeed = saveMaxAirSpeed;
 		hitSomething = false;
 	}
@@ -130,6 +122,8 @@ public class DoubleGun : GunBase
 			return;
 		}
 		RaycastHit hit;
+		GameObject ropeRoot = Instantiate (ropePrefab);
+		rope = ropeRoot.GetComponentInChildren<RopeSim> ();
 		// We ignore player collisions.
 		if (Physics.Raycast(view.position, view.forward, out hit, range, ~(1 << LayerMask.NameToLayer("Player"))))
 		{
@@ -137,20 +131,21 @@ public class DoubleGun : GunBase
 			hitPosition.position = hit.point;
 			hitSomething = true;
 			hitDist = hit.distance;
-			linerender.SetPosition(0, gunBarrelFront.position);
-			linerender.SetPosition(1, hit.point);
+			rope.start.position = gunBarrelFront.position;
+			rope.end.position = hit.point;
+			rope.Regenerate ();
 			player.maxSpeed = 1000f;
 		}
 		else
 		{
 			hitSomething = false;
-			fade = fadeTime;
 			missStart = gunBarrelFront.position;
 			missEnd = view.position + view.forward * range;
-			linerender.SetPosition(0, missStart);
-			linerender.SetPosition(1, missEnd);
+			rope.start.position = missStart;
+			rope.end.position = missEnd;
+			rope.Regenerate ();
+			rope.staticEnd = false;
 		}
-		linerender.enabled = true;
 		shotSound.Play();
 	}
 
