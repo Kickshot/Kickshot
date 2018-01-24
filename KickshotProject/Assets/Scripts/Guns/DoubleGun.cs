@@ -17,6 +17,7 @@ public class DoubleGun : GunBase
 	private float exhaust = 1f;
 	private float exhaustBusy = 0f;
 	public float exhaustBusyTime = 1f;
+	private List<RopeSim> ropes;
 
 	public GameObject ropePrefab;
 	private RopeSim rope;
@@ -26,6 +27,7 @@ public class DoubleGun : GunBase
 
 	void Start()
 	{
+		ropes = new List<RopeSim> ();
 		exhaust = 1f;
 		exhaustBusy = 0f;
 		// Copy a transform for use.
@@ -55,6 +57,11 @@ public class DoubleGun : GunBase
 	override public void Update()
 	{
 		base.Update();
+		if (ropes.Count > 10) {
+			RopeSim temp = ropes [0];
+			Destroy (temp.gameObject);
+			ropes.Remove (temp);
+		}
 		if (exhaustBusy > 0f) {
 			exhaustBusy -= Time.deltaTime;
 		}
@@ -79,7 +86,9 @@ public class DoubleGun : GunBase
 			if (player.velocity.magnitude != 0f) {
 				rope.start.position = gunBarrelFront.position;
 				rope.end.position = hitPosition.position;
-				player.Accelerate (dir, 1f / Time.deltaTime, -Vector3.Dot (player.velocity, dir));
+				if (Vector3.Distance (hitPosition.position, view.position) > hitDist) {
+					player.Accelerate (dir, 1f / Time.deltaTime, -Vector3.Dot (player.velocity, dir));
+				}
 				missStart = gunBarrelFront.position;
 				missEnd = hitPosition.position;
 			}
@@ -112,6 +121,7 @@ public class DoubleGun : GunBase
 	public override void OnSecondaryFireRelease()
 	{
 		rope.staticStart = false;
+		rope.sticky = true;
 		rope = null;
 		player.maxSpeed = saveMaxAirSpeed;
 		hitSomething = false;
@@ -122,15 +132,17 @@ public class DoubleGun : GunBase
 			return;
 		}
 		RaycastHit hit;
-		GameObject ropeRoot = Instantiate (ropePrefab);
+		GameObject ropeRoot = Instantiate (ropePrefab,Vector3.zero,Quaternion.identity);
 		rope = ropeRoot.GetComponentInChildren<RopeSim> ();
+		ropes.Add (rope);
+		rope.sticky = false;
 		// We ignore player collisions.
 		if (Physics.Raycast(view.position, view.forward, out hit, range, ~(1 << LayerMask.NameToLayer("Player"))))
 		{
 			hitPosition.SetParent(hit.collider.transform);
 			hitPosition.position = hit.point;
 			hitSomething = true;
-			hitDist = hit.distance;
+			hitDist = Mathf.Max(hit.distance,1f);
 			rope.start.position = gunBarrelFront.position;
 			rope.end.position = hit.point;
 			rope.Regenerate ();

@@ -13,6 +13,9 @@ public class RopeSim : MonoBehaviour {
     public List<Transform> bones = new List<Transform>();
     private List<Vector3> accel;
     private List<Vector3> vel;
+	private List<bool> stuck;
+	public bool sticky = false;
+	[HideInInspector]
     public float distanceBetweenBones;
     public float strength = 100f;
 	public bool staticStart = true;
@@ -28,6 +31,7 @@ public class RopeSim : MonoBehaviour {
     public float settleTime = 2f;
     public float animationLength = 10f;
     public float animationFPS = 30f;
+	public LayerMask collidesWith;
     private bool generated = false;
     public bool sane {
         get { return generated && !transform.hasChanged; }
@@ -62,6 +66,7 @@ public class RopeSim : MonoBehaviour {
         bones.Clear();
         accel = new List<Vector3>();
         vel = new List<Vector3>();
+		stuck = new List<bool>();
         int parts = (int)(Vector3.Distance(start.position, end.position)*boneDensity);
         distanceBetweenBones = Vector3.Distance(start.position, end.position)/parts;
         for( int i=0;i<=parts;i++ ) {
@@ -72,6 +77,7 @@ public class RopeSim : MonoBehaviour {
             bones.Add( bone );
             accel.Add( Vector3.zero );
             vel.Add( Vector3.zero );
+			stuck.Add (false);
             if ( recordAnimation ) {
                 cx.Add( new List<Keyframe>() );
                 cy.Add( new List<Keyframe>() );
@@ -118,66 +124,32 @@ public class RopeSim : MonoBehaviour {
         }
         bones[0].position = start.position;
         bones[bones.Count-1].position = end.position;
-		if (!staticStart) {
-			accel [0] = gravity;
-			vel [0] += accel [0] * Time.deltaTime;
-			Vector3 dir = Vector3.Normalize (bones [0].position - bones [1].position);
-			if (dir.magnitude == 0) {
-				dir = -bones [1].forward;
-			}
-			vel[0] += ( ( bones[1].position + dir * distanceBetweenBones ) - bones[0].position)*Time.deltaTime*strength;
-			vel[0] += new Vector3( Random.Range(-noise,noise),Random.Range(-noise,noise),Random.Range(-noise,noise) );
-			vel[0] += windDirection * windAmount * 0.6f * (Mathf.Sin(Time.time*1.4f)+1f)/2f;
-			vel[0] += windDirection * windAmount * 0.2f * (Mathf.Sin(Time.time*5f)+1f)/2f;
-			vel[0] += windDirection * windAmount * 0.2f * Mathf.Sin(Time.time*4f);
-			vel[0] -= vel[0]*damping;
-			if ( vel[0].magnitude > maxVel ) {
-				vel[0] = Vector3.Normalize(vel[0])*maxVel;
-			}
-		}
-		if (!staticEnd) {
-			int i = bones.Count - 1;
-			accel[i] = gravity;
-			vel[i] += accel[i]*Time.deltaTime;
-			// Classic spring constraints
-			Vector3 dir = Vector3.Normalize(bones[i].position - bones[i-1].position);
-			if ( dir.magnitude == 0 ) {
-				dir = bones[i-1].forward;
-			}
-			vel[i] += ((bones[i-1].position + dir * distanceBetweenBones) - bones[i].position)*Time.deltaTime*strength;
-			vel[i] += new Vector3( Random.Range(-noise,noise),Random.Range(-noise,noise),Random.Range(-noise,noise) );
-			vel[i] += windDirection * windAmount * 0.6f * (Mathf.Sin(Time.time*1.4f)+1f)/2f;
-			vel[i] += windDirection * windAmount * 0.2f * (Mathf.Sin(Time.time*5f)+1f)/2f;
-			vel[i] += windDirection * windAmount * 0.2f * Mathf.Sin(Time.time*4f);
-			vel[i] -= vel[i]*damping;
-			if ( vel[i].magnitude > maxVel ) {
-				vel[i] = Vector3.Normalize(vel[i])*maxVel;
-			}
-		}
         for( int i=0;i<bones.Count;i++ ) {
+			if (stuck [i] && sticky) {
+				continue;
+			}
             // We don't move end bones
 			Vector3 dir;
-            if ( i == 0 ) {
-                bones[i].up = Vector3.Normalize(bones[i+1].position-bones[i].position);
-				continue;
-            } else if ( i == bones.Count-1 ) {
-                bones[i].up = Vector3.Normalize(bones[i].position-bones[i-1].position);
-				continue;
-            }
             accel[i] = gravity;
             vel[i] += accel[i]*Time.deltaTime;
             // Classic spring constraints
-			dir = Vector3.Normalize(bones[i].position - bones[i-1].position);
-            if ( dir.magnitude == 0 ) {
-                dir = bones[i-1].forward;
-            }
-            vel[i] += ((bones[i-1].position + dir * distanceBetweenBones) - bones[i].position)*Time.deltaTime*strength;
-            dir = Vector3.Normalize(bones[i].position - bones[i+1].position);
-            if ( dir.magnitude == 0 ) {
-                dir = -bones[i+1].forward;
-            }
-            vel[i] += ( ( bones[i+1].position + dir * distanceBetweenBones ) - bones[i].position)*Time.deltaTime*strength;
-            bones[i].up = Vector3.Normalize(bones[i+1].position-bones[i].position);
+			if (i != 0) {
+				dir = Vector3.Normalize (bones [i].position - bones [i - 1].position);
+				if (dir.magnitude == 0) {
+					dir = bones [i - 1].forward;
+				}
+				vel [i] += ((bones [i - 1].position + dir * distanceBetweenBones) - bones [i].position) * Time.deltaTime * strength;
+			}
+			if (i != bones.Count - 1) {
+				dir = Vector3.Normalize (bones [i].position - bones [i + 1].position);
+				if (dir.magnitude == 0) {
+					dir = -bones [i + 1].forward;
+				}
+				vel [i] += ((bones [i + 1].position + dir * distanceBetweenBones) - bones [i].position) * Time.deltaTime * strength;
+				bones [i].up = Vector3.Normalize (bones [i + 1].position - bones [i].position);
+			} else {
+				bones [i].up = -Vector3.Normalize (bones [i - 1].position - bones [i].position);
+			}
             vel[i] += new Vector3( Random.Range(-noise,noise),Random.Range(-noise,noise),Random.Range(-noise,noise) );
             vel[i] += windDirection * windAmount * 0.6f * (Mathf.Sin(Time.time*1.4f)+1f)/2f;
             vel[i] += windDirection * windAmount * 0.2f * (Mathf.Sin(Time.time*5f)+1f)/2f;
@@ -187,10 +159,8 @@ public class RopeSim : MonoBehaviour {
                 vel[i] = Vector3.Normalize(vel[i])*maxVel;
             }
         }
-
-		start.position += vel [0] * Time.deltaTime;
-		end.position += vel [bones.Count-1] * Time.deltaTime;
-        for( int i=1;i<bones.Count-1;i++ ) {
+			
+        for( int i=0;i<bones.Count;i++ ) {
             animationTimer += Time.deltaTime;
             if ( recordAnimation && animationTimer > 1f/animationFPS && Time.time > settleTime && Time.time < animationLength+settleTime ) {
                 animationTimer = 0f;
@@ -198,8 +168,25 @@ public class RopeSim : MonoBehaviour {
                 cy[i].Add(new Keyframe(Time.time, bones[i].localPosition.y));
                 cz[i].Add(new Keyframe(Time.time, bones[i].localPosition.z));
             }
-            bones[i].position += vel[i]*Time.deltaTime;
+			if (stuck [i] && sticky) {
+				continue;
+			}
+			if (i == 0 && staticStart || i == bones.Count-1 && staticEnd) {
+				continue;
+			}
+			bones [i].position += vel [i] * Time.deltaTime;
         }
+		start.position = bones [0].position;
+		end.position = bones [bones.Count - 1].position;
+
+		if (sticky) {
+			for (int i = 0; i < bones.Count; i++) {			
+				foreach (Collider col in Physics.OverlapSphere(bones[i].position,0.05f,collidesWith,QueryTriggerInteraction.Ignore)) {
+					stuck [i] = true;
+					break;
+				}
+			}
+		}
 
         if ( recordAnimation && Time.time > animationLength+settleTime && !savedAnimation ) {
             savedAnimation = true;
