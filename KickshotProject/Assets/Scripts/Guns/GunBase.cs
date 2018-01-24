@@ -20,6 +20,7 @@ public class GunBase : MonoBehaviour {
     public bool reloading = false; // Reload doesn't complete until we're no longer busy, this tells the clip to fill up after we're no longer busy.
     public bool autoReload = true; // Checks if the gun is out of ammo and not busy, then reloads it automatically. Otherwise the player has to press the reload key.
     public bool autoFire = true; // Determines if the player can just hold down the mouse to fire, rather than spam clicks.
+	public bool autoFireSecondary = true; // Determines if the player can just hold down the mouse to fire, rather than spam clicks.
     public bool flashMuzzle = true;
     public ParticleSystem muzzleFlash; // Particles to be emmitted out of guns muzzle. If Null, no particles to emit.
     [HideInInspector]
@@ -140,7 +141,7 @@ public class GunBase : MonoBehaviour {
             EmitMuzzleFlash();
         }
 
-        if (((Input.GetButtonDown ("Fire2") && !autoFire) || (Input.GetButton("Fire2") && autoFire)) && ammo >= secondaryFireAmmoCost && busySecondary <= 0) {
+		if (((Input.GetButtonDown ("Fire2") && !autoFireSecondary) || (Input.GetButton("Fire2") && autoFireSecondary)) && ammo >= secondaryFireAmmoCost && busySecondary <= 0) {
             ammo -= secondaryFireAmmoCost;
             if (doubleGun == true)
                 busySecondary = secondaryFireCooldown;

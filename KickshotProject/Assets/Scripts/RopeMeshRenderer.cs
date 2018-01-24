@@ -1,0 +1,189 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEditor;
+
+[RequireComponent(typeof(RopeSim))]
+[RequireComponent(typeof(SkinnedMeshRenderer))]
+[ExecuteInEditMode]
+public class RopeMeshRenderer : MonoBehaviour {
+    public float radius = 0.05f;
+    private RopeSim ropesim;
+    void Start () {
+        ropesim = GetComponent<RopeSim>();
+        SkinnedMeshRenderer renderer = GetComponent<SkinnedMeshRenderer>();
+        if ( !ropesim.sane ) {
+            if ( renderer.sharedMesh != null ) {
+                renderer.sharedMesh.Clear();
+                renderer.sharedMesh = null;
+            }
+            return;
+        }
+        Mesh mesh = new Mesh();
+        int parts = (int)(Vector3.Distance(ropesim.start.position, ropesim.end.position)*ropesim.boneDensity);
+        List<Vector3> verts = new List<Vector3>();
+        List<Vector2> uvs = new List<Vector2>();
+        List<int> tris = new List<int>();
+        List<BoneWeight> weights = new List<BoneWeight>();
+		float distMultiplier = ropesim.distanceBetweenBones;//Vector3.Distance(ropesim.start.position, ropesim.end.position)/(float)parts;
+        for( int i=0;i<parts;i++ ) {
+            BoneWeight w1 = new BoneWeight();
+            if ( i == parts || i == 0 ) {
+                w1.boneIndex0 = i;
+                w1.weight0 = 1f;
+            } else {
+                w1.boneIndex0 = i-1;
+                w1.weight0 = 1f/4f;
+                w1.boneIndex1 = i;
+                w1.weight1 = 2f/4f;
+                w1.boneIndex2 = i+1;
+                w1.weight2 = 1f/4f;
+            }
+
+            BoneWeight w2 = new BoneWeight();
+            if ( i+1 == parts ) {
+                w2.boneIndex0 = i+1;
+                w2.weight0 = 1f;
+            } else {
+                w2.boneIndex0 = i;
+                w2.weight0 = 1f/4f;
+                w2.boneIndex1 = i+1;
+                w2.weight1 = 2f/4f;
+                w2.boneIndex2 = i+2;
+                w2.weight2 = 1f/4f;
+            }
+
+            verts.Add( new Vector3(-radius, i*distMultiplier, -radius ) );
+            weights.Add( w1 );
+            uvs.Add( new Vector2( 0, 0 ) );
+            verts.Add( new Vector3(-radius, (i+1)*distMultiplier, -radius ) );
+            weights.Add( w2 );
+            uvs.Add( new Vector2( 0, 1 ) );
+            verts.Add( new Vector3(radius, i*distMultiplier, -radius ) );
+            weights.Add( w1 );
+            uvs.Add( new Vector2( 1, 0 ) );
+
+            verts.Add( new Vector3(radius, i*distMultiplier, -radius ) );
+            weights.Add( w1 );
+            uvs.Add( new Vector2( 1, 0 ) );
+            verts.Add( new Vector3(-radius, (i+1)*distMultiplier, -radius ) );
+            weights.Add( w2 );
+            uvs.Add( new Vector2( 0, 1 ) );
+            verts.Add( new Vector3(radius, (i+1)*distMultiplier, -radius ) );
+            weights.Add( w2 );
+            uvs.Add( new Vector2( 1, 1 ) );
+
+            verts.Add( new Vector3(radius, i*distMultiplier, -radius ) );
+            weights.Add( w1 );
+            uvs.Add( new Vector2( 0, 0 ) );
+            verts.Add( new Vector3(radius, (i+1)*distMultiplier, -radius ) );
+            weights.Add( w2 );
+            uvs.Add( new Vector2( 0, 1 ) );
+            verts.Add( new Vector3(radius, i*distMultiplier, radius ) );
+            weights.Add( w1 );
+            uvs.Add( new Vector2( 1, 0 ) );
+
+            verts.Add( new Vector3(radius, i*distMultiplier, radius ) );
+            weights.Add( w1 );
+            uvs.Add( new Vector2( 1, 0 ) );
+            verts.Add( new Vector3(radius, (i+1)*distMultiplier, -radius ) );
+            weights.Add( w2 );
+            uvs.Add( new Vector2( 0, 1 ) );
+            verts.Add( new Vector3(radius, (i+1)*distMultiplier, radius ) );
+            weights.Add( w2 );
+            uvs.Add( new Vector2( 1, 1 ) );
+
+            verts.Add( new Vector3(-radius, i*distMultiplier, radius ) );
+            weights.Add( w1 );
+            uvs.Add( new Vector2( 0, 0 ) );
+            verts.Add( new Vector3(radius, i*distMultiplier, radius ) );
+            weights.Add( w1 );
+            uvs.Add( new Vector2( 1, 0 ) );
+            verts.Add( new Vector3(-radius, (i+1)*distMultiplier, radius ) );
+            weights.Add( w2 );
+            uvs.Add( new Vector2( 0, 1 ) );
+
+            verts.Add( new Vector3(radius, i*distMultiplier, radius ) );
+            weights.Add( w1 );
+            uvs.Add( new Vector2( 1, 0 ) );
+            verts.Add( new Vector3(radius, (i+1)*distMultiplier, radius ) );
+            weights.Add( w2 );
+            uvs.Add( new Vector2( 1, 1 ) );
+            verts.Add( new Vector3(-radius, (i+1)*distMultiplier, radius ) );
+            weights.Add( w2 );
+            uvs.Add( new Vector2( 0, 1 ) );
+
+            verts.Add( new Vector3(-radius, i*distMultiplier, -radius ) );
+            weights.Add( w1 );
+            uvs.Add( new Vector2( 0, 0 ) );
+            verts.Add( new Vector3(-radius, i*distMultiplier, radius ) );
+            weights.Add( w1 );
+            uvs.Add( new Vector2( 1, 0 ) );
+            verts.Add( new Vector3(-radius, (i+1)*distMultiplier, -radius ) );
+            weights.Add( w2 );
+            uvs.Add( new Vector2( 0, 1 ) );
+
+            verts.Add( new Vector3(-radius, i*distMultiplier, radius ) );
+            weights.Add( w1 );
+            uvs.Add( new Vector2( 1, 0 ) );
+            verts.Add( new Vector3(-radius, (i+1)*distMultiplier, radius ) );
+            weights.Add( w2 );
+            uvs.Add( new Vector2( 1, 1 ) );
+            verts.Add( new Vector3(-radius, (i+1)*distMultiplier, -radius ) );
+            weights.Add( w2 );
+            uvs.Add( new Vector2( 0, 1 ) );
+        }
+        mesh.vertices = verts.ToArray();
+        mesh.uv = uvs.ToArray();
+        for (int i=0;i<verts.Count;i+=3) {
+            tris.Add( i );
+            tris.Add( i+1 );
+            tris.Add( i+2 );
+        }
+        mesh.triangles = tris.ToArray();
+        mesh.RecalculateNormals();
+        mesh.boneWeights = weights.ToArray();
+
+        List<Matrix4x4> bindPoses = new List<Matrix4x4>();
+
+        foreach( Transform bone in ropesim.bones ) {
+            bindPoses.Add( bone.worldToLocalMatrix * transform.localToWorldMatrix );
+        }
+
+        mesh.bindposes = bindPoses.ToArray();
+
+        renderer.bones = ropesim.bones.ToArray();
+        if ( renderer.sharedMesh != null ) {
+            renderer.sharedMesh.Clear();
+        }
+        renderer.sharedMesh = mesh;
+    }
+
+    void Update() {
+        SkinnedMeshRenderer renderer = GetComponent<SkinnedMeshRenderer>();
+        if ( !EditorApplication.isPlaying ) {
+            if ( renderer.sharedMesh == null ||
+                 renderer.sharedMesh.triangles.Length <= 0 ||
+                 ropesim.transform.hasChanged || 
+                 renderer.bones[0] != ropesim.bones[0]) {
+                Start();
+            }
+        } else {
+            Vector3 max = Vector3.zero;
+            Vector3 min = Vector3.zero;
+            foreach( Transform bone in renderer.bones ) {
+				max.x = Mathf.Max(bone.localPosition.x, max.x);
+				max.y = Mathf.Max(bone.localPosition.y, max.y);
+				max.z = Mathf.Max(bone.localPosition.z, max.z);
+
+				min.x = Mathf.Min(bone.localPosition.x, min.x);
+				min.y = Mathf.Min(bone.localPosition.y, min.y);
+				min.z = Mathf.Min(bone.localPosition.z, min.z);
+            }
+			Vector3 center = ((max - min) / 2f);
+            Vector3 size = max-min;
+			center.z *= -1f;
+            renderer.localBounds = new Bounds(center, size);
+        }
+    }
+}
