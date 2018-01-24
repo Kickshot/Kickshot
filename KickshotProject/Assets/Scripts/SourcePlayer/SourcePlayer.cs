@@ -58,8 +58,11 @@ public class SourcePlayer : MonoBehaviour {
     public float WallDodgeSpeedBonus = 10f;
 	public float WallSaveAbleFallSpeed = 10f;
 	public float WallRunUpAcceleration = 1;
-	public float WallRunUpTime = 0.5f;
+	public float WallRunUpTime = 0.5f; // This controls how much acceleration time in the Y for a wall run.
 	public float WallRunMaxUpVelocity = 100.0f;
+    public float TimeToWallJump = 1.0f;
+    public float WallJumpBoost = 2.0f;
+
 
 
     [HideInInspector]
@@ -138,8 +141,10 @@ public class SourcePlayer : MonoBehaviour {
     private Vector3 DodgeDirection;
 	private GameObject DodgeWall;
 	private Vector3 DodgeNormal;
-	private float CurrentWallUpTime = 0;
-
+	private float CurrentWallUpTime = 0; // How long you have been wall running.
+    private bool CanWallJump = false; // If they can wall jump after a wall run.
+    private float TimeToJump = 0;
+    private bool JustEndedWallRun = false;
 
     void Awake () {
         audio = GetComponent<AudioSource> ();
@@ -750,6 +755,7 @@ public class SourcePlayer : MonoBehaviour {
         //  we don't slow when standing still, relative to the conveyor.
         if (groundEntity != null) {
 			CurrentWallUpTime = 0;
+            CanWallJump = false;
             Friction ();
         }
 
@@ -944,19 +950,20 @@ public class SourcePlayer : MonoBehaviour {
         velocity -= groundVelocity;
 
         if (wishWallDodge && DodgeWall != null) {
-            PerformWallDodge ();
+            PerformWallDodge (false);
         }
     }
 
     private void WallMove () {
         Vector3 flatvel = new Vector3 (velocity.x, 0, velocity.z);
-        if (wishJump && wallEntity != null && Mathf.Abs(Vector3.Dot(flatvel.normalized,wallNormal)) < 0.5f) {
+        if (wishJump && wallEntity != null && Mathf.Abs(Vector3.Dot(flatvel.normalized,wallNormal)) < 0.5f && CanWallJump == false) {
 			CurrentWallUpTime += Time.deltaTime;
 			bool saved = false;
 				
 			if (wishWallDodge) {
-				PerformWallDodge ();
+				PerformWallDodge (true);
 				EndWallRun ();
+                CanWallJump = false;
 				AirMove ();
 				return;
 			}
@@ -967,6 +974,7 @@ public class SourcePlayer : MonoBehaviour {
 			adjustedOldVelocity.y = 0;
             // Check if new velocity is trying to get off the wall.w
             if (Vector3.Dot (adjustedOldVelocity.normalized, adjustedVelocity.normalized) < 0.98f && wallRunning) {
+                print(Vector3.Dot(adjustedOldVelocity.normalized, adjustedVelocity.normalized));
                 EndWallRun ();
                 AirMove ();
                 return;
@@ -1043,8 +1051,24 @@ public class SourcePlayer : MonoBehaviour {
             if(CameraControls != null)
                 CameraControls.AddWallVector(wallNormal);
         } else {
+
+            JustEndedWallRun = !wallRunning;
+        
 			CurrentWallUpTime = 0;
             wallRunning = false;
+            CanWallJump = true;
+
+            if (JustEndedWallRun)
+                TimeToJump = Time.time;
+
+            bool AllowedToJump = Time.time - TimeToJump <= TimeToWallJump;
+
+            if(wallEntity != null && wishJump && AllowedToJump) {
+                PerformWallDodge(true);
+                CanWallJump = false;
+                TimeToJump = Time.time;
+
+            }
         }
 
     }
@@ -1087,7 +1111,7 @@ public class SourcePlayer : MonoBehaviour {
 
     }
 
-	private void PerformWallDodge() {
+	private void PerformWallDodge(bool WithVelocity) {
 
 
 		if (DodgeWall == null)
@@ -1102,13 +1126,15 @@ public class SourcePlayer : MonoBehaviour {
 
 		float speed = DodgeSpeed;
 
-		if (wallRunning) {
+		if (wallRunning || WithVelocity) {
 			Vector3 adjustedVel = velocity;
 			adjustedVel.y = 0;
 			float mag = adjustedVel.magnitude;
 			if (mag < speed)
 				mag = speed;
-			velocity = new Vector3 (DodgeDirection.x * mag, WallDodgeHeight, DodgeDirection.z * mag);
+            mag += WallJumpBoost;
+
+            velocity = new Vector3 (DodgeDirection.x * mag , WallDodgeHeight, DodgeDirection.z * mag);
 		} else {
 			velocity = new Vector3 (DodgeDirection.x * speed, WallDodgeHeight, DodgeDirection.z * speed);
 		}
@@ -1220,8 +1246,10 @@ public class SourcePlayer : MonoBehaviour {
 
 	void EndWallRun()
 	{
-		
-		wallEntity = null;
+        if (wallRunning == true)
+            CanWallJump = true;
+
+        wallEntity = null;
 		wallRunning = false;
 		CurrentWallUpTime = 0;
 	}
@@ -1249,7 +1277,7 @@ public class SourcePlayer : MonoBehaviour {
         }
 		// We have been wall running but there are now no contacts.
 		// Do a capsule cast to see if there is a wall near us.
-		if (contacts.Count == 0 && wallRunning)
+		if ((contacts.Count == 0 && wallRunning) || (contacts.Count == 0 && CanWallJump))
         {
             RaycastHit hitInfo;
 
@@ -1274,7 +1302,9 @@ public class SourcePlayer : MonoBehaviour {
 			} else {
 				// We hit nothing end wall run.
 				EndWallRun ();
-			}
+                CanWallJump = false;
+
+            }
         }
 
         foreach (ContactPoint point in contacts) {
