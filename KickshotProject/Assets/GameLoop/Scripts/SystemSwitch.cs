@@ -10,7 +10,6 @@ public class SystemSwitch : MonoBehaviour {
     {
         if (other.CompareTag("Player"))
         {
-            Debug.Log("Playing");
             system.Play();
         }
     }
@@ -19,7 +18,6 @@ public class SystemSwitch : MonoBehaviour {
     {
         if (other.CompareTag("Player"))
         {
-            Debug.Log("Stopping");
             system.Stop();
         }
     }

@@ -20,7 +20,7 @@ public class ImpactSoundGenerator : GunBase {
         base.OnEquip (Player);
         Debug.Log ("Hello! M1 = tag surface, M2 = switch tag, R = write to file.");
     }
-    public override void OnGUI () {
+    /*public override void OnGUI () {
         if (!equipped) {
             return;
         }
@@ -31,7 +31,7 @@ public class ImpactSoundGenerator : GunBase {
         GUI.Label (new Rect (51f, Screen.height-100f, 100, 50), materialTypes[currentType], style);
         style.normal.textColor = Color.red;
         GUI.Label (new Rect (50f, Screen.height-100f, 100, 50), materialTypes[currentType], style);
-    }
+    }*/
     public override void Update() {
         base.Update();
         if (!equipped) {

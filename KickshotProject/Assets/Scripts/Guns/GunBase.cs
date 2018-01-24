@@ -35,7 +35,7 @@ public class GunBase : MonoBehaviour {
     private bool pfiring = false; // These dumb booleans just keep track to make sure that OnPrimaryRelease doesn't get called before OnPrimaryFire.
     private bool sfiring = false;
 
-    virtual public void OnGUI() {
+    /*virtual public void OnGUI() {
         if (!equipped) {
             return;
         }
@@ -47,7 +47,7 @@ public class GunBase : MonoBehaviour {
         style.normal.textColor = Color.red;
         GUI.Label (new Rect (Screen.width-300f, Screen.height-50f, 250, 50), gunName, style);
         GUI.Label (new Rect (Screen.width-300f, Screen.height-100f, 250, 50), ammo + "/" + curAmmo, style);
-    }
+    }*/
 
     virtual public void OnEquip (GameObject Player) {
         foreach (Collider col in gameObject.GetComponentsInChildren<Collider> ()) {
