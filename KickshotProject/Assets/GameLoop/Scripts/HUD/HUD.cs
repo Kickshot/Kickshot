@@ -39,7 +39,7 @@ public class HUD : MonoBehaviour {
 
     private void LateUpdate()
     {
-        timerText.text = timer.Time.ToString();
+        timerText.text = string.Format("{0}:{1:n3}", ((int)(timer.Time/60)).ToString("N2"), (timer.Time % 60f).ToString().PadLeft(5,'0'));
         speedText.text = player.velocity.magnitude.ToString();
     }
 }
