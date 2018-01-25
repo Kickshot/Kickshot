@@ -18,7 +18,7 @@ public class GunBase : MonoBehaviour {
     public float busy = 0f; // Time in seconds we're stunned for.
     public float busySecondary = 0f; // Time in seconds we're stunned for.
     public bool reloading = false; // Reload doesn't complete until we're no longer busy, this tells the clip to fill up after we're no longer busy.
-    public bool autoReload = true; // Checks if the gun is out of ammo and not busy, then reloads it automatically. Otherwise the player has to press the reload key.
+    public bool autoReload = false; // Checks if the gun is out of ammo and not busy, then reloads it automatically. Otherwise the player has to press the reload key.
     public bool autoFire = true; // Determines if the player can just hold down the mouse to fire, rather than spam clicks.
 	public bool autoFireSecondary = true; // Determines if the player can just hold down the mouse to fire, rather than spam clicks.
     public bool flashMuzzle = true;

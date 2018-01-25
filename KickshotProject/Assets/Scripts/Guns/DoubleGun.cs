@@ -12,12 +12,12 @@ public class DoubleGun : GunBase
 	public float range = 12f;
 	private Vector3 missStart;
 	private Vector3 missEnd;
-	private AudioSource shotSound;
 	private float saveMaxAirSpeed;
 	private float exhaust = 1f;
 	private float exhaustBusy = 0f;
 	public float exhaustBusyTime = 1f;
 	private List<RopeSim> ropes;
+	public AudioSource airBurst;
 
 	public GameObject ropePrefab;
 	private RopeSim rope;
@@ -32,7 +32,6 @@ public class DoubleGun : GunBase
 		exhaustBusy = 0f;
 		// Copy a transform for use.
 		hitPosition = Transform.Instantiate(gunBarrelFront);
-		shotSound = GetComponent<AudioSource>();
 		//saveMaxAirSpeed = player.maxSpeed;
 	}
 	override public void OnEquip(GameObject Player)
@@ -50,6 +49,7 @@ public class DoubleGun : GunBase
 		base.OnReload();
 		player.velocity += view.forward * exhaust * 5f;
 		exhaust = 1f;
+		airBurst.Play ();
 		exhaustBusy = exhaustBusyTime;
 		Camera.main.GetComponent<SmartCamera>().AddShake(.4f);
 		Camera.main.GetComponent<SmartCamera>().AddRecoil(3f);
@@ -158,7 +158,6 @@ public class DoubleGun : GunBase
 			rope.Regenerate ();
 			rope.staticEnd = false;
 		}
-		shotSound.Play();
 	}
 
 	public override void OnPrimaryFire()
