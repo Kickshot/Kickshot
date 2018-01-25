@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public class LevelCompleteScreenManager : MonoBehaviour {
 
     // used to disable camera/movement
-    public GameObject player, levelCompleteScreen, gun;
+    public GameObject player, levelCompleteScreen, gun, crosshair;
     public Text HUDTime, completeTime;
 
     void Start()
@@ -30,10 +30,12 @@ public class LevelCompleteScreenManager : MonoBehaviour {
         player.GetComponent<CharacterController>().enabled = false;
         player.GetComponent<SourcePlayer>().enabled = false;
         gun.SetActive(false);
+        crosshair.SetActive(false);
         levelCompleteScreen.SetActive(true);
         Cursor.lockState = CursorLockMode.None;
         completeTime.text = HUDTime.text;
         HUDTime.enabled = false;
+        Debug.Log(HUDTime.text);
     }
 
     public void ClickMainMenu()
