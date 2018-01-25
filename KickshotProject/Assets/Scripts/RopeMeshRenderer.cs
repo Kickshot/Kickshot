@@ -25,7 +25,55 @@ public class RopeMeshRenderer : MonoBehaviour {
         List<Vector2> uvs = new List<Vector2>();
         List<int> tris = new List<int>();
         List<BoneWeight> weights = new List<BoneWeight>();
-		float distMultiplier = ropesim.distanceBetweenBones;//Vector3.Distance(ropesim.start.position, ropesim.end.position)/(float)parts;
+		float distMultiplier = Vector3.Distance(ropesim.start.position, ropesim.end.position)/(float)parts;
+
+		// End cap
+		BoneWeight capweight = new BoneWeight();
+		capweight.boneIndex0 = ropesim.bones.Count-1;
+		capweight.weight0 = 1f;
+		verts.Add( new Vector3(-radius, ((float)parts)*distMultiplier, -radius ) );
+		weights.Add( capweight );
+		uvs.Add( new Vector2( 0, 0 ) );
+		verts.Add( new Vector3(-radius, ((float)parts)*distMultiplier, radius ) );
+		weights.Add( capweight );
+		uvs.Add( new Vector2( 0, 1 ) );
+		verts.Add( new Vector3(radius, ((float)parts)*distMultiplier, radius ) );
+		weights.Add( capweight );
+		uvs.Add( new Vector2( 1, 1 ) );
+
+		verts.Add( new Vector3(-radius, ((float)parts)*distMultiplier, -radius ) );
+		weights.Add( capweight );
+		uvs.Add( new Vector2( 0, 0 ) );
+		verts.Add( new Vector3(radius, ((float)parts)*distMultiplier, radius ) );
+		weights.Add( capweight );
+		uvs.Add( new Vector2( 1, 1 ) );
+		verts.Add( new Vector3(radius, ((float)parts)*distMultiplier, -radius ) );
+		weights.Add( capweight );
+		uvs.Add( new Vector2( 1, 0 ) );
+
+		capweight.boneIndex0 = 0;
+		capweight.weight0 = 1f;
+
+		verts.Add( new Vector3(-radius, 0, -radius ) );
+		weights.Add( capweight );
+		uvs.Add( new Vector2( 0, 0 ) );
+		verts.Add( new Vector3(radius, 0, radius ) );
+		weights.Add( capweight );
+		uvs.Add( new Vector2( 1, 1 ) );
+		verts.Add( new Vector3(-radius, 0, radius ) );
+		weights.Add( capweight );
+		uvs.Add( new Vector2( 0, 1 ) );
+
+		verts.Add( new Vector3(-radius, 0, -radius ) );
+		weights.Add( capweight );
+		uvs.Add( new Vector2( 0, 0 ) );
+		verts.Add( new Vector3(radius, 0, -radius ) );
+		weights.Add( capweight );
+		uvs.Add( new Vector2( 1, 0 ) );
+		verts.Add( new Vector3(radius, 0, radius ) );
+		weights.Add( capweight );
+		uvs.Add( new Vector2( 1, 1 ) );
+
         for( int i=0;i<parts;i++ ) {
             BoneWeight w1 = new BoneWeight();
             if ( i == parts || i == 0 ) {
@@ -169,21 +217,22 @@ public class RopeMeshRenderer : MonoBehaviour {
                 Start();
             }
         } else {
-            Vector3 max = Vector3.zero;
-            Vector3 min = Vector3.zero;
-            foreach( Transform bone in renderer.bones ) {
-				max.x = Mathf.Max(bone.localPosition.x, max.x);
-				max.y = Mathf.Max(bone.localPosition.y, max.y);
-				max.z = Mathf.Max(bone.localPosition.z, max.z);
+			Vector3 max = ropesim.bones[0].localPosition;
+			Vector3 min = ropesim.bones[0].localPosition;
+			foreach( Transform bone in ropesim.bones ) {
+				Vector3 pos = bone.localPosition;
+				max.x = Mathf.Max(pos.x, max.x);
+				max.y = Mathf.Max(pos.y, max.y);
+				max.z = Mathf.Max(pos.z, max.z);
 
-				min.x = Mathf.Min(bone.localPosition.x, min.x);
-				min.y = Mathf.Min(bone.localPosition.y, min.y);
-				min.z = Mathf.Min(bone.localPosition.z, min.z);
+				min.x = Mathf.Min(pos.x, min.x);
+				min.y = Mathf.Min(pos.y, min.y);
+				min.z = Mathf.Min(pos.z, min.z);
             }
-			Vector3 center = ((max - min) / 2f);
-            Vector3 size = max-min;
-			center.z *= -1f;
-            renderer.localBounds = new Bounds(center, size);
+			max += new Vector3 (radius, radius, radius);
+			min -= new Vector3 (radius, radius, radius);
+			Vector3 center = min + (Vector3.Normalize (max - min) * Vector3.Distance(min,max)/2f);
+			renderer.localBounds = new Bounds(center, max-min);
         }
     }
 }

@@ -956,7 +956,15 @@ public class SourcePlayer : MonoBehaviour {
 
     private void WallMove () {
         Vector3 flatvel = new Vector3 (velocity.x, 0, velocity.z);
-        if (wishJump && wallEntity != null && Mathf.Abs(Vector3.Dot(flatvel.normalized,wallNormal)) < 0.5f && CanWallJump == false) {
+        if (wishJump && wallEntity != null && CanWallJump == false) {
+
+            if (Mathf.Abs(Vector3.Dot(flatvel.normalized, wallNormal)) > 0.5f && wallRunning == false)
+            {
+                EndWallRun();
+                AirMove();
+                return;
+            }
+
 			CurrentWallUpTime += Time.deltaTime;
 			bool saved = false;
 				
@@ -1001,7 +1009,10 @@ public class SourcePlayer : MonoBehaviour {
 
 			float wallBreakMag = -Vector3.Dot (wishdir, velocity);
 
+
 			velocity = ClipVelocity (velocity, wallNormal);
+            velocity = velocity.normalized * velocity.magnitude;
+
             flatvel = new Vector3 (velocity.x, 0f, velocity.z);
             if (flatvel.magnitude < WallRunMinSpeed) {
                 EndWallRun ();
@@ -1203,7 +1214,8 @@ public class SourcePlayer : MonoBehaviour {
 
         float mag = velocity.magnitude;
         bool quickDot = Vector3.Dot (Vector3.Normalize(velocity), hitNormal) > -0.75f;
-        velocity = ClipVelocity (velocity, hitNormal);
+        if(!wallRunning)
+            velocity = ClipVelocity (velocity, hitNormal);
         // If the collision is wall-runnable, and we are attempting to wall-run, don't slow us down!
         if (Mathf.Abs (hitNormal.y) < 0.025f && wishJump && quickDot) {
             velocity = Vector3.Normalize(velocity) * mag;
@@ -1291,6 +1303,7 @@ public class SourcePlayer : MonoBehaviour {
 					// The normals are too different; end wall run.
 					DodgeWall = hitInfo.collider.gameObject;
 					EndWallRun ();
+                    CanWallJump = false;
 				} else {
 					// Continue wall running with new normal.
 					wallEntity = hitInfo.collider.gameObject;
