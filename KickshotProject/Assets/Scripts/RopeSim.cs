@@ -68,6 +68,9 @@ public class RopeSim : MonoBehaviour {
         vel = new List<Vector3>();
 		stuck = new List<bool>();
         int parts = (int)(Vector3.Distance(start.position, end.position)*boneDensity);
+		if (parts == 0) {
+			return;
+		}
         distanceBetweenBones = Vector3.Distance(start.position, end.position)/parts;
         for( int i=0;i<=parts;i++ ) {
             Transform bone = new GameObject("Bone" + i).transform;
@@ -122,6 +125,9 @@ public class RopeSim : MonoBehaviour {
             }
             return;
         }
+		if (bones.Count <= 0) {
+			return;
+		}
         bones[0].position = start.position;
         bones[bones.Count-1].position = end.position;
         for( int i=0;i<bones.Count;i++ ) {
@@ -180,7 +186,10 @@ public class RopeSim : MonoBehaviour {
 		end.position = bones [bones.Count - 1].position;
 
 		if (sticky) {
-			for (int i = 0; i < bones.Count; i++) {			
+			for (int i = 0; i < bones.Count; i++) {		
+				if (stuck [i]) { 
+					continue;
+				}
 				foreach (Collider col in Physics.OverlapSphere(bones[i].position,0.05f,collidesWith,QueryTriggerInteraction.Ignore)) {
 					stuck [i] = true;
 					break;
