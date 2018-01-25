@@ -4,15 +4,16 @@ using UnityEngine;
 
 public class DoubleGun : GunBase
 {
-
 	public Transform gunBarrelFront;
-	private bool hitSomething = false;
+    public GameObject grappleHitCloud;
+    private bool hitSomething = false;
 	private Transform hitPosition;
 	private float hitDist;
 	public float range = 12f;
 	private Vector3 missStart;
 	private Vector3 missEnd;
-	private float saveMaxAirSpeed;
+    public List<AudioClip> grappleHit;
+    private float saveMaxAirSpeed;
 	private float exhaust = 1f;
 	private float exhaustBusy = 0f;
 	public float exhaustBusyTime = 1f;
@@ -32,8 +33,8 @@ public class DoubleGun : GunBase
 		exhaustBusy = 0f;
 		// Copy a transform for use.
 		hitPosition = Transform.Instantiate(gunBarrelFront);
-		//saveMaxAirSpeed = player.maxSpeed;
-	}
+        //saveMaxAirSpeed = player.maxSpeed;
+    }
 	override public void OnEquip(GameObject Player)
 	{
 		base.OnEquip(Player);
@@ -147,6 +148,8 @@ public class DoubleGun : GunBase
 			rope.end.position = hit.point;
 			rope.Regenerate ();
 			player.maxSpeed = 1000f;
+            AudioSource.PlayClipAtPoint(grappleHit[Random.Range(0,grappleHit.Count)], hit.point);
+            Destroy(Instantiate(grappleHitCloud, hit.point, Quaternion.Euler(hit.normal) ), 1f);
 		}
 		else
 		{

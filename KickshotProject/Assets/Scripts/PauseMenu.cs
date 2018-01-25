@@ -25,8 +25,8 @@ public class PauseMenu : MonoBehaviour {
 
 		if (m_PauseGame)
 			Pause ();
-		else
-			UnPause ();
+		//else
+			//UnPause ();
 	}
 
 	public void Pause() {
