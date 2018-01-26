@@ -119,7 +119,10 @@ public class DoubleGun : GunBase
 	}
 	public override void OnSecondaryFireRelease()
 	{
-		rope.staticStart = false;
+        if (hitSomething)
+            busySecondary = 0;
+
+        rope.staticStart = false;
 		rope.sticky = true;
 		rope = null;
 		player.maxSpeed = saveMaxAirSpeed;
