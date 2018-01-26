@@ -209,14 +209,14 @@ public class RopeMeshRenderer : MonoBehaviour {
 
     void Update() {
         SkinnedMeshRenderer renderer = GetComponent<SkinnedMeshRenderer>();
-        if ( !EditorApplication.isPlaying ) {
-            if ( renderer.sharedMesh == null ||
+        if (!EditorApplication.isPlaying ) {
+        if ( renderer.sharedMesh == null ||
                  renderer.sharedMesh.triangles.Length <= 0 ||
                  ropesim.transform.hasChanged || 
                  renderer.bones[0] != ropesim.bones[0]) {
                 Start();
             }
-        } else {
+        } else { 
 			Vector3 max = ropesim.bones[0].localPosition;
 			Vector3 min = ropesim.bones[0].localPosition;
 			foreach( Transform bone in ropesim.bones ) {
@@ -228,8 +228,8 @@ public class RopeMeshRenderer : MonoBehaviour {
 				min.x = Mathf.Min(pos.x, min.x);
 				min.y = Mathf.Min(pos.y, min.y);
 				min.z = Mathf.Min(pos.z, min.z);
-            }
-			max += new Vector3 (radius, radius, radius);
+}
+                max += new Vector3 (radius, radius, radius);
 			min -= new Vector3 (radius, radius, radius);
 			Vector3 center = min + (Vector3.Normalize (max - min) * Vector3.Distance(min,max)/2f);
 			renderer.localBounds = new Bounds(center, max-min);

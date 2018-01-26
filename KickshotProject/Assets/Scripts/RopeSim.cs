@@ -97,6 +97,7 @@ public class RopeSim : MonoBehaviour {
 		distanceBetweenBones += distanceBetweenBones * slack;
         generated = true;
     }
+#if UNITY_EDITOR
     void OnDrawGizmosSelected() {
         if ( !sane ) {
             return;
@@ -108,7 +109,8 @@ public class RopeSim : MonoBehaviour {
         Gizmos.DrawSphere(start.position,0.1f);
         Gizmos.DrawSphere(end.position,0.1f);
     }
-	public void Regenerate() {
+#endif
+    public void Regenerate() {
 		generated = false;
 		transform.hasChanged = true;
 		Awake();
@@ -120,6 +122,7 @@ public class RopeSim : MonoBehaviour {
 			return;
 		}
 		timeStepTimer -= timeStep;
+#if UNITY_EDITOR
         if ( !EditorApplication.isPlaying ) {
             if ( transform.hasChanged || start.hasChanged || end.hasChanged ) {
                 generated = false;
@@ -132,7 +135,8 @@ public class RopeSim : MonoBehaviour {
             }
             return;
         }
-		if (bones.Count <= 0) {
+#endif
+        if (bones.Count <= 0) {
 			return;
 		}
         bones[0].position = start.position;
