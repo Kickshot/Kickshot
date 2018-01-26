@@ -102,8 +102,6 @@ public class DoubleGun : GunBase
 			player.maxSpeed = saveMaxAirSpeed;
 		}
 
-
-
 		// Rocket Update
 		transform.rotation = view.rotation;
 		if (reloading)
