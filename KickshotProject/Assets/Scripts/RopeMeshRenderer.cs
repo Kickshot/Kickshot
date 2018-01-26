@@ -1,7 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 
 [RequireComponent(typeof(RopeSim))]
 [RequireComponent(typeof(SkinnedMeshRenderer))]
@@ -25,54 +27,54 @@ public class RopeMeshRenderer : MonoBehaviour {
         List<Vector2> uvs = new List<Vector2>();
         List<int> tris = new List<int>();
         List<BoneWeight> weights = new List<BoneWeight>();
-		float distMultiplier = Vector3.Distance(ropesim.start.position, ropesim.end.position)/(float)parts;
+        float distMultiplier = Vector3.Distance(ropesim.start.position, ropesim.end.position)/(float)parts;
 
-		// End cap
-		BoneWeight capweight = new BoneWeight();
-		capweight.boneIndex0 = ropesim.bones.Count-1;
-		capweight.weight0 = 1f;
-		verts.Add( new Vector3(-radius, ((float)parts)*distMultiplier, -radius ) );
-		weights.Add( capweight );
-		uvs.Add( new Vector2( 0, 0 ) );
-		verts.Add( new Vector3(-radius, ((float)parts)*distMultiplier, radius ) );
-		weights.Add( capweight );
-		uvs.Add( new Vector2( 0, 1 ) );
-		verts.Add( new Vector3(radius, ((float)parts)*distMultiplier, radius ) );
-		weights.Add( capweight );
-		uvs.Add( new Vector2( 1, 1 ) );
+        // End cap
+        BoneWeight capweight = new BoneWeight();
+        capweight.boneIndex0 = ropesim.bones.Count-1;
+        capweight.weight0 = 1f;
+        verts.Add( new Vector3(-radius, ((float)parts)*distMultiplier, -radius ) );
+        weights.Add( capweight );
+        uvs.Add( new Vector2( 0, 0 ) );
+        verts.Add( new Vector3(-radius, ((float)parts)*distMultiplier, radius ) );
+        weights.Add( capweight );
+        uvs.Add( new Vector2( 0, 1 ) );
+        verts.Add( new Vector3(radius, ((float)parts)*distMultiplier, radius ) );
+        weights.Add( capweight );
+        uvs.Add( new Vector2( 1, 1 ) );
 
-		verts.Add( new Vector3(-radius, ((float)parts)*distMultiplier, -radius ) );
-		weights.Add( capweight );
-		uvs.Add( new Vector2( 0, 0 ) );
-		verts.Add( new Vector3(radius, ((float)parts)*distMultiplier, radius ) );
-		weights.Add( capweight );
-		uvs.Add( new Vector2( 1, 1 ) );
-		verts.Add( new Vector3(radius, ((float)parts)*distMultiplier, -radius ) );
-		weights.Add( capweight );
-		uvs.Add( new Vector2( 1, 0 ) );
+        verts.Add( new Vector3(-radius, ((float)parts)*distMultiplier, -radius ) );
+        weights.Add( capweight );
+        uvs.Add( new Vector2( 0, 0 ) );
+        verts.Add( new Vector3(radius, ((float)parts)*distMultiplier, radius ) );
+        weights.Add( capweight );
+        uvs.Add( new Vector2( 1, 1 ) );
+        verts.Add( new Vector3(radius, ((float)parts)*distMultiplier, -radius ) );
+        weights.Add( capweight );
+        uvs.Add( new Vector2( 1, 0 ) );
 
-		capweight.boneIndex0 = 0;
-		capweight.weight0 = 1f;
+        capweight.boneIndex0 = 0;
+        capweight.weight0 = 1f;
 
-		verts.Add( new Vector3(-radius, 0, -radius ) );
-		weights.Add( capweight );
-		uvs.Add( new Vector2( 0, 0 ) );
-		verts.Add( new Vector3(radius, 0, radius ) );
-		weights.Add( capweight );
-		uvs.Add( new Vector2( 1, 1 ) );
-		verts.Add( new Vector3(-radius, 0, radius ) );
-		weights.Add( capweight );
-		uvs.Add( new Vector2( 0, 1 ) );
+        verts.Add( new Vector3(-radius, 0, -radius ) );
+        weights.Add( capweight );
+        uvs.Add( new Vector2( 0, 0 ) );
+        verts.Add( new Vector3(radius, 0, radius ) );
+        weights.Add( capweight );
+        uvs.Add( new Vector2( 1, 1 ) );
+        verts.Add( new Vector3(-radius, 0, radius ) );
+        weights.Add( capweight );
+        uvs.Add( new Vector2( 0, 1 ) );
 
-		verts.Add( new Vector3(-radius, 0, -radius ) );
-		weights.Add( capweight );
-		uvs.Add( new Vector2( 0, 0 ) );
-		verts.Add( new Vector3(radius, 0, -radius ) );
-		weights.Add( capweight );
-		uvs.Add( new Vector2( 1, 0 ) );
-		verts.Add( new Vector3(radius, 0, radius ) );
-		weights.Add( capweight );
-		uvs.Add( new Vector2( 1, 1 ) );
+        verts.Add( new Vector3(-radius, 0, -radius ) );
+        weights.Add( capweight );
+        uvs.Add( new Vector2( 0, 0 ) );
+        verts.Add( new Vector3(radius, 0, -radius ) );
+        weights.Add( capweight );
+        uvs.Add( new Vector2( 1, 0 ) );
+        verts.Add( new Vector3(radius, 0, radius ) );
+        weights.Add( capweight );
+        uvs.Add( new Vector2( 1, 1 ) );
 
         for( int i=0;i<parts;i++ ) {
             BoneWeight w1 = new BoneWeight();
@@ -209,30 +211,37 @@ public class RopeMeshRenderer : MonoBehaviour {
 
     void Update() {
         SkinnedMeshRenderer renderer = GetComponent<SkinnedMeshRenderer>();
+#if UNITY_EDITOR
         if (!EditorApplication.isPlaying ) {
-        if ( renderer.sharedMesh == null ||
+#endif
+            if ( renderer.sharedMesh == null ||
                  renderer.sharedMesh.triangles.Length <= 0 ||
                  ropesim.transform.hasChanged || 
                  renderer.bones[0] != ropesim.bones[0]) {
                 Start();
+                return;
             }
+#if UNITY_EDITOR
         } else { 
-			Vector3 max = ropesim.bones[0].localPosition;
-			Vector3 min = ropesim.bones[0].localPosition;
-			foreach( Transform bone in ropesim.bones ) {
-				Vector3 pos = bone.localPosition;
-				max.x = Mathf.Max(pos.x, max.x);
-				max.y = Mathf.Max(pos.y, max.y);
-				max.z = Mathf.Max(pos.z, max.z);
+#endif
+            Vector3 max = ropesim.bones[0].localPosition;
+            Vector3 min = ropesim.bones[0].localPosition;
+            foreach( Transform bone in ropesim.bones ) {
+                Vector3 pos = bone.localPosition;
+                max.x = Mathf.Max(pos.x, max.x);
+                max.y = Mathf.Max(pos.y, max.y);
+                max.z = Mathf.Max(pos.z, max.z);
 
-				min.x = Mathf.Min(pos.x, min.x);
-				min.y = Mathf.Min(pos.y, min.y);
-				min.z = Mathf.Min(pos.z, min.z);
-}
-                max += new Vector3 (radius, radius, radius);
-			min -= new Vector3 (radius, radius, radius);
-			Vector3 center = min + (Vector3.Normalize (max - min) * Vector3.Distance(min,max)/2f);
-			renderer.localBounds = new Bounds(center, max-min);
+                min.x = Mathf.Min(pos.x, min.x);
+                min.y = Mathf.Min(pos.y, min.y);
+                min.z = Mathf.Min(pos.z, min.z);
+            }
+            max += new Vector3 (radius, radius, radius);
+            min -= new Vector3 (radius, radius, radius);
+            Vector3 center = min + (Vector3.Normalize (max - min) * Vector3.Distance(min,max)/2f);
+            renderer.localBounds = new Bounds(center, max-min);
+#if UNITY_EDITOR
         }
+#endif
     }
 }
