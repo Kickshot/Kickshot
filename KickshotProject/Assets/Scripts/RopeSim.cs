@@ -9,6 +9,8 @@ public class RopeSim : MonoBehaviour {
     public Transform start;
     public Transform end;
     public float boneDensity = 1f;
+	public float timeStep = 1 / 60f;
+	private float timeStepTimer = 0f;
     [HideInInspector]
     public List<Transform> bones = new List<Transform>();
     private List<Vector3> accel;
@@ -113,6 +115,11 @@ public class RopeSim : MonoBehaviour {
 	}
 
     void Update() {
+		if (timeStepTimer < timeStep && timeStep > 0f) {
+			timeStepTimer += Time.deltaTime;
+			return;
+		}
+		timeStepTimer -= timeStep;
         if ( !EditorApplication.isPlaying ) {
             if ( transform.hasChanged || start.hasChanged || end.hasChanged ) {
                 generated = false;
