@@ -35,5 +35,6 @@ public class TimelineController : MonoBehaviour {
         foreach (GameObject o in enableds) {
             o.SetActive(true);
         }
+        DestroyImmediate(gameObject);
     }
 }
