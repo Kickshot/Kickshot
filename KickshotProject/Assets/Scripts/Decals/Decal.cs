@@ -6,7 +6,6 @@ using System.Threading;
 [RequireComponent( typeof(MeshFilter) )]
 [RequireComponent( typeof(MeshRenderer) )]
 public class Decal : MonoBehaviour {
-    public Material decal;
     public float offset = 0.005f;
     public bool randomRotateOnSpawn = false;
     public LayerMask layerMask;
@@ -25,8 +24,6 @@ public class Decal : MonoBehaviour {
         if (randomRotateOnSpawn) {
             transform.RotateAround (transform.position, transform.up, Random.Range (0f, 360f));
         }
-        // Set the texture of our decal.
-        GetComponent<MeshRenderer> ().material = decal;
         BuildDecal ();
         // Make sure we don't re-build the mesh by saying our transform hasn't changed.
         transform.hasChanged = false;
@@ -76,7 +73,7 @@ public class Decal : MonoBehaviour {
         subMeshFollower.target = target.transform;
         MeshFilter subMeshFilter = subDecal.AddComponent<MeshFilter> ();
         MeshRenderer subRenderer = subDecal.AddComponent<MeshRenderer> ();
-        subRenderer.material = decal;
+		subRenderer.material = GetComponent<MeshRenderer>().material;
         subDecals.Add (subDecal);
         return subMeshFilter;
     }
@@ -124,7 +121,7 @@ public class Decal : MonoBehaviour {
             DecalBuilder builder = new DecalBuilder ();
             builder.mat = transform.worldToLocalMatrix * obj.transform.localToWorldMatrix;
             builder.position = affectedMesh.transform.InverseTransformPoint(transform.position);
-            builder.rotation = obj.transform.rotation*Quaternion.Inverse(transform.rotation);
+			builder.rotation = GetRotation (builder.mat);
             builder.scale = GetScale (obj);
             builder.tree = affectedMesh;
             builder.offset = offset*Random.Range(0.1f,1f);
@@ -141,7 +138,7 @@ public class Decal : MonoBehaviour {
             DecalBuilder builder = new DecalBuilder ();
             builder.mat = transform.worldToLocalMatrix * obj.transform.localToWorldMatrix;
             builder.position = affectedMesh.transform.InverseTransformPoint(transform.position);
-            builder.rotation = obj.transform.rotation*Quaternion.Inverse(transform.rotation);
+			builder.rotation = GetRotation (builder.mat);
             builder.scale = GetScale (obj);
             builder.tree = affectedMesh;
             builder.offset = offset*Random.Range(0.1f,1f);
@@ -176,6 +173,10 @@ public class Decal : MonoBehaviour {
         newNorms.Clear ();
         newTri.Clear ();
     }
+
+	public Quaternion GetRotation(Matrix4x4 matrix) {
+		return Quaternion.LookRotation(matrix.GetColumn(2), matrix.GetColumn(1));
+	}
 
     public void FinishMesh( bool isStatic, GameObject obj, List<Vector3> verts, List<Vector3> norms, List<Vector2> uvs, LinkedList<int> tris, GameObject target = null) {
         if (tris.Count <= 0) {
