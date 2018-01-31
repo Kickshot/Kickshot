@@ -23,11 +23,14 @@ public class PauseMenuManager : MonoBehaviour
         pauseMenu.SetActive(true);
         // Hide crosshair
         crosshair.SetActive(false);
+		Cursor.lockState = CursorLockMode.None;
+		if (player == null) {
+			return;
+		}
+		gun.SetActive(false);
         player.GetComponent<MouseLook>().enabled = false;
         player.GetComponent<CharacterController>().enabled = false;
         player.GetComponent<SourcePlayer>().enabled = false;
-        gun.SetActive(false);
-        Cursor.lockState = CursorLockMode.None;
     }
 
     public void ClickResume()
@@ -36,11 +39,14 @@ public class PauseMenuManager : MonoBehaviour
         pauseMenu.SetActive(false);
         // Show crosshair
         crosshair.SetActive(true);
+		Cursor.lockState = CursorLockMode.Locked;
+		if (player == null) {
+			return;
+		}
         player.GetComponent<MouseLook>().enabled = true;
         player.GetComponent<CharacterController>().enabled = true;
         player.GetComponent<SourcePlayer>().enabled = true;
         gun.SetActive(true);
-        Cursor.lockState = CursorLockMode.Locked;
     }
 
     public void ClickQuit()
