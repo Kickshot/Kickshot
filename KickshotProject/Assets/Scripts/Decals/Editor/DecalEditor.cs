@@ -7,7 +7,6 @@ using UnityEditor;
 public class DecalEditor : Editor {
     public override void OnInspectorGUI() {
         Decal decal = (Decal)target;
-        decal.decal = AssetField<Material>("Material", decal.decal);
         decal.offset =  EditorGUILayout.FloatField("Offset", decal.offset);
         decal.randomRotateOnSpawn =  EditorGUILayout.Toggle("Spawn with random rotation", decal.randomRotateOnSpawn);
         decal.layerMask = LayerMaskField("Affected Layers", decal.layerMask);
