@@ -28,7 +28,6 @@ public class TimelineController : MonoBehaviour {
     }
 
     private void StartGame() {
-        Debug.Log("Timeline over");
         foreach (GameObject o in disableds) {
             o.SetActive(false);
         }
