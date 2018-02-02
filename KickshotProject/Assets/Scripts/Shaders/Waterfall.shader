@@ -16,6 +16,7 @@
 		CGPROGRAM
 		#pragma surface surf Standard alpha:fade
 		#pragma target 3.0
+        #include "UnityCG.cginc"
 
         sampler2D _AlphaTex;
 		sampler2D _MainTex;
