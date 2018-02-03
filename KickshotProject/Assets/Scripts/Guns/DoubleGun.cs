@@ -150,7 +150,7 @@ public class DoubleGun : GunBase
 			rope.Regenerate ();
 			player.maxSpeed = 1000f;
             AudioSource.PlayClipAtPoint(grappleHit[Random.Range(0,grappleHit.Count)], hit.point);
-            Destroy(Instantiate(grappleHitCloud, hit.point, Quaternion.Euler(hit.normal) ), 1f);
+            Destroy(Instantiate(grappleHitCloud, hit.point, Quaternion.LookRotation(hit.normal) ), 1f);
 		}
 		else
 		{
