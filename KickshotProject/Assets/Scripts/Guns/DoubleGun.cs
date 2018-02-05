@@ -30,16 +30,17 @@ public class DoubleGun : GunBase
     public float GrappleUsePercentage = 50f;
     public float UngroundedRecoveryPercentage = 10f;
     public float GroundedRecoveryPercentage = 50f;
-    private float energy;
+    internal float energy;
 
     [Header("Rocket Launcher")]
+    public AudioSource OverheatClip;
     public float RocketUsePercentage = 35f;
     public float DecayPercentage = 10f;
     public float MaxVentVelocity = 50f;
     public float VentPenalty = 1f;
     public float OverheatPenalty = 2f;
     public float NoHeatVentPercentage = 10f; //Percentage of MaxVentVelocity attained when heat = 0.
-    private float heat;
+    internal float heat;
 
     void Start()
 	{
@@ -79,7 +80,7 @@ public class DoubleGun : GunBase
 	}
 	override public void Update()
 	{
-        print("energy = " + energy + " heat = " + heat);
+        //print("energy = " + energy + " heat = " + heat);
         //Grapple Hook energy system.
         if(player.controller.isGrounded)
             energy += GroundedRecoveryPercentage * Time.deltaTime;
@@ -161,6 +162,7 @@ public class DoubleGun : GunBase
 
     public void Overheat()
     {
+        OverheatClip.Play();
         exhaustBusy = OverheatPenalty;
         heat = 0f;
     }
