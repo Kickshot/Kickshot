@@ -29,6 +29,12 @@ public class CircleColorChange : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
     {
+        if (player == null)
+            player = FindObjectOfType<SourcePlayer>();
+
+        if (player == null)
+            return;
+
         img.fillAmount = map(player.velocity.magnitude,0,100,0,1);
         img.color = Color.Lerp(to, from, img.fillAmount); 
 	}

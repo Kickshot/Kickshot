@@ -40,6 +40,12 @@ public class HUD : MonoBehaviour {
 
     private void LateUpdate()
     {
+        if (player == null)
+            player = FindObjectOfType<SourcePlayer>();
+
+        if (player == null)
+            return;
+
         TimeSpan ts = TimeSpan.FromSeconds(timer.Time);
         //print("Minutes = " + ts.Minutes + " Seconds = " + ts.Seconds + " Milliseconds = " + ts.Milliseconds);
         timerText.text = ts.Minutes.ToString().PadLeft(2, '0') + ":" + (ts.Seconds % 60).ToString().PadLeft(2,'0') + ":" + ts.Milliseconds.ToString().PadLeft(3, '0');
