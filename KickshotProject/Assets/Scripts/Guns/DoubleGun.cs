@@ -16,7 +16,7 @@ public class DoubleGun : GunBase
     private float saveMaxAirSpeed;
 	private float exhaust = 1f;
 	private float exhaustBusy = 0f;
-	public float exhaustBusyTime = 1f;
+	
 	private List<RopeSim> ropes;
 	public AudioSource airBurst;
 
@@ -32,9 +32,19 @@ public class DoubleGun : GunBase
     public float GroundedRecoveryPercentage = 50f;
     private float energy;
 
+    [Header("Rocket Launcher")]
+    public float RocketUsePercentage = 35f;
+    public float DecayPercentage = 10f;
+    public float MaxVentVelocity = 50f;
+    public float VentPenalty = 1f;
+    public float OverheatPenalty = 2f;
+    public float NoHeatVentPercentage = 10f; //Percentage of MaxVentVelocity attained when heat = 0.
+    private float heat;
+
     void Start()
 	{
         energy = 100f;
+        heat = 0f;
 		ropes = new List<RopeSim> ();
 		exhaust = 1f;
 		exhaustBusy = 0f;
@@ -59,16 +69,17 @@ public class DoubleGun : GunBase
             return;
 
         base.OnReload();
-		player.velocity += view.forward * exhaust * 5f;
+		player.velocity += view.forward * ( (heat == 0f ? NoHeatVentPercentage : heat)/100f) * MaxVentVelocity;
+        heat = 0f;
 		exhaust = 1f;
 		airBurst.Play ();
-		exhaustBusy = exhaustBusyTime;
+		exhaustBusy = VentPenalty;
 		Camera.main.GetComponent<SmartCamera>().AddShake(.4f);
 		Camera.main.GetComponent<SmartCamera>().AddRecoil(3f);
 	}
 	override public void Update()
 	{
-        print("energy = " + energy);
+        print("energy = " + energy + " heat = " + heat);
         //Grapple Hook energy system.
         if(player.controller.isGrounded)
             energy += GroundedRecoveryPercentage * Time.deltaTime;
@@ -76,6 +87,14 @@ public class DoubleGun : GunBase
             energy += UngroundedRecoveryPercentage * Time.deltaTime;
 
         energy = Mathf.Clamp(energy, 0f, 100f);
+
+        //Rocket Laucher heat system.
+        heat -= DecayPercentage * Time.deltaTime;
+        heat = Mathf.Clamp(heat, 0f , float.MaxValue);
+        if(heat > 100f)
+        {
+            Overheat();
+        }
 
         base.Update();
 		if (ropes.Count > 10) {
@@ -139,6 +158,13 @@ public class DoubleGun : GunBase
 			}
 		}
 	}
+
+    public void Overheat()
+    {
+        exhaustBusy = OverheatPenalty;
+        heat = 0f;
+    }
+
 	public override void OnSecondaryFireRelease()
 	{
         if (hitSomething)
@@ -201,6 +227,8 @@ public class DoubleGun : GunBase
 		if (exhaust > 5f) {
 			exhaust = 5f;
 		}
+        heat += RocketUsePercentage;
+
 		RaycastHit hit;
 		rocketLauncher.SetTrigger("Fire");
 		Vector3 hitpos = view.position + view.forward * 1000f;
