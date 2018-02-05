@@ -124,7 +124,7 @@ public class SourcePlayer : MonoBehaviour {
     // How much to allow penetration.
     private float lastGrunt;
     private float fallVelocity;
-    private CharacterController controller;
+    internal CharacterController controller;
     private Vector3 groundNormal = new Vector3 (0f, 1f, 0f);
     private float groundFriction;
     private float distToGround;

@@ -26,8 +26,15 @@ public class DoubleGun : GunBase
 	public Rocket rocket;
 	public Animator rocketLauncher;
 
-	void Start()
+    [Header("Grapple Hook")]
+    public float GrappleUsePercentage = 50f;
+    public float UngroundedRecoveryPercentage = 10f;
+    public float GroundedRecoveryPercentage = 50f;
+    private float energy;
+
+    void Start()
 	{
+        energy = 100f;
 		ropes = new List<RopeSim> ();
 		exhaust = 1f;
 		exhaustBusy = 0f;
@@ -46,8 +53,12 @@ public class DoubleGun : GunBase
 		hitSomething = false;
 		player.maxSpeed = saveMaxAirSpeed;
 	}
-	override public void OnReload() {
-		base.OnReload();
+	override public void OnReload()
+    {
+        if (exhaustBusy > 0f)
+            return;
+
+        base.OnReload();
 		player.velocity += view.forward * exhaust * 5f;
 		exhaust = 1f;
 		airBurst.Play ();
@@ -57,19 +68,30 @@ public class DoubleGun : GunBase
 	}
 	override public void Update()
 	{
-		base.Update();
+        print("energy = " + energy);
+        //Grapple Hook energy system.
+        if(player.controller.isGrounded)
+            energy += GroundedRecoveryPercentage * Time.deltaTime;
+        else
+            energy += UngroundedRecoveryPercentage * Time.deltaTime;
+
+        energy = Mathf.Clamp(energy, 0f, 100f);
+
+        base.Update();
 		if (ropes.Count > 10) {
 			RopeSim temp = ropes [0];
 			Destroy (temp.gameObject);
 			ropes.Remove (temp);
 		}
-		if (exhaustBusy > 0f) {
+		if (exhaustBusy > 0f)
+        {
 			exhaustBusy -= Time.deltaTime;
 		}
 		if (!equipped)
 		{
 			return;
 		}
+        
 
 		transform.rotation = view.rotation;
 		if (hitSomething)
@@ -133,6 +155,12 @@ public class DoubleGun : GunBase
 		if (exhaustBusy > 0f) { 
 			return;
 		}
+
+        if(energy - GrappleUsePercentage < 0)
+        {
+            return;
+        }
+        energy -= GrappleUsePercentage;
 		RaycastHit hit;
 		GameObject ropeRoot = Instantiate (ropePrefab,Vector3.zero,Quaternion.identity);
 		rope = ropeRoot.GetComponentInChildren<RopeSim> ();
