@@ -23,6 +23,6 @@ public class PlaySplash : MonoBehaviour {
     {
         Cursor.visible = true;
         //Load in Main Menu here.
-        SceneManager.LoadScene("MainMenuIslands");
+        SceneManager.LoadScene("MainMenu");
     }
 }
