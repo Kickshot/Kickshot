@@ -34,6 +34,9 @@ public class AmmoColorChange : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        gun = FindObjectOfType<DoubleGun>();
+        if (gun == null)
+            return;
         switch (variable)
         {
             case Variable.RocketLaucher:
