@@ -35,4 +35,5 @@ sysinfo.txt
 # Builds
 *.apk
 *.unitypackage
+*.ide
 *.ide-wal
