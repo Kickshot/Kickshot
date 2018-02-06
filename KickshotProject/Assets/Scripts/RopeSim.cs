@@ -150,21 +150,21 @@ public class RopeSim : MonoBehaviour {
             // We don't move end bones
             Vector3 dir;
             accel[i] = gravity;
-            vel[i] += accel[i]*Time.deltaTime;
+            vel[i] += accel[i]*timeStep;
             // Classic spring constraints
             if (i != 0) {
                 dir = Vector3.Normalize (bones [i].position - bones [i - 1].position);
                 if (dir.magnitude == 0) {
                     dir = bones [i - 1].forward;
                 }
-                vel [i] += ((bones [i - 1].position + dir * distanceBetweenBones) - bones [i].position) * Time.deltaTime * strength;
+                vel [i] += ((bones [i - 1].position + dir * distanceBetweenBones) - bones [i].position) * timeStep * strength;
             }
             if (i != bones.Count - 1) {
                 dir = Vector3.Normalize (bones [i].position - bones [i + 1].position);
                 if (dir.magnitude == 0) {
                     dir = -bones [i + 1].forward;
                 }
-                vel [i] += ((bones [i + 1].position + dir * distanceBetweenBones) - bones [i].position) * Time.deltaTime * strength;
+                vel [i] += ((bones [i + 1].position + dir * distanceBetweenBones) - bones [i].position) * timeStep * strength;
                 bones [i].up = Vector3.Normalize (bones [i + 1].position - bones [i].position);
             } else {
                 bones [i].up = -Vector3.Normalize (bones [i - 1].position - bones [i].position);
@@ -181,7 +181,7 @@ public class RopeSim : MonoBehaviour {
 
         for( int i=0;i<bones.Count;i++ ) {
 #if UNITY_EDITOR
-            animationTimer += Time.deltaTime;
+            animationTimer += timeStep;
 
             if ( recordAnimation && animationTimer > 1f/animationFPS && Time.time > settleTime && Time.time < animationLength+settleTime ) {
                 animationTimer = 0f;
@@ -196,7 +196,7 @@ public class RopeSim : MonoBehaviour {
             if (i == 0 && staticStart || i == bones.Count-1 && staticEnd) {
                 continue;
             }
-            bones [i].position += vel [i] * Time.deltaTime;
+            bones [i].position += vel [i] * timeStep;
         }
         start.position = bones [0].position;
         end.position = bones [bones.Count - 1].position;
