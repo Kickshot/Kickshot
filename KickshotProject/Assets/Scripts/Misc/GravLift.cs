@@ -9,6 +9,7 @@ public class GravLift : MonoBehaviour
     public float Cooldown;
 
     public bool NoCoolDown;
+    public bool AdditiveVelocity;
 
     private float HitTime;
     // Use this for initialization
@@ -37,7 +38,10 @@ public class GravLift : MonoBehaviour
         if (AllowedToJump)
         {
             SourcePlayer player = other.gameObject.GetComponent<SourcePlayer>();
-            player.velocity = Velocity;
+            if (AdditiveVelocity)
+                player.velocity += Velocity;
+            else
+                player.velocity = Velocity;
             HitTime = 0;
         }
     }
@@ -47,7 +51,10 @@ public class GravLift : MonoBehaviour
         if (NoCoolDown)
         {
             SourcePlayer player = other.gameObject.GetComponent<SourcePlayer>();
-            player.velocity = Velocity;
+            if(AdditiveVelocity)
+                player.velocity += Velocity;
+            else
+                player.velocity = Velocity;
         }
     }
 }
