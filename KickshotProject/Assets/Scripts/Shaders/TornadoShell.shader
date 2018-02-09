@@ -1,5 +1,6 @@
 ﻿Shader "Effects/TornadoShell" {
 	Properties {
+		_Texture ("Texture", 2D) = "white" {}
 		_Color ("Color", Color) = (1,1,1,1)
         _USpeed ("U Speed", Range(0,20)) = 0.0
         _VSpeed ("V Speed", Range(0,20)) = 0.0
