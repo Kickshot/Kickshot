@@ -32,6 +32,7 @@ public static class ResourceManager {
         resources.Add ("MedeaGrunt",            new string[]{"Sounds/jumpgrunt"});
         resources.Add ("MedeaPainGrunt",        new string[]{"Sounds/hurtgrunt"});
         resources.Add ("BoneSnap",              new string[]{"Sounds/bonecrack"});
+        resources.Add("ShatterWall",            new string[] { "Prefabs/WorldObjects/ShatterWall" });
 
         // Whomp Fortress music.
         resources.Add ("MarioMusic",        new string[]{"Sounds/Super Mario 64 - Main Theme Music - Bob-Omb Battlefield"});

@@ -4,25 +4,9 @@ using UnityEngine;
 
 public class ShatterWall : MonoBehaviour
 {
-    [SerializeField]
-    private GameObject ShatteredWallObj;
-    [SerializeField]
-    private float CenterToObjVelScale;
-    [SerializeField]
-    private float ForwardVelScale;
-
-
-    // Use this for initialization
-    void Start()
-    {
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
+    public GameObject ShatteredWallObj;
+    public float CenterToObjVelScale;
+    public float ForwardVelScale;
 
     void OnCollisionEnter(Collision collision)
     {
