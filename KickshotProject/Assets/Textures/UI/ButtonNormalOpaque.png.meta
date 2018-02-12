@@ -1,6 +1,6 @@
 fileFormatVersion: 2
-guid: c23f436bf7ba64fff93c43f31e90213c
-timeCreated: 1518390285
+guid: 7b311e908d79b4919bcb955f98379430
+timeCreated: 1518395673
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName: {}
@@ -60,7 +60,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 2
+    textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -70,7 +70,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 2
+    textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -80,7 +80,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 2
+    textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -89,42 +89,8 @@ TextureImporter:
   spriteSheet:
     serializedVersion: 2
     sprites: []
-    outline:
-    - - {x: -191, y: 42.5}
-      - {x: -252, y: -18.5}
-      - {x: -252, y: -42.5}
-      - {x: -230, y: -42.5}
-      - {x: -146, y: 41.5}
-      - {x: -146, y: 42.5}
-    - - {x: -135, y: 42.5}
-      - {x: -219, y: -41.5}
-      - {x: -219, y: -42.5}
-      - {x: 252, y: -42.5}
-      - {x: 252, y: 42.5}
-    - - {x: -218, y: 42.5}
-      - {x: -252, y: 8.5}
-      - {x: -252, y: -12.5}
-      - {x: -251, y: -12.5}
-      - {x: -197, y: 41.5}
-      - {x: -197, y: 42.5}
-    physicsShape:
-    - - {x: -190, y: 42.5}
-      - {x: -252, y: -19.5}
-      - {x: -252, y: -42.5}
-      - {x: -231, y: -42.5}
-      - {x: -147, y: 41.5}
-      - {x: -147, y: 42.5}
-    - - {x: -134, y: 42.5}
-      - {x: -218, y: -41.5}
-      - {x: -218, y: -42.5}
-      - {x: -110, y: -42.5}
-      - {x: -110, y: 42.5}
-    - - {x: -217, y: 42.5}
-      - {x: -252, y: 7.5}
-      - {x: -252, y: -11.5}
-      - {x: -251, y: -11.5}
-      - {x: -198, y: 41.5}
-      - {x: -198, y: 42.5}
+    outline: []
+    physicsShape: []
   spritePackingTag: 
   userData: 
   assetBundleName: 
