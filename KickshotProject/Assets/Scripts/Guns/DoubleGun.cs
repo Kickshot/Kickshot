@@ -144,7 +144,6 @@ public class DoubleGun : GunBase
 			if (rope != null) {
 				rope.start.position = gunBarrelFront.position;
 			}
-            else { Debug.Log("null rope"); }
 			player.maxSpeed = saveMaxAirSpeed;
 		}
 
