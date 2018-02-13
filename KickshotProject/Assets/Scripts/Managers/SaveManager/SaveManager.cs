@@ -23,6 +23,10 @@ public static class SaveManager
                 data.Add (new GunSaveData (gun.gameObject));
             }
         }
+        foreach(ShatterWall wall in UnityEngine.Object.FindObjectsOfType<ShatterWall>())
+        {
+            data.Add(new WallSaveData(wall.gameObject));
+        }
     }
 
     // Destroys everything in the world (that has save data), and recreates them with saved parameters.
