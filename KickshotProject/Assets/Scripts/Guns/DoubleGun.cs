@@ -82,6 +82,9 @@ public class DoubleGun : GunBase
 	{
         //print("energy = " + energy + " heat = " + heat);
         //Grapple Hook energy system.
+        if (player == null)
+            return;
+
         if(player.controller.isGrounded)
             energy += GroundedRecoveryPercentage * Time.deltaTime;
         else
@@ -172,9 +175,11 @@ public class DoubleGun : GunBase
         if (hitSomething)
             busySecondary = 0;
 
-        rope.staticStart = false;
-		rope.sticky = true;
-		rope = null;
+        if (rope != null) {
+            rope.staticStart = false;
+            rope.sticky = true;
+            rope = null;
+        }
 		player.maxSpeed = saveMaxAirSpeed;
 		hitSomething = false;
 	}
