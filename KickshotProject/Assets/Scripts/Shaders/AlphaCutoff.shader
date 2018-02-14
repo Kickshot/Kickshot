@@ -20,6 +20,7 @@
 		struct Input {
 			float2 uv_MainTex;
             float2 uv_AltTex;
+            float2 uv_CutoffTex;
 		};
         
 		float _Cutoff;
@@ -27,9 +28,9 @@
 		void surf (Input IN, inout SurfaceOutputStandard o) {
 			fixed4 m = tex2D (_MainTex, IN.uv_MainTex);
             fixed4 a = tex2D (_AltTex, IN.uv_AltTex);
-            fixed c = lerp(1, tex2D (_CutoffTex, IN.uv_MainTex).x, _Cutoff);
+            fixed c = clamp(tex2D (_CutoffTex, IN.uv_CutoffTex).x + _Cutoff*2 - 1,0,1);
 
-            fixed4 ret = m * (c) + a * (1 - c);
+            fixed4 ret = a * (c) + m * (1 - c);
 
 			o.Albedo = ret.rgb;
 			o.Alpha = ret.a;
