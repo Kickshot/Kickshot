@@ -175,9 +175,11 @@ public class DoubleGun : GunBase
         if (hitSomething)
             busySecondary = 0;
 
-        rope.staticStart = false;
-		rope.sticky = true;
-		rope = null;
+        if (rope != null) {
+            rope.staticStart = false;
+            rope.sticky = true;
+            rope = null;
+        }
 		player.maxSpeed = saveMaxAirSpeed;
 		hitSomething = false;
 	}
