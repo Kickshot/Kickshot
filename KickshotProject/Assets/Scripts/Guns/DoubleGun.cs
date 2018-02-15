@@ -15,7 +15,7 @@ public class DoubleGun : GunBase
     public List<AudioClip> grappleHit;
     private float saveMaxAirSpeed;
 	private float exhaust = 1f;
-	private float exhaustBusy = 0f;
+	internal float exhaustBusy = 0f;
 	
 	private List<RopeSim> ropes;
 	public AudioSource airBurst;
@@ -31,6 +31,7 @@ public class DoubleGun : GunBase
     public float UngroundedRecoveryPercentage = 10f;
     public float GroundedRecoveryPercentage = 50f;
     internal float energy;
+    Transform grappleShoulderBone;
 
     [Header("Rocket Launcher")]
     public AudioSource OverheatClip;
@@ -41,6 +42,7 @@ public class DoubleGun : GunBase
     public float OverheatPenalty = 2f;
     public float NoHeatVentPercentage = 10f; //Percentage of MaxVentVelocity attained when heat = 0.
     internal float heat;
+    internal bool isOverheating;
 
     void Start()
 	{
@@ -57,7 +59,8 @@ public class DoubleGun : GunBase
 	{
 		base.OnEquip(Player);
 		saveMaxAirSpeed = player.maxSpeed;
-	}
+        grappleShoulderBone = player.GetComponentInChildren<Animator>().GetBoneTransform(HumanBodyBones.LeftUpperArm);
+    }
 	override public void OnUnequip(GameObject Player)
 	{
 		base.OnUnequip(Player);
@@ -130,19 +133,19 @@ public class DoubleGun : GunBase
 				//player.Accelerate (dir, 5f, 100f);
 			//}
 			if (player.velocity.magnitude != 0f) {
-				rope.start.position = gunBarrelFront.position;
+				rope.start.position = grappleShoulderBone.position;
 				rope.end.position = hitPosition.position;
 				if (Vector3.Distance (hitPosition.position, view.position) > hitDist) {
 					player.Accelerate (dir, 1f / Time.deltaTime, -Vector3.Dot (player.velocity, dir));
 				}
-				missStart = gunBarrelFront.position;
+				missStart = grappleShoulderBone.position;
 				missEnd = hitPosition.position;
 			}
 		}
 		else
 		{
 			if (rope != null) {
-				rope.start.position = gunBarrelFront.position;
+				rope.start.position = grappleShoulderBone.position;
 			}
 			player.maxSpeed = saveMaxAirSpeed;
 		}
@@ -165,9 +168,18 @@ public class DoubleGun : GunBase
 
     public void Overheat()
     {
+        isOverheating = true;
         OverheatClip.Play();
         exhaustBusy = OverheatPenalty;
         heat = 0f;
+
+        StartCoroutine(ReleaseOverheat());
+    }
+
+    IEnumerator ReleaseOverheat()
+    {
+        yield return new WaitForSeconds(OverheatPenalty);
+        isOverheating = false;
     }
 
 	public override void OnSecondaryFireRelease()
@@ -206,7 +218,8 @@ public class DoubleGun : GunBase
 			hitPosition.position = hit.point;
 			hitSomething = true;
 			hitDist = Mathf.Max(hit.distance,1f);
-			rope.start.position = gunBarrelFront.position;
+            
+            rope.start.position = grappleShoulderBone.position;
 			rope.end.position = hit.point;
 			rope.Regenerate ();
 			player.maxSpeed = 1000f;
