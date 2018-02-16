@@ -4,22 +4,19 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 
-public class GameManager : MonoBehaviour
-{
+public class GameManager : MonoBehaviour {
     public static GameManager instance = null;
 
     SourcePlayer _player;
     LevelTimer _timer;
     float _postLevelTimer;
-    bool saveOnNextFrame = false;
-    public Vector3 playerVelocity;
-
+    bool _saveOnNextFrame = false;
     bool _postLevelState = false;
+	public bool flyby = false;
 
     public SourcePlayer Player
     {
-        get
-        {
+        get {
             if (_player == null) {
                 GameObject p = GameObject.FindGameObjectWithTag ("Player");
                 if (p != null) {
@@ -27,55 +24,43 @@ public class GameManager : MonoBehaviour
                     return _player;
                 }
             }
-            return null;
+            return _player;
         }
     }
-    /*public LevelTimer GameTimer
-    {
-        get
-        {
-            if (_timer == null)
-                _timer = GetComponent<LevelTimer>();
-            return _timer;
-        }
-    }*/
 
+	[HideInInspector]
+	public Vector3 playerVelocity;
 
-    void Awake()
-    {
+    void Awake() {
         if (instance == null)
             instance = this;
 
         else if (instance != this)
             Destroy(gameObject);
 
-        GameObject m = new GameObject ();
-        m.AddComponent<MusicManager> ();
-        
+        GameObject m = new GameObject ();        
         DontDestroyOnLoad(gameObject);
-
         SceneManager.sceneLoaded += SceneLoaded;
     }
-        
 
-    void SceneLoaded(Scene scene, LoadSceneMode mode)
-    {
-        saveOnNextFrame = true;
-        //SaveManager.Save();
-        //GameTimer.Reset();
+    void SceneLoaded(Scene scene, LoadSceneMode mode) {
+        _saveOnNextFrame = true;
     }
 
-    void Update()
-    {
-        if (saveOnNextFrame) {
+	void FinishFlyby() {
+		flyby = false;
+	}
+
+    void Update() {
+		if (_saveOnNextFrame && !flyby) {
             SaveManager.Save();
-            saveOnNextFrame = false;
+            _saveOnNextFrame = false;
         }
+		if (Player != null) {
+			playerVelocity = Player.velocity;
+		}
         if(_postLevelState)
         {
-            //if (Player != null) {
-                //playerVelocity = Player.velocity;
-            //}
             if(Input.GetButtonDown("Fire1") || _postLevelTimer <= 0 )
             {
                 _postLevelState = false;
@@ -85,20 +70,16 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void Died()
-    {
+    public void Died() {
         SaveManager.Load();
-        //GameTimer.Reset();
     }
 
-    public void LevelFinished()
-    {
+    public void LevelFinished() {
         _postLevelState = true;
-        _postLevelTimer = 4f;
+        _postLevelTimer = 2f;
     }
 
-    public void LoadNext()
-    {
+    public void LoadNext() {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
     }
 }
