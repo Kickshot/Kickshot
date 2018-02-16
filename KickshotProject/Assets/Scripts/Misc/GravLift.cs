@@ -30,6 +30,8 @@ public class GravLift : MonoBehaviour
 
     void OnTriggerStay(Collider other)
     {
+        if (!other.CompareTag("Player"))
+            return;
         if (NoCoolDown)
             return;
 
@@ -48,6 +50,8 @@ public class GravLift : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        if (!other.CompareTag("Player"))
+            return;
         if (NoCoolDown)
         {
             SourcePlayer player = other.gameObject.GetComponent<SourcePlayer>();
