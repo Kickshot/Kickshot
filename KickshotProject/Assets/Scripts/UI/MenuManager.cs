@@ -40,6 +40,9 @@ public class MenuManager : MonoBehaviour
         Camera c = Camera.main;
         Debug.Assert(c != null, "Failed to find scene camera");
         mainCamera = c.gameObject;
+
+        Camera.main.backgroundColor = defaultFogColor;
+        RenderSettings.fogColor = defaultFogColor;
     }
 
     /// <summary>
@@ -59,6 +62,7 @@ public class MenuManager : MonoBehaviour
     /// <param name="menu">Menu integer (Menus enum)</param>
     public void ChangeMenu(int menu) {
         Transform target = mainMenuView;
+        Color cTarget = defaultFogColor;
 
         Menus m = (Menus)menu;
         switch (m) {
@@ -70,14 +74,19 @@ public class MenuManager : MonoBehaviour
                 break;
             case Menus.IslandsWorld:
                 target = islandsView;
+                cTarget = islandsFogColor;
                 break;
             case Menus.DesertWorld:
                 target = desertView;
+                cTarget = desertFogColor;
                 break;
         }
 
         StopCoroutine("GoToMenu");
         StartCoroutine(GoToMenu(target));
+
+        StopCoroutine("LerpFogColor");
+        StartCoroutine(LerpBackColor(cTarget, 0.5f));
     }
 
     /// <summary>
@@ -108,6 +117,25 @@ public class MenuManager : MonoBehaviour
             camRot = Quaternion.Lerp(camRot, target.rotation, percent);
             mainCamera.transform.position = camPos;
             mainCamera.transform.rotation = camRot;
+            yield return null;
+        }
+    }
+
+    /// <summary>
+    /// Lerps the color of the background camera color and fog color.
+    /// </summary>
+    /// <param name="target">Target color.</param>
+    /// <param name="duration">Lerp duration.</param>
+    private IEnumerator LerpBackColor(Color target, float duration) {
+        float curDur = 0f;
+        Color src = RenderSettings.fogColor;
+
+        while (curDur < duration) {
+            curDur += Time.deltaTime;
+            float percent = Mathf.Clamp01(curDur / duration);
+            src = Color.Lerp(src, target, percent);
+            RenderSettings.fogColor = src;
+            Camera.main.backgroundColor = src;
             yield return null;
         }
     }
