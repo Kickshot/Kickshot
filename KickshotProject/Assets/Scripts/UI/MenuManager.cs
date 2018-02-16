@@ -3,57 +3,112 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class MenuManager : MonoBehaviour
 {
-
-    public Canvas mainMenu;
-    public List<Canvas> subMenus;
-
-    private bool transitionActive = false;
-    private Canvas curCanvas;
-    private Canvas oldCanvas;
-
-    public void Start()
+    public enum Menus
     {
-        if (mainMenu == null)
-        {
-            Debug.LogError("Need to specify main menu!");
+        Main,
+        WorldSelect,
+        IslandsWorld,
+        DesertWorld
+    }
+
+    [Header("General Settings")]
+    public float lerpDuration;
+
+    [Header("Camera Positions")]
+    public Transform mainMenuView;
+    public Transform worldSelectView;
+    public Transform islandsView;
+    public Transform desertView;
+
+    [Header("Position Fog Colors")]
+    public Color islandsFogColor;
+    public Color desertFogColor;
+    public Color defaultFogColor;
+
+    [Header("Element References")]
+    public Text buildLabel;
+
+    private GameObject mainCamera;
+
+    private void Start()
+    {
+        buildLabel.text = Application.version;
+        Camera c = Camera.main;
+        Debug.Assert(c != null, "Failed to find scene camera");
+        mainCamera = c.gameObject;
+    }
+
+    /// <summary>
+    /// Uses scenemanagement to load a given scene. Needs to be passed the proper
+    /// scene name or will fail.
+    /// </summary>
+    /// <param name="sceneName">Scene name</param>
+    public void LoadLevel(string sceneName) {
+        //TODO Add scene validity check
+        Debug.Log(sceneName);
+        SceneManager.LoadScene(sceneName);
+    }
+
+    /// <summary>
+    /// Will lerp to a given menu transform, use Menus enum as number reference.
+    /// </summary>
+    /// <param name="menu">Menu integer (Menus enum)</param>
+    public void ChangeMenu(int menu) {
+        Transform target = mainMenuView;
+
+        Menus m = (Menus)menu;
+        switch (m) {
+            case Menus.Main:
+                target = mainMenuView;
+                break;
+            case Menus.WorldSelect:
+                target = worldSelectView;
+                break;
+            case Menus.IslandsWorld:
+                target = islandsView;
+                break;
+            case Menus.DesertWorld:
+                target = desertView;
+                break;
         }
-        curCanvas = mainMenu;
+
+        StopCoroutine("GoToMenu");
+        StartCoroutine(GoToMenu(target));
     }
 
-    public void Transition(Canvas next)
-    {
-        //if (transitionActive) return;
-        //transitionActive = true;
-        oldCanvas = curCanvas;
-        curCanvas = next;
-        oldCanvas.gameObject.SetActive(false);
-        curCanvas.gameObject.SetActive(true);
-        //oldCanvas.GetComponent<CanvasFade>().ToggleFade();
-        //transitionAnimator.SetTrigger("Close");
-    }
-
-    public void FinishedFade()
-    {
-        curCanvas.GetComponent<CanvasFade>().ToggleFade();
-        transitionActive = false;
-    }
-
-    public void Opened()
-    {
-        transitionActive = false;
-    }
-
-    public void Closed()
-    {
-        
-    }
-
+    /// <summary>
+    /// Quit game or stop playing if in the editor.
+    /// </summary>
     public void Quit()
     {
         Debug.Log("Quit");
-        //TODO open up confirmation modal
+        Application.Quit();
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#endif
+    }
+
+    /// <summary>
+    /// Lerps position and rotation of the camera to a given target transform.
+    /// </summary>
+    /// <param name="target">Target transform</param>
+    private IEnumerator GoToMenu(Transform target) {
+        Vector3 camPos = mainCamera.transform.position;
+        Quaternion camRot = mainCamera.transform.rotation;
+        float curDur = 0f;
+
+        while (curDur < lerpDuration) {
+            curDur += Time.deltaTime;
+            float percent = Mathf.Clamp01(curDur / lerpDuration);
+            camPos = Vector3.Lerp(camPos, target.position, percent);
+            camRot = Quaternion.Lerp(camRot, target.rotation, percent);
+            mainCamera.transform.position = camPos;
+            mainCamera.transform.rotation = camRot;
+            yield return null;
+        }
     }
 }
