@@ -31,6 +31,7 @@ public class DoubleGun : GunBase
     public float UngroundedRecoveryPercentage = 10f;
     public float GroundedRecoveryPercentage = 50f;
     internal float energy;
+    public bool checkTag;
 
     [Header("Rocket Launcher")]
     public AudioSource OverheatClip;
@@ -199,30 +200,35 @@ public class DoubleGun : GunBase
 		rope = ropeRoot.GetComponentInChildren<RopeSim> ();
 		ropes.Add (rope);
 		rope.sticky = false;
-		// We ignore player collisions.
-		if (Physics.Raycast(view.position, view.forward, out hit, range, ~(1 << LayerMask.NameToLayer("Player"))))
-		{
-			hitPosition.SetParent(hit.collider.transform);
-			hitPosition.position = hit.point;
-			hitSomething = true;
-			hitDist = Mathf.Max(hit.distance,1f);
-			rope.start.position = gunBarrelFront.position;
-			rope.end.position = hit.point;
-			rope.Regenerate ();
-			player.maxSpeed = 1000f;
-            AudioSource.PlayClipAtPoint(grappleHit[Random.Range(0,grappleHit.Count)], hit.point);
-            Destroy(Instantiate(grappleHitCloud, hit.point, Quaternion.LookRotation(hit.normal) ), 1f);
-		}
-		else
-		{
-			hitSomething = false;
-			missStart = gunBarrelFront.position;
-			missEnd = view.position + view.forward * range;
-			rope.start.position = missStart;
-			rope.end.position = missEnd;
-			rope.Regenerate ();
-			rope.staticEnd = false;
-		}
+
+        missStart = gunBarrelFront.position;
+        missEnd = view.position + view.forward * range;
+        // We ignore player collisions.
+        if (Physics.Raycast(view.position, view.forward, out hit, range, ~(1 << LayerMask.NameToLayer("Player"))))
+        {
+            if (!checkTag || hit.collider.CompareTag("Grappleable"))
+            {
+                hitPosition.SetParent(hit.collider.transform);
+                hitPosition.position = hit.point;
+                hitSomething = true;
+                hitDist = Mathf.Max(hit.distance, 1f);
+                rope.start.position = gunBarrelFront.position;
+                rope.end.position = hit.point;
+                rope.Regenerate();
+                player.maxSpeed = 1000f;
+                AudioSource.PlayClipAtPoint(grappleHit[Random.Range(0, grappleHit.Count)], hit.point);
+                Destroy(Instantiate(grappleHitCloud, hit.point, Quaternion.LookRotation(hit.normal)), 1f);
+                return;
+            } else {
+                missEnd = hit.point;
+            }
+        }
+		hitSomething = false;
+		rope.start.position = missStart;
+		rope.end.position = missEnd;
+		rope.Regenerate ();
+		rope.staticEnd = false;
+		
 	}
 
 	public override void OnPrimaryFire()
