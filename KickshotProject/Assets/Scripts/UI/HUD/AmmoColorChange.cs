@@ -40,13 +40,28 @@ public class AmmoColorChange : MonoBehaviour
         switch (variable)
         {
             case Variable.RocketLaucher:
-                img.fillAmount = map(gun.heat, 0, 100, 0, 1);
-                break;
+                {
+                    if (!gun.isOverheating)
+                    {
+                        img.fillAmount = map(gun.heat, 0, 100, 0, 1);
+                        img.color = Color.Lerp(to, from, img.fillAmount);
+                    }
+                    else
+                    {
+                        img.fillAmount = map(gun.exhaustBusy, 0, gun.OverheatPenalty, 0, 1);
+                        img.color = from;
+                    }
+                    break;
+                }
+                        
             case Variable.GrappleHook:
+            {
                 img.fillAmount = map(gun.energy, 0, 100, 0, 1);
+                img.color = Color.Lerp(to, from, img.fillAmount);
                 break;
+            }
         }
-        img.color = Color.Lerp(to, from, img.fillAmount);
+        
     }
 
     float map(float s, float a1, float a2, float b1, float b2)
