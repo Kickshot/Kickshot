@@ -32,7 +32,6 @@ public class DoubleGun : GunBase
     public float GroundedRecoveryPercentage = 50f;
     internal float energy;
     public bool checkTag;
-=======
     Transform grappleShoulderBone;
 
     [Header("Rocket Launcher")]
@@ -271,7 +270,8 @@ public class DoubleGun : GunBase
 
 	public override void OnPrimaryFire()
 	{
-		if (exhaustBusy > 0f) { 
+		if (exhaustBusy > 0f)
+        { 
 			return;
 		}
 		exhaust += 1f;

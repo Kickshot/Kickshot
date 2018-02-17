@@ -1,7 +1,13 @@
 fileFormatVersion: 2
+<<<<<<< HEAD:KickshotProject/Assets/ProCore/ProBuilder.meta
 guid: 9401232bf7fa5bb40be0ff2366fd8c76
 folderAsset: yes
 timeCreated: 1509986156
+=======
+guid: e700579d96deeac46bc79f56cedcb9b0
+folderAsset: yes
+timeCreated: 1508790309
+>>>>>>> ViewModelTest:KickshotProject/Assets/ProCore/ProBuilder.meta
 licenseType: Store
 DefaultImporter:
   externalObjects: {}
