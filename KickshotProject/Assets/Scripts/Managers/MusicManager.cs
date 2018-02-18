@@ -16,16 +16,19 @@ public class MusicManager : MonoBehaviour {
             Destroy (gameObject);
         }
         music = new Dictionary<int, string> ();
-        //music [2] = "MarioMusic"; // Music to be played during level index x (whomp fortress). Music IDs are handled by the Resource Manager.
-        //music [1] = "DKMusic";
-        //music [3] = "drum&bass";
+        music [1] = "DKMusic";
+        music [1] = "MarioMusic"; // Music to be played during level index x (whomp fortress). Music IDs are handled by the Resource Manager.
+        music [1] = "drum&bass";
         SceneManager.sceneLoaded += SceneLoaded;
     }
-    void SceneLoaded(Scene scene, LoadSceneMode mode) {
-        if (!music.ContainsKey (scene.buildIndex)) {
+    void SceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (!music.ContainsKey (scene.buildIndex))
+        {
             return;
         }
-        if (musicPlayer == null) {
+        if (musicPlayer == null)
+        {
             musicPlayer = new GameObject ();
             audioSource = musicPlayer.AddComponent<AudioSource> ();
         }
