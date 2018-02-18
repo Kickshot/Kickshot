@@ -32,7 +32,7 @@ public class RopeSim : MonoBehaviour {
     public float maxVel = 100f;
     public float slack = -0.5f;
     public bool recordAnimation = false;
-    public float settleTime = 2f;
+    public float settleTime = 4f;
     public float animationLength = 10f;
     public float animationFPS = 30f;
     public LayerMask collidesWith;
@@ -67,11 +67,19 @@ public class RopeSim : MonoBehaviour {
                 DestroyImmediate( bone.gameObject, true );
             }
         }
+		List<GameObject> children = new List<GameObject> ();
+		for ( int i=0;i<transform.childCount;i++ ) {
+			children.Add( transform.GetChild(i).gameObject );
+		}
+		foreach (GameObject child in children) {
+			DestroyImmediate (child);
+		}
+		children.Clear ();
         bones.Clear();
         accel = new List<Vector3>();
         vel = new List<Vector3>();
         stuck = new List<bool>();
-        int parts = (int)(Vector3.Distance(start.position, end.position)*boneDensity);
+		int parts = (int)(Mathf.Floor(Vector3.Distance(start.position, end.position)*boneDensity));
         if (parts == 0) {
             return;
         }
@@ -98,6 +106,15 @@ public class RopeSim : MonoBehaviour {
         end.hasChanged = false;
         distanceBetweenBones += distanceBetweenBones * slack;
         generated = true;
+		#if UNITY_EDITOR
+		if ( recordAnimation ) {
+			AnimationClip clip = AssetDatabase.LoadAssetAtPath<AnimationClip>("Assets/" + transform.parent.gameObject.name + ".anim") as AnimationClip;
+			if (clip) {
+				recordAnimation = false;
+				GetComponent<Animation> ().clip = clip;
+			}
+		}
+		#endif
     }
 #if UNITY_EDITOR
     void OnDrawGizmosSelected() {
@@ -117,6 +134,43 @@ public class RopeSim : MonoBehaviour {
         transform.hasChanged = true;
         Awake();
     }
+    
+    public void UpdateLength() {
+        int parts = (int)(Vector3.Distance(start.position, end.position)*boneDensity);
+        if ( parts+1 == bones.Count ) {
+            return;
+        }
+        if ( parts == 0 ) {
+            return;
+        }
+        for ( int i=parts+2;i<bones.Count;i++ ) {
+            bones.RemoveAt(i);
+            accel.RemoveAt(i);
+            vel.RemoveAt(i);
+            stuck.RemoveAt(i);
+        }
+        for ( int i=bones.Count;i<parts+1;i++ ) {
+			bones.Add( null );
+            accel.Add( Vector3.zero );
+            vel.Add( Vector3.zero );
+            stuck.Add (false);
+        }
+        distanceBetweenBones = Vector3.Distance(start.position, end.position)/parts;
+        for( int i=0;i<=parts;i++ ) {
+            if ( bones[i] != null ) {
+                continue;
+            }
+            Transform bone = new GameObject("Bone" + i).transform;
+            bone.parent = transform;
+            bone.localRotation = Quaternion.identity;
+            if ( i != 0 ) {
+                bone.localPosition = bones[i-1].localPosition;
+            } else {
+                bone.localPosition = new Vector3( 0, distanceBetweenBones*i, 0 );
+            }
+            bones[i] = bone;
+        }
+    }
 
     void Update() {
         if (timeStepTimer < timeStep && timeStep > 0f) {
@@ -134,6 +188,7 @@ public class RopeSim : MonoBehaviour {
             }
             if ( !generated ) {
                 Awake();
+				return;
             }
             return;
         }
@@ -179,9 +234,21 @@ public class RopeSim : MonoBehaviour {
             }
         }
 
+        for (int i = 0; i < bones.Count; i++) {		
+            foreach (Collider col in Physics.OverlapSphere(bones[i].position,0.5f,collidesWith,QueryTriggerInteraction.Ignore)) {
+                if (sticky) {
+                    stuck [i] = true;
+                }
+                if ( vel[i].y < 0 ) {
+                    vel[i] = new Vector3(vel[i].x, 0, vel[i].z);
+                }
+                break;
+            }
+        }
+
         for( int i=0;i<bones.Count;i++ ) {
 #if UNITY_EDITOR
-            animationTimer += timeStep;
+            animationTimer += Time.deltaTime;
 
             if ( recordAnimation && animationTimer > 1f/animationFPS && Time.time > settleTime && Time.time < animationLength+settleTime ) {
                 animationTimer = 0f;
@@ -201,31 +268,19 @@ public class RopeSim : MonoBehaviour {
         start.position = bones [0].position;
         end.position = bones [bones.Count - 1].position;
 
-        if (sticky) {
-            for (int i = 0; i < bones.Count; i++) {		
-                if (stuck [i]) { 
-                    continue;
-                }
-                foreach (Collider col in Physics.OverlapSphere(bones[i].position,0.05f,collidesWith,QueryTriggerInteraction.Ignore)) {
-                    stuck [i] = true;
-                    break;
-                }
-            }
-        }
-
 #if UNITY_EDITOR
         if ( recordAnimation && Time.time > animationLength+settleTime && !savedAnimation ) {
             savedAnimation = true;
             clip.legacy = true;
             for ( int i=0;i<bones.Count;i++ ) {
                 clip.SetCurve("Bone"+i, typeof(Transform), "localPosition.x", new AnimationCurve(cx[i].ToArray()));
-                clip.SetCurve("Bone"+i, typeof(Transform), "localPosition.y", new AnimationCurve(cy[i].ToArray()));
+				clip.SetCurve("Bone"+i, typeof(Transform), "localPosition.y", new AnimationCurve(cy[i].ToArray()));
                 clip.SetCurve("Bone"+i, typeof(Transform), "localPosition.z", new AnimationCurve(cz[i].ToArray()));
             }
             clip.wrapMode = WrapMode.PingPong;
             clip.name = gameObject.name;
             clip.frameRate = 30;
-            AssetDatabase.CreateAsset(clip, "Assets/"+gameObject.name+".anim");
+			AssetDatabase.CreateAsset(clip, "Assets/"+gameObject.transform.parent.gameObject.name+".anim");
             AssetDatabase.SaveAssets();
             Animation ani = GetComponent<Animation> ();
             ani.clip = clip;
