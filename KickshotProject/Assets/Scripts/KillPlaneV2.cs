@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class KillPlaneV2 : MonoBehaviour
 {
-    public LoseScreenManager loseScreen;
     void Update()
     {
         foreach (SourcePlayer obj in GameObject.FindObjectsOfType<SourcePlayer>())
@@ -12,7 +11,6 @@ public class KillPlaneV2 : MonoBehaviour
             if (Vector3.Dot(obj.transform.position - transform.position, transform.up) < 0)
             {
                 obj.Explode();
-                loseScreen.DisplayLevelCompleteMenu();
             }
         }
     }

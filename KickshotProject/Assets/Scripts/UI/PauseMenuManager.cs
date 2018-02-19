@@ -55,6 +55,11 @@ public class PauseMenuManager : MonoBehaviour
         SceneManager.LoadScene("MainMenu");
     }
 
+    public void ClickRestart()
+    {
+        Time.timeScale = 1;
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
     public void ClickOptions()
     {
 

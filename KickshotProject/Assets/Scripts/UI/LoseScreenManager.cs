@@ -20,10 +20,10 @@ public class LoseScreenManager : MonoBehaviour {
     {
         if (Input.GetKeyDown(KeyCode.N))
         {
-            DisplayLevelCompleteMenu();
+            DisplayLoseScreen();
         }
     }
-    public void DisplayLevelCompleteMenu()
+    public void DisplayLoseScreen()
     {
         crosshair.SetActive(false);
         loseScreen.SetActive(true);
