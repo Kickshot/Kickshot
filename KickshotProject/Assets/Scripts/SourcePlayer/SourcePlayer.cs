@@ -423,7 +423,7 @@ public class SourcePlayer : MonoBehaviour {
         }
     }
 
-    void Explode() {
+    public void Explode() {
         Destroy(gameObject);
         GameObject gibs = Instantiate(deathSpawn,transform.position,transform.rotation);
         //gibs.GetComponent<GibPile> ().FitToPlayer (gameObject, velocity);

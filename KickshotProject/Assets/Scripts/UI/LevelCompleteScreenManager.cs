@@ -1,19 +1,24 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class LevelCompleteScreenManager : MonoBehaviour {
+public class LevelCompleteScreenManager : MonoBehaviour
+{
 
     // used to disable camera/movement
-    public GameObject player, levelCompleteScreen, gun, crosshair;
+    [HideInInspector]
+    public GameObject player, gun;
+
+    public GameObject levelCompleteScreen, crosshair;
     public Text HUDTime, completeTime;
 
     void Start()
     {
         //player = GameObject.Find("SourcePlayer");
-       // DisplayLevelCompleteMenu();
+        // DisplayLevelCompleteMenu();
     }
 
     void Update()
@@ -26,6 +31,8 @@ public class LevelCompleteScreenManager : MonoBehaviour {
     public void DisplayLevelCompleteMenu()
     {
         Time.timeScale = 0;
+        player = GameObject.Find("SourcePlayer");
+        gun = GameObject.Find("DoubleGun");
         player.GetComponent<MouseLook>().enabled = false;
         player.GetComponent<CharacterController>().enabled = false;
         player.GetComponent<SourcePlayer>().enabled = false;
@@ -47,6 +54,13 @@ public class LevelCompleteScreenManager : MonoBehaviour {
     public void ClickNextLevel()
     {
         Time.timeScale = 1;
-        Debug.Log("Next Level To Be Implemented");
+        //TODO: This will break if the build settings are changed at all. Probably better to adopt a "level1, level2" naming standard.
+        int nextSceneBuildIndex = SceneManager.GetActiveScene().buildIndex + 1;
+        if (nextSceneBuildIndex == 10 || nextSceneBuildIndex == 13)
+        {
+            SceneManager.LoadScene("MainMenu");
+        } else {
+            SceneManager.LoadScene(nextSceneBuildIndex);
+        }
     }
 }
