@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Text.RegularExpressions;
+using System.IO;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -11,6 +13,9 @@ using UnityEditor;
 public class RopeMeshRenderer : MonoBehaviour {
     public float radius = 0.05f;
     private RopeSim ropesim;
+	private Bounds biggestBounds;
+	private float biggestBoundsVolume;
+	private bool wroteBounds;
     void Start () {
         ropesim = GetComponent<RopeSim>();
         SkinnedMeshRenderer renderer = GetComponent<SkinnedMeshRenderer>();
@@ -22,7 +27,7 @@ public class RopeMeshRenderer : MonoBehaviour {
             return;
         }
         Mesh mesh = new Mesh();
-        int parts = (int)(Vector3.Distance(ropesim.start.position, ropesim.end.position)*ropesim.boneDensity);
+		int parts = ropesim.bones.Count-1;
         List<Vector3> verts = new List<Vector3>();
         List<Vector2> uvs = new List<Vector2>();
         List<int> tris = new List<int>();
@@ -207,6 +212,16 @@ public class RopeMeshRenderer : MonoBehaviour {
             renderer.sharedMesh.Clear();
         }
         renderer.sharedMesh = mesh;
+		#if UNITY_EDITOR
+		TextAsset t = AssetDatabase.LoadAssetAtPath<TextAsset>("Assets/" + transform.parent.gameObject.name + ".txt") as TextAsset;
+		if (t) {
+			MatchCollection matches = Regex.Matches(t.text, @"-?\d+\.?\d*");
+			Vector3 center = new Vector3 (float.Parse (matches [0].Value), float.Parse (matches [1].Value), float.Parse (matches [2].Value));
+			Vector3 extents = new Vector3 (float.Parse (matches [3].Value), float.Parse (matches [4].Value), float.Parse (matches [5].Value));
+			renderer.localBounds = new Bounds (center, extents);
+			AssetDatabase.DeleteAsset ("Assets/" + transform.parent.gameObject.name + ".txt");
+		}
+		#endif
     }
 
     void Update() {
@@ -240,6 +255,17 @@ public class RopeMeshRenderer : MonoBehaviour {
             min -= new Vector3 (radius, radius, radius);
             Vector3 center = min + (Vector3.Normalize (max - min) * Vector3.Distance(min,max)/2f);
             renderer.localBounds = new Bounds(center, max-min);
+			float volume = (max - min).x*(max-min).y*(max-min).z;
+			if (volume > biggestBoundsVolume) {
+				biggestBounds = renderer.localBounds;
+				biggestBoundsVolume = volume;
+			}
+			if (ropesim.recordAnimation && Time.time > ropesim.animationLength+ropesim.settleTime && !wroteBounds) {
+				wroteBounds = true;
+				StreamWriter writer = new StreamWriter("Assets/"+gameObject.transform.parent.gameObject.name+".txt", true);
+				writer.WriteLine(biggestBounds.center + " " + biggestBounds.size);
+				writer.Close();
+			}
 #if UNITY_EDITOR
         }
 #endif
