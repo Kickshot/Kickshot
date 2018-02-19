@@ -5,13 +5,15 @@ using UnityEngine.SceneManagement;
 
 public class PauseMenuManager : MonoBehaviour
 {
-    public GameObject pauseMenu, crosshair, player, gun;
+    [HideInInspector]
+    public GameObject player, gun;
+    public GameObject pauseMenu, crosshair;
     private bool m_paused;
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetButtonDown("Pause"))
+        if (Input.GetButtonDown("Pause") && !m_paused)
         {
             Pause();
         }
@@ -19,14 +21,14 @@ public class PauseMenuManager : MonoBehaviour
 
     private void Pause()
     {
+        m_paused = true;
         Time.timeScale = 0;
         pauseMenu.SetActive(true);
         // Hide crosshair
         crosshair.SetActive(false);
 		Cursor.lockState = CursorLockMode.None;
-		if (player == null) {
-			return;
-		}
+        player = GameObject.Find("SourcePlayer");
+        gun = GameObject.Find("DoubleGun");
 		gun.SetActive(false);
         player.GetComponent<MouseLook>().enabled = false;
         player.GetComponent<CharacterController>().enabled = false;
@@ -35,14 +37,12 @@ public class PauseMenuManager : MonoBehaviour
 
     public void ClickResume()
     {
+        m_paused = false;
         Time.timeScale = 1;
         pauseMenu.SetActive(false);
         // Show crosshair
         crosshair.SetActive(true);
 		Cursor.lockState = CursorLockMode.Locked;
-		if (player == null) {
-			return;
-		}
         player.GetComponent<MouseLook>().enabled = true;
         player.GetComponent<CharacterController>().enabled = true;
         player.GetComponent<SourcePlayer>().enabled = true;
