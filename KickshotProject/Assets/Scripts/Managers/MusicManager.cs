@@ -10,7 +10,7 @@ public class MusicManager : MonoBehaviour {
     private AudioSource audioSourceOut;
     private Dictionary<int, string> music;
     private bool InPlaying;
-    private static int oldBuildIndex;
+    private int oldBuildIndex;
     void Awake() {
         if (!manager) {
             manager = this;
@@ -20,7 +20,8 @@ public class MusicManager : MonoBehaviour {
         }
         animator = GetComponent<Animator>();
         music = new Dictionary<int, string> ();
-        
+        oldBuildIndex = 0;
+
         music [1] = "Menu";
         music[2] = "I01"; // Music to be played during level index x (whomp fortress). Music IDs are handled by the Resource Manager.
         music[3] = "I02";
@@ -55,12 +56,12 @@ public class MusicManager : MonoBehaviour {
         }
         else
         {
-            if (scene.buildIndex != oldBuildIndex)
+            if (scene.buildIndex != manager.oldBuildIndex)
             {
                 Crossfade(scene.buildIndex);
             }
         }
-        oldBuildIndex = scene.buildIndex;
+        manager.oldBuildIndex = scene.buildIndex;
     }
 
     void Crossfade(int toSceneIndexNumber)
