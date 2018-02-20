@@ -1,8 +1,7 @@
 fileFormatVersion: 2
 guid: b05a3e598b8e03d44958508c759ad65b
-timeCreated: 1516558910
-licenseType: Free
 VideoClipImporter:
+  externalObjects: {}
   serializedVersion: 2
   useLegacyImporter: 0
   quality: 0.5
@@ -16,38 +15,7 @@ VideoClipImporter:
   flipVertical: 0
   flipHorizontal: 0
   importAudio: 1
-  targetSettings:
-    0:
-      enableTranscoding: 1
-      codec: 0
-      resizeFormat: 0
-      aspectRatio: 0
-      customWidth: 1920
-      customHeight: 1080
-      bitrateMode: 2
-      spatialQuality: 2
-<<<<<<< HEAD
-=======
-  output:
-    format: 1
-    settings:
-      enableTranscoding: 1
-      codec: 0
-      resizeFormat: 0
-      aspectRatio: 0
-      customWidth: 1920
-      customHeight: 1080
-      bitrateMode: 2
-      spatialQuality: 2
-    encodedWidth: 1920
-    encodedHeight: 1080
-    encodedStartFrame: 0
-    encodedEndFrame: 86
-    streamedResource:
-      source: library/metadata/b0/b05a3e598b8e03d44958508c759ad65b.resource
-      offset: 0
-      size: 1863625
->>>>>>> d68fd98d4918b6803d11c7de7208baaa0cf9d20d
+  targetSettings: {}
   userData: 
   assetBundleName: 
   assetBundleVariant: 

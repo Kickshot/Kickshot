@@ -1,17 +1,11 @@
 fileFormatVersion: 2
 guid: e580deff56671da4f98af229f9d25932
-timeCreated: 1517898321
-licenseType: Free
 VideoClipImporter:
-<<<<<<< HEAD
   externalObjects: {}
-=======
->>>>>>> d68fd98d4918b6803d11c7de7208baaa0cf9d20d
   serializedVersion: 2
   useLegacyImporter: 0
   quality: 0.5
   isColorLinear: 0
-<<<<<<< HEAD
   frameRange: 0
   startFrame: -1
   endFrame: -1
@@ -21,57 +15,7 @@ VideoClipImporter:
   flipVertical: 0
   flipHorizontal: 0
   importAudio: 1
-=======
-  originalWidth: 1920
-  originalHeight: 1080
-  frameRange: 0
-  startFrame: -1
-  endFrame: -1
-  frameCount: 150
-  frameRate: 29.970029830932617
-  colorSpace: 0
-  deinterlace: 0
-  sourceFileSize: 6586308
-  encodeAlpha: 0
-  sourceHasAlpha: 0
-  flipVertical: 0
-  flipHorizontal: 0
-  importAudio: 1
-  sourceAudioChannelCount: 0200
-  sourceAudioSampleRate: 80bb0000
->>>>>>> d68fd98d4918b6803d11c7de7208baaa0cf9d20d
-  targetSettings:
-    0:
-      enableTranscoding: 1
-      codec: 0
-      resizeFormat: 0
-      aspectRatio: 0
-      customWidth: 1920
-      customHeight: 1080
-      bitrateMode: 2
-      spatialQuality: 2
-<<<<<<< HEAD
-=======
-  output:
-    format: 1
-    settings:
-      enableTranscoding: 1
-      codec: 0
-      resizeFormat: 0
-      aspectRatio: 0
-      customWidth: 1920
-      customHeight: 1080
-      bitrateMode: 2
-      spatialQuality: 2
-    encodedWidth: 1920
-    encodedHeight: 1080
-    encodedStartFrame: 0
-    encodedEndFrame: 150
-    streamedResource:
-      source: library/metadata/e5/e580deff56671da4f98af229f9d25932.resource
-      offset: 0
-      size: 5529503
->>>>>>> d68fd98d4918b6803d11c7de7208baaa0cf9d20d
+  targetSettings: {}
   userData: 
   assetBundleName: 
   assetBundleVariant: 

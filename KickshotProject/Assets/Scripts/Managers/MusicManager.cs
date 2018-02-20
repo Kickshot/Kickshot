@@ -10,6 +10,7 @@ public class MusicManager : MonoBehaviour {
     private AudioSource audioSourceOut;
     private Dictionary<int, string> music;
     private bool InPlaying;
+    private static int oldBuildIndex;
     void Awake() {
         if (!manager) {
             manager = this;
@@ -54,8 +55,12 @@ public class MusicManager : MonoBehaviour {
         }
         else
         {
-            Crossfade(scene.buildIndex);
+            if (scene.buildIndex != oldBuildIndex)
+            {
+                Crossfade(scene.buildIndex);
+            }
         }
+        oldBuildIndex = scene.buildIndex;
     }
 
     void Crossfade(int toSceneIndexNumber)
