@@ -28,7 +28,8 @@
 		void surf (Input IN, inout SurfaceOutputStandard o) {
             fixed c = floor(tex2D (_CutoffTex, IN.uv_CutoffTex).x + _Cutoff);
             fixed4 ret = _AltColor * (c) + _MainColor * (1 - c);
-         
+
+            o.Emission = ret.rgb;
 			o.Albedo = ret.rgb;
 			o.Alpha = ret.a;
 		}
