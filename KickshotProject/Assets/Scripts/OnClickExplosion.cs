@@ -10,7 +10,6 @@ public class OnClickExplosion : MonoBehaviour {
     {
         if (Input.GetMouseButtonDown(0))
         {
-            Debug.Log("Click");
             Ray dir = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
             if (Physics.Raycast(dir, out hit))
