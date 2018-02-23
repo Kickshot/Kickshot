@@ -23,18 +23,19 @@ public class MusicManager : MonoBehaviour {
         oldBuildIndex = 0;
 
         music [1] = "Menu";
-        music[2] = "I01"; // Music to be played during level index x (whomp fortress). Music IDs are handled by the Resource Manager.
-        music[3] = "I02";
-        music[4] = "I03";
-        music[5] = "I04";
-        music[6] = "I05";
-        music[7] = "I06";
-        music[8] = "I07";
-        music[9] = "I08";
+        music[2] = "I01";
+        music[3] = "I02"; // Music to be played during level index x (whomp fortress). Music IDs are handled by the Resource Manager.
+        music[4] = "I01";
+        music[5] = "I03";
+        music[6] = "I04";
+        music[7] = "I05";
+        music[8] = "I06";
+        music[9] = "I07";
         music[10] = "I08";
-        music[11] = "D01";
-        music[12] = "D02";
-        music[13] = "D03";
+        music[11] = "I08";
+        music[12] = "D01";
+        music[13] = "D02";
+        music[14] = "D03";
         SceneManager.sceneLoaded += SceneLoaded;
     }
     void SceneLoaded(Scene scene, LoadSceneMode mode)
