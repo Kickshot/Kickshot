@@ -44,7 +44,7 @@ public class Rocket : MonoBehaviour {
         }
         Vector3 perp = new Vector3 (-hitnormal.z, hitnormal.x, -hitnormal.y);
         Instantiate(decal,position,Quaternion.LookRotation(perp,hitnormal));
-        Instantiate (explosions [(int)Random.Range (0, explosions.Count)], position, Quaternion.LookRotation(-hitnormal)*Quaternion.AngleAxis(Random.Range(0,360),new Vector3(0,0,1)));
+        Instantiate (explosions [(int)Random.Range (0, explosions.Count)], position, Quaternion.LookRotation(hitnormal)*Quaternion.AngleAxis(Random.Range(0,360),new Vector3(0,0,1)));
         Destroy(gameObject.transform.Find("Trail").gameObject);
         Destroy(gameObject.transform.Find("rocket").gameObject);
         Destroy(gameObject.transform.Find("CloudTrail").gameObject,1f);
