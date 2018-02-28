@@ -139,4 +139,20 @@ public class MenuManager : MonoBehaviour
             yield return null;
         }
     }
+
+    public void FadeOut(GameObject menu)
+    {
+        CanvasGroup group = menu.GetComponent<CanvasGroup>();
+        group.alpha = 0;
+        group.interactable = false;
+        group.blocksRaycasts = false;
+    }
+
+    public void FadeIn(GameObject menu)
+    {
+        CanvasGroup group = menu.GetComponent<CanvasGroup>();
+        group.alpha = 1;
+        group.interactable = true;
+        group.blocksRaycasts = true;
+    }
 }
