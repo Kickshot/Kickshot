@@ -8,12 +8,13 @@ public class PauseMenuManager : MonoBehaviour
     [HideInInspector]
     public GameObject player, gun;
     public GameObject pauseMenu, crosshair;
+    public InGameGUIManager guiManager;
     private bool m_paused;
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetButtonDown("Pause") && !m_paused)
+        if (Input.GetButtonDown("Pause") && !m_paused && !guiManager.activeMenu)
         {
             Pause();
         }

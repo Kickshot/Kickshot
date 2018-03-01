@@ -7,24 +7,13 @@ public class LoseScreenManager : MonoBehaviour {
 
     // used to disable camera/movement
     [HideInInspector]
-
     public GameObject crosshair, loseScreen;
 
-    void Start()
-    {
-        //player = GameObject.Find("SourcePlayer");
-        // DisplayLevelCompleteMenu();
-    }
+    public InGameGUIManager guiManager;
 
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.N))
-        {
-            DisplayLoseScreen();
-        }
-    }
     public void DisplayLoseScreen()
     {
+        guiManager.activeMenu = true;
         crosshair.SetActive(false);
         loseScreen.SetActive(true);
         Cursor.lockState = CursorLockMode.None;
