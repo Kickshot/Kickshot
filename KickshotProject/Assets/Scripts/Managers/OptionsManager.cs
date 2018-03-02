@@ -7,6 +7,7 @@ public class OptionsManager : MonoBehaviour
 
     private float m_sensitivity;
     private float m_fov;
+    bool Active = false;
     void Awake()
     {
         m_sensitivity = PlayerPrefs.GetFloat("Sensitivity");
@@ -22,6 +23,7 @@ public class OptionsManager : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+
     }
 
     // Update is called once per frame
@@ -52,7 +54,7 @@ public class OptionsManager : MonoBehaviour
     {
         m_fov = value;
         PlayerPrefs.SetFloat("Fov", m_fov);
-        setPlayerFov(); 
+        setPlayerFov();
     }
 
     public float getFov()
@@ -79,5 +81,37 @@ public class OptionsManager : MonoBehaviour
             Camera cam = Player.GetComponentInChildren<Camera>();
             cam.fieldOfView = m_fov;
         }
+    }
+
+    public void FadeOut(GameObject menu)
+    {
+        Active = false;
+        Animator anim = menu.GetComponent<Animator>();
+        anim.SetTrigger("FadeOut");
+
+    }
+
+    public void FadeIn(GameObject menu)
+    {
+        Active = true;
+        Animator anim = menu.GetComponent<Animator>();
+        anim.SetTrigger("FadeIn");
+    }
+
+    public void Activate()
+    {
+        CanvasGroup group = gameObject.GetComponent<CanvasGroup>();
+        group.alpha = 1;
+        group.interactable = true;
+        group.blocksRaycasts = true;
+    }
+
+    public void Deactivate()
+    {
+        CanvasGroup group = gameObject.GetComponent<CanvasGroup>();
+        group.alpha = 0;
+        group.interactable = false;
+        group.blocksRaycasts = false;
+        Active = false;
     }
 }
