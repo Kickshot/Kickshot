@@ -9,7 +9,6 @@ public class OptionsManager : MonoBehaviour
     private float m_fov;
     void Awake()
     {
-        DontDestroyOnLoad(transform.gameObject);
         m_sensitivity = PlayerPrefs.GetFloat("Sensitivity");
         m_fov = PlayerPrefs.GetFloat("Fov");
 

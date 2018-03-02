@@ -11,12 +11,14 @@ public class VariableSlider : MonoBehaviour {
 
     private Slider slider;
     private Text text;
-    public OptionsManager manager;
+    private OptionsManager manager;
+    public GameObject OptionsManager;
     private void Start()
     {
-        GameObject OptionManager = GameObject.Find("[Options_Manager]");
-        manager = OptionManager.GetComponent<OptionsManager>();
 
+        manager = OptionsManager.GetComponent<OptionsManager>();
+
+  
         slider = GetComponent<Slider>();
         text = GetComponentInChildren<Text>();
         if (slider == null || text == null)
