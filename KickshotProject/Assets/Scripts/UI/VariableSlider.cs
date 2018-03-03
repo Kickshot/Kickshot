@@ -11,9 +11,14 @@ public class VariableSlider : MonoBehaviour {
 
     private Slider slider;
     private Text text;
-
+    private OptionsManager manager;
+    public GameObject OptionsManager;
     private void Start()
     {
+
+        manager = OptionsManager.GetComponent<OptionsManager>();
+
+  
         slider = GetComponent<Slider>();
         text = GetComponentInChildren<Text>();
         if (slider == null || text == null)
@@ -21,10 +26,10 @@ public class VariableSlider : MonoBehaviour {
 
         switch (variable) {
             case GlobalConstant.FOV:
-                slider.value = GlobalConstants.FOV;
+                slider.value = manager.getFov();
                 break;
             case GlobalConstant.Sensitivity:
-                slider.value = GlobalConstants.Sensitivity;
+                slider.value = manager.getSensitivity();
                 break;
             case GlobalConstant.SFXVolume:
                 slider.value = GlobalConstants.SFXVolume;
@@ -41,9 +46,11 @@ public class VariableSlider : MonoBehaviour {
         {
             case GlobalConstant.FOV:
                 GlobalConstants.FOV = value;
+                manager.setFov(value);
                 break;
             case GlobalConstant.Sensitivity:
                 GlobalConstants.Sensitivity = value;
+                manager.setSensitivity(value);
                 break;
             case GlobalConstant.SFXVolume:
                 GlobalConstants.SFXVolume = value;

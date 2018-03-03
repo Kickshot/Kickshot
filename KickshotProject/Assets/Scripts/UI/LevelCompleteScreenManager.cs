@@ -14,22 +14,11 @@ public class LevelCompleteScreenManager : MonoBehaviour
 
     public GameObject levelCompleteScreen, crosshair;
     public Text HUDTime, completeTime;
+    public InGameGUIManager guiManager;
 
-    void Start()
-    {
-        //player = GameObject.Find("SourcePlayer");
-        // DisplayLevelCompleteMenu();
-    }
-
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.M))
-        {
-            DisplayLevelCompleteMenu();
-        }
-    }
     public void DisplayLevelCompleteMenu()
     {
+        guiManager.activeMenu = true;
         Time.timeScale = 0;
         player = GameObject.Find("SourcePlayer");
         gun = GameObject.Find("DoubleGun");
