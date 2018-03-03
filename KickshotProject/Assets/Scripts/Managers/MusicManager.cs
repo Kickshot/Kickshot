@@ -32,10 +32,9 @@ public class MusicManager : MonoBehaviour {
         music[8] = "I06";
         music[9] = "I07";
         music[10] = "I08";
-        music[11] = "I08";
-        music[12] = "D01";
-        music[13] = "D02";
-        music[14] = "D03";
+        music[11] = "D01";
+        music[12] = "D02";
+        music[13] = "D03";
         SceneManager.sceneLoaded += SceneLoaded;
     }
     void SceneLoaded(Scene scene, LoadSceneMode mode)
