@@ -26,6 +26,7 @@ public class LoseScreenManager : MonoBehaviour {
 
     public void RestartLevel()
     {
+        Cursor.lockState = CursorLockMode.Locked;
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 }

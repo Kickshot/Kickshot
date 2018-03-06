@@ -48,6 +48,11 @@ public class PauseMenuManager : MonoBehaviour
         player.GetComponent<CharacterController>().enabled = true;
         player.GetComponent<SourcePlayer>().enabled = true;
         gun.SetActive(true);
+        if (guiManager.optionsOpen)
+        {
+            GameObject optionsMenu = GameObject.Find("OptionsMenu");
+            optionsMenu.GetComponent<OptionsManager>().FadeOut(optionsMenu);
+        }
     }
 
     public void ClickQuit()
@@ -58,14 +63,10 @@ public class PauseMenuManager : MonoBehaviour
 
     public void ClickRestart()
     {
+        Cursor.lockState = CursorLockMode.Locked;
         Time.timeScale = 1;
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
-    public void ClickOptions()
-    {
-
-    }
-
     public void FadeOut(GameObject menu)
     {
         CanvasGroup group = menu.GetComponent<CanvasGroup>();
