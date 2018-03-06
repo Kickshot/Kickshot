@@ -17,6 +17,9 @@ public class PauseMenuManager : MonoBehaviour
         if (Input.GetButtonDown("Pause") && !m_paused && !guiManager.activeMenu)
         {
             Pause();
+        } else if (Input.GetButtonDown("Pause") && m_paused && !guiManager.activeMenu)
+        {
+            ClickResume();
         }
     }
 
@@ -53,6 +56,9 @@ public class PauseMenuManager : MonoBehaviour
             GameObject optionsMenu = GameObject.Find("OptionsMenu");
             optionsMenu.GetComponent<OptionsManager>().FadeOut(optionsMenu);
         }
+
+        gun.GetComponent<DoubleGun>().OnSecondaryFireRelease(); // simulate a rope release in case player paused while attached to rope
+
     }
 
     public void ClickQuit()
