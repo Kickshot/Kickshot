@@ -1,31 +1,27 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class LevelCompleteScreenManager : MonoBehaviour {
+public class LevelCompleteScreenManager : MonoBehaviour
+{
 
     // used to disable camera/movement
-    public GameObject player, levelCompleteScreen, gun, crosshair;
+    [HideInInspector]
+    public GameObject player, gun;
+
+    public GameObject levelCompleteScreen, crosshair;
     public Text HUDTime, completeTime;
+    public InGameGUIManager guiManager;
 
-    void Start()
-    {
-        //player = GameObject.Find("SourcePlayer");
-       // DisplayLevelCompleteMenu();
-    }
-
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.M))
-        {
-            DisplayLevelCompleteMenu();
-        }
-    }
     public void DisplayLevelCompleteMenu()
     {
+        guiManager.activeMenu = true;
         Time.timeScale = 0;
+        player = GameObject.Find("SourcePlayer");
+        gun = GameObject.Find("DoubleGun");
         player.GetComponent<MouseLook>().enabled = false;
         player.GetComponent<CharacterController>().enabled = false;
         player.GetComponent<SourcePlayer>().enabled = false;
@@ -35,7 +31,6 @@ public class LevelCompleteScreenManager : MonoBehaviour {
         Cursor.lockState = CursorLockMode.None;
         completeTime.text = HUDTime.text;
         HUDTime.enabled = false;
-        Debug.Log(HUDTime.text);
     }
 
     public void ClickMainMenu()
@@ -46,7 +41,15 @@ public class LevelCompleteScreenManager : MonoBehaviour {
 
     public void ClickNextLevel()
     {
+        Cursor.lockState = CursorLockMode.Locked;
         Time.timeScale = 1;
-        Debug.Log("Next Level To Be Implemented");
+        //TODO: This will break if the build settings are changed at all. Probably better to adopt a "level1, level2" naming standard.
+        int nextSceneBuildIndex = SceneManager.GetActiveScene().buildIndex + 1;
+        if (nextSceneBuildIndex == 10 || nextSceneBuildIndex == 13)
+        {
+            SceneManager.LoadScene("MainMenu");
+        } else {
+            SceneManager.LoadScene(nextSceneBuildIndex);
+        }
     }
 }

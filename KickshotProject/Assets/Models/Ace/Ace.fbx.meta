@@ -1,0 +1,127 @@
+fileFormatVersion: 2
+guid: c0eb55ecb4bf02847b0c2a1afd0182ec
+timeCreated: 1520324008
+licenseType: Free
+ModelImporter:
+  serializedVersion: 22
+  fileIDToRecycleName:
+    100000: //RootNode
+    100002: Ace_Low
+    100004: Eyes_Low
+    100006: Helmet_low
+    100008: Teeth_Low
+    100010: Visor_Low
+    400000: //RootNode
+    400002: Ace_Low
+    400004: Eyes_Low
+    400006: Helmet_low
+    400008: Teeth_Low
+    400010: Visor_Low
+    2300000: Ace_Low
+    2300002: Eyes_Low
+    2300004: Helmet_low
+    2300006: Teeth_Low
+    2300008: Visor_Low
+    3300000: Ace_Low
+    3300002: Eyes_Low
+    3300004: Helmet_low
+    3300006: Teeth_Low
+    3300008: Visor_Low
+    4300000: Ace_Low
+    4300002: Teeth_Low
+    4300004: Helmet_low
+    4300006: Visor_Low
+    4300008: Eyes_Low
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Ace_Details
+    second: {fileID: 2100000, guid: 5b02e3b05ca94d34aa19d450586b9ecf, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Ace_Main
+    second: {fileID: 2100000, guid: de2c16be54dc8fc45bb0c1f56699114e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Ace_Visor
+    second: {fileID: 2100000, guid: 356d91dcb4d6b8b4287e3c3a983b0de3, type: 2}
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 0
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 0
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

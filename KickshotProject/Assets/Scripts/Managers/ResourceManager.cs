@@ -39,7 +39,19 @@ public static class ResourceManager {
         // DK Mountain music
         resources.Add ("DKMusic",           new string[]{"Sounds/Mario Kart Double Dash - DK Mountain Music"});
         // Luis' level music
-        resources.Add ("drum&bass",           new string[]{"Sounds/Paul SG & Carter - A Lot To Talk About"});
+        resources.Add ("Menu",              new string[]{"Sounds/Paul SG & Carter - A Lot To Talk About"});
+        resources.Add("I01", new string[] { "Sounds/Music/IslandCandidates/01" });
+        resources.Add("I02", new string[] { "Sounds/Music/IslandCandidates/02" });
+        resources.Add("I03", new string[] { "Sounds/Music/IslandCandidates/03" });
+        resources.Add("I04", new string[] { "Sounds/Music/IslandCandidates/04" });
+        resources.Add("I05", new string[] { "Sounds/Music/IslandCandidates/05" });
+        resources.Add("I06", new string[] { "Sounds/Music/IslandCandidates/06" });
+        resources.Add("I07", new string[] { "Sounds/Music/IslandCandidates/07" });
+        resources.Add("I08", new string[] { "Sounds/Music/IslandCandidates/08" });
+        resources.Add("I09", new string[] { "Sounds/Music/IslandCandidates/09" });
+        resources.Add("D01", new string[] { "Sounds/Music/DesertCandidates/01" });
+        resources.Add("D02", new string[] { "Sounds/Music/DesertCandidates/02" });
+        resources.Add("D03", new string[] { "Sounds/Music/DesertCandidates/03" });
         generated = true;
     }
     // Randomly returns a resource with the given name.
