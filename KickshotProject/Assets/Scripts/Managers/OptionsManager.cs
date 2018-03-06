@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class OptionsManager : MonoBehaviour
 {
-
+    public InGameGUIManager guiManager;
     private float m_sensitivity;
     private float m_fov;
     bool Active = false;
@@ -18,18 +18,6 @@ public class OptionsManager : MonoBehaviour
 
         if (m_fov == 0)
             m_fov = 90;
-    }
-
-    // Use this for initialization
-    void Start()
-    {
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
     }
 
     void OnLevelWasLoaded(int level)
@@ -85,17 +73,30 @@ public class OptionsManager : MonoBehaviour
 
     public void FadeOut(GameObject menu)
     {
-        Active = false;
-        Animator anim = menu.GetComponent<Animator>();
-        anim.SetTrigger("FadeOut");
-
+        if (guiManager.optionsOpen)
+        {
+            guiManager.optionsOpen = false;
+            Active = false;
+            Animator anim = menu.GetComponent<Animator>();
+            anim.SetTrigger("FadeOut");
+        } else
+        {
+            FadeIn(menu);
+        }
     }
 
     public void FadeIn(GameObject menu)
     {
-        Active = true;
-        Animator anim = menu.GetComponent<Animator>();
-        anim.SetTrigger("FadeIn");
+        if (!guiManager.optionsOpen)
+        {
+            guiManager.optionsOpen = true;
+            Active = true;
+            Animator anim = menu.GetComponent<Animator>();
+            anim.SetTrigger("FadeIn");
+        } else
+        {
+            FadeOut(menu);
+        }
     }
 
     public void Activate()

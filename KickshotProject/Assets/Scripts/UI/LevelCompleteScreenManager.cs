@@ -31,7 +31,6 @@ public class LevelCompleteScreenManager : MonoBehaviour
         Cursor.lockState = CursorLockMode.None;
         completeTime.text = HUDTime.text;
         HUDTime.enabled = false;
-        Debug.Log(HUDTime.text);
     }
 
     public void ClickMainMenu()
@@ -42,6 +41,7 @@ public class LevelCompleteScreenManager : MonoBehaviour
 
     public void ClickNextLevel()
     {
+        Cursor.lockState = CursorLockMode.Locked;
         Time.timeScale = 1;
         //TODO: This will break if the build settings are changed at all. Probably better to adopt a "level1, level2" naming standard.
         int nextSceneBuildIndex = SceneManager.GetActiveScene().buildIndex + 1;
