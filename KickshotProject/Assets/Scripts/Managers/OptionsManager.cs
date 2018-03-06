@@ -8,6 +8,7 @@ public class OptionsManager : MonoBehaviour
     private float m_sensitivity;
     private float m_fov;
     bool Active = false;
+
     void Awake()
     {
         m_sensitivity = PlayerPrefs.GetFloat("Sensitivity");
@@ -75,6 +76,13 @@ public class OptionsManager : MonoBehaviour
 
     public void FadeOut(GameObject menu)
     {
+		if (guiManager == null) {
+			Active = false;
+			Animator anim = menu.GetComponent<Animator>();
+			anim.SetTrigger("FadeOut");
+			return;
+		}
+
         if (guiManager.optionsOpen)
         {
             guiManager.optionsOpen = false;
@@ -89,6 +97,13 @@ public class OptionsManager : MonoBehaviour
 
     public void FadeIn(GameObject menu)
     {
+		if (guiManager == null) {
+			Active = true;
+			Animator anim = menu.GetComponent<Animator>();
+			anim.SetTrigger("FadeIn");
+			return;
+		}
+			
         if (!guiManager.optionsOpen)
         {
             guiManager.optionsOpen = true;
