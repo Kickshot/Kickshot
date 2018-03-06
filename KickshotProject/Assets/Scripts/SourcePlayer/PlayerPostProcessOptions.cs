@@ -7,7 +7,7 @@ public class PlayerPostProcessOptions : MonoBehaviour
 {
     internal PostProcessingBehaviour ppb;
     public SourcePlayer player;
-    float baseFOV;
+    public float baseFOV;
 
     [Header("   FOV Options\n")]
     [Range(10f,100f)] //Speed needed to start applying FOV distortion to the player.

@@ -67,6 +67,8 @@ public class OptionsManager : MonoBehaviour
         if (Player != null)
         {
             Camera cam = Player.GetComponentInChildren<Camera>();
+			PlayerPostProcessOptions PostPros = Player.GetComponentInChildren<PlayerPostProcessOptions> ();
+			PostPros.baseFOV = m_fov;
             cam.fieldOfView = m_fov;
         }
     }
