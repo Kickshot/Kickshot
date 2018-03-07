@@ -1,34 +1,23 @@
 fileFormatVersion: 2
-guid: 202439c239ef45a48883db0e919f1d3c
-timeCreated: 1516768897
+guid: 09b06fd631e4eae44b98480c9e202f0c
+timeCreated: 1520394885
 licenseType: Free
 ModelImporter:
   serializedVersion: 22
   fileIDToRecycleName:
     100000: //RootNode
-    100002: Desert_SmallRock05:pCube2
-    100004: Desert_SmallRock01:pCube2
     400000: //RootNode
-    400002: Desert_SmallRock05:pCube2
-    400004: Desert_SmallRock01:pCube2
-    2300000: Desert_SmallRock05:pCube2
-    2300002: Desert_SmallRock01:pCube2
-    3300000: Desert_SmallRock05:pCube2
-    3300002: Desert_SmallRock01:pCube2
-    4300000: Desert_SmallRock05:pCube2
-    4300002: Desert_SmallRock01:pCube2
+    2100000: redrock3
+    2300000: //RootNode
+    3300000: //RootNode
+    4300000: hoodoo1_0002:pCube1
     9500000: //RootNode
-  externalObjects:
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: lambert2
-    second: {fileID: 2100000, guid: b20c30a1f46b5af4c97300e1d6c28bc3, type: 2}
+  externalObjects: {}
   materials:
     importMaterials: 1
     materialName: 0
     materialSearch: 1
-    materialLocation: 0
+    materialLocation: 1
   animations:
     legacyGenerateAnimations: 4
     bakeSimulation: 0
@@ -67,7 +56,7 @@ ModelImporter:
     keepQuads: 0
     weldVertices: 1
     preserveHierarchy: 0
-    indexFormat: 1
+    indexFormat: 0
     secondaryUVAngleDistortion: 8
     secondaryUVAreaDistortion: 15.000001
     secondaryUVHardAngle: 88

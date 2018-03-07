@@ -1,0 +1,508 @@
+fileFormatVersion: 2
+guid: 6164c1d13d1baba498c98d0c9e90dd50
+timeCreated: 1520388625
+licenseType: Free
+ModelImporter:
+  serializedVersion: 22
+  fileIDToRecycleName:
+    100000: //RootNode
+    100002: Armor_1
+    100004: Armor_2
+    100006: Armor_Group
+    100008: Barrel_1
+    100010: Barrel_2
+    100012: Barrel_3
+    100014: Barrel_4
+    100016: Barrel_5
+    100018: Barrel_6
+    100020: Barrel_7
+    100022: Barrel_8
+    100024: Barrel_CTRL
+    100026: Barrel_Rotation
+    100028: Base
+    100030: Gun_Main_Offset
+    100032: GunPos_CTRL
+    100034: L_Elbow
+    100036: L_Forearm
+    100038: L_Hand_Palm
+    100040: L_Index_Knuckle
+    100042: L_Index_Middle
+    100044: L_Index_Nail
+    100046: L_Index_Tip
+    100048: L_Middle_Knuckle
+    100050: L_Middle_Middle
+    100052: L_Middle_Nail
+    100054: L_Middle_Tip
+    100056: L_Pinky_Knuckle
+    100058: L_Pinky_Middle
+    100060: L_Pinky_Nail
+    100062: L_Pinky_Tip
+    100064: L_Shoulder
+    100066: L_Shoulder_Pos
+    100068: L_Thumb_Center
+    100070: L_Thumb_Knuckle
+    100072: L_Thumb_Tip
+    100074: L_Wrist
+    100076: pCube1
+    100078: pCube1 1
+    100080: pCube1 2
+    100082: pCube1 3
+    100084: pCube1 4
+    100086: pCube1 5
+    100088: pCube1 6
+    100090: pCube1 7
+    100092: pCube15
+    100094: pCube15 1
+    100096: pCube15 2
+    100098: pCube15 3
+    100100: pCube15 4
+    100102: pCube15 5
+    100104: pCube15 6
+    100106: pCube15 7
+    100108: pCube16
+    100110: pCube16 1
+    100112: pCube16 2
+    100114: pCube16 3
+    100116: pCube16 4
+    100118: pCube16 5
+    100120: pCube16 6
+    100122: pCube16 7
+    100124: pCube17
+    100126: pCube17 1
+    100128: pCube17 2
+    100130: pCube17 3
+    100132: pCube17 4
+    100134: pCube17 5
+    100136: pCube17 6
+    100138: pCube17 7
+    100140: pCube18
+    100142: pCube18 1
+    100144: pCube18 2
+    100146: pCube18 3
+    100148: pCube18 4
+    100150: pCube18 5
+    100152: pCube18 6
+    100154: pCube18 7
+    100156: pCylinder3
+    100158: pCylinder3 1
+    100160: pCylinder3 2
+    100162: pCylinder3 3
+    100164: pCylinder3 4
+    100166: pCylinder3 5
+    100168: pCylinder3 6
+    100170: pCylinder3 7
+    100172: R_Elbow
+    100174: R_Forearm
+    100176: R_Hand_Palm
+    100178: R_Index_Knuckle
+    100180: R_Index_Middle
+    100182: R_Index_Nail
+    100184: R_Index_Tip
+    100186: R_Middle_Knuckle
+    100188: R_Middle_Middle
+    100190: R_Middle_Nail
+    100192: R_Middle_Tip
+    100194: R_Pinky_Knuckle
+    100196: R_Pinky_Middle
+    100198: R_Pinky_Nail
+    100200: R_Pinky_Tip
+    100202: R_Shoulder
+    100204: R_Shoulder_Pos
+    100206: R_Thumb_Center
+    100208: R_Thumb_Knuckle
+    100210: R_Thumb_Tip
+    100212: R_Wrist
+    100214: Rotator_Back
+    100216: Rotator_Front
+    100218: Skeleton_Group
+    100220: Slide
+    100222: Super_Mover
+    100224: transform1
+    100226: transform4
+    100228: transform5
+    100230: Trigger
+    100232: Vents
+    100234: Vents 1
+    100236: Vents 2
+    100238: Vents 3
+    100240: Vents 4
+    100242: Vents 5
+    100244: Vents 6
+    100246: Vents 7
+    400000: //RootNode
+    400002: Armor_1
+    400004: Armor_2
+    400006: Armor_Group
+    400008: Barrel_1
+    400010: Barrel_2
+    400012: Barrel_3
+    400014: Barrel_4
+    400016: Barrel_5
+    400018: Barrel_6
+    400020: Barrel_7
+    400022: Barrel_8
+    400024: Barrel_CTRL
+    400026: Barrel_Rotation
+    400028: Base
+    400030: Gun_Main_Offset
+    400032: GunPos_CTRL
+    400034: L_Elbow
+    400036: L_Forearm
+    400038: L_Hand_Palm
+    400040: L_Index_Knuckle
+    400042: L_Index_Middle
+    400044: L_Index_Nail
+    400046: L_Index_Tip
+    400048: L_Middle_Knuckle
+    400050: L_Middle_Middle
+    400052: L_Middle_Nail
+    400054: L_Middle_Tip
+    400056: L_Pinky_Knuckle
+    400058: L_Pinky_Middle
+    400060: L_Pinky_Nail
+    400062: L_Pinky_Tip
+    400064: L_Shoulder
+    400066: L_Shoulder_Pos
+    400068: L_Thumb_Center
+    400070: L_Thumb_Knuckle
+    400072: L_Thumb_Tip
+    400074: L_Wrist
+    400076: pCube1
+    400078: pCube1 1
+    400080: pCube1 2
+    400082: pCube1 3
+    400084: pCube1 4
+    400086: pCube1 5
+    400088: pCube1 6
+    400090: pCube1 7
+    400092: pCube15
+    400094: pCube15 1
+    400096: pCube15 2
+    400098: pCube15 3
+    400100: pCube15 4
+    400102: pCube15 5
+    400104: pCube15 6
+    400106: pCube15 7
+    400108: pCube16
+    400110: pCube16 1
+    400112: pCube16 2
+    400114: pCube16 3
+    400116: pCube16 4
+    400118: pCube16 5
+    400120: pCube16 6
+    400122: pCube16 7
+    400124: pCube17
+    400126: pCube17 1
+    400128: pCube17 2
+    400130: pCube17 3
+    400132: pCube17 4
+    400134: pCube17 5
+    400136: pCube17 6
+    400138: pCube17 7
+    400140: pCube18
+    400142: pCube18 1
+    400144: pCube18 2
+    400146: pCube18 3
+    400148: pCube18 4
+    400150: pCube18 5
+    400152: pCube18 6
+    400154: pCube18 7
+    400156: pCylinder3
+    400158: pCylinder3 1
+    400160: pCylinder3 2
+    400162: pCylinder3 3
+    400164: pCylinder3 4
+    400166: pCylinder3 5
+    400168: pCylinder3 6
+    400170: pCylinder3 7
+    400172: R_Elbow
+    400174: R_Forearm
+    400176: R_Hand_Palm
+    400178: R_Index_Knuckle
+    400180: R_Index_Middle
+    400182: R_Index_Nail
+    400184: R_Index_Tip
+    400186: R_Middle_Knuckle
+    400188: R_Middle_Middle
+    400190: R_Middle_Nail
+    400192: R_Middle_Tip
+    400194: R_Pinky_Knuckle
+    400196: R_Pinky_Middle
+    400198: R_Pinky_Nail
+    400200: R_Pinky_Tip
+    400202: R_Shoulder
+    400204: R_Shoulder_Pos
+    400206: R_Thumb_Center
+    400208: R_Thumb_Knuckle
+    400210: R_Thumb_Tip
+    400212: R_Wrist
+    400214: Rotator_Back
+    400216: Rotator_Front
+    400218: Skeleton_Group
+    400220: Slide
+    400222: Super_Mover
+    400224: transform1
+    400226: transform4
+    400228: transform5
+    400230: Trigger
+    400232: Vents
+    400234: Vents 1
+    400236: Vents 2
+    400238: Vents 3
+    400240: Vents 4
+    400242: Vents 5
+    400244: Vents 6
+    400246: Vents 7
+    2100000: Gold1
+    2100002: Steel_Grey1
+    2100004: Grey1
+    2100006: Red1
+    2100008: Black1
+    2100010: Matt_Black1
+    2300000: Armor_1
+    2300002: Armor_2
+    2300004: Base
+    2300006: pCube1
+    2300008: pCube1 1
+    2300010: pCube1 2
+    2300012: pCube1 3
+    2300014: pCube1 4
+    2300016: pCube1 5
+    2300018: pCube1 6
+    2300020: pCube1 7
+    2300022: pCube15
+    2300024: pCube15 1
+    2300026: pCube15 2
+    2300028: pCube15 3
+    2300030: pCube15 4
+    2300032: pCube15 5
+    2300034: pCube15 6
+    2300036: pCube15 7
+    2300038: pCube16
+    2300040: pCube16 1
+    2300042: pCube16 2
+    2300044: pCube16 3
+    2300046: pCube16 4
+    2300048: pCube16 5
+    2300050: pCube16 6
+    2300052: pCube16 7
+    2300054: pCube17
+    2300056: pCube17 1
+    2300058: pCube17 2
+    2300060: pCube17 3
+    2300062: pCube17 4
+    2300064: pCube17 5
+    2300066: pCube17 6
+    2300068: pCube17 7
+    2300070: pCube18
+    2300072: pCube18 1
+    2300074: pCube18 2
+    2300076: pCube18 3
+    2300078: pCube18 4
+    2300080: pCube18 5
+    2300082: pCube18 6
+    2300084: pCube18 7
+    2300086: pCylinder3
+    2300088: pCylinder3 1
+    2300090: pCylinder3 2
+    2300092: pCylinder3 3
+    2300094: pCylinder3 4
+    2300096: pCylinder3 5
+    2300098: pCylinder3 6
+    2300100: pCylinder3 7
+    2300102: Rotator_Back
+    2300104: Rotator_Front
+    2300106: Slide
+    2300108: Trigger
+    3300000: Armor_1
+    3300002: Armor_2
+    3300004: Base
+    3300006: pCube1
+    3300008: pCube1 1
+    3300010: pCube1 2
+    3300012: pCube1 3
+    3300014: pCube1 4
+    3300016: pCube1 5
+    3300018: pCube1 6
+    3300020: pCube1 7
+    3300022: pCube15
+    3300024: pCube15 1
+    3300026: pCube15 2
+    3300028: pCube15 3
+    3300030: pCube15 4
+    3300032: pCube15 5
+    3300034: pCube15 6
+    3300036: pCube15 7
+    3300038: pCube16
+    3300040: pCube16 1
+    3300042: pCube16 2
+    3300044: pCube16 3
+    3300046: pCube16 4
+    3300048: pCube16 5
+    3300050: pCube16 6
+    3300052: pCube16 7
+    3300054: pCube17
+    3300056: pCube17 1
+    3300058: pCube17 2
+    3300060: pCube17 3
+    3300062: pCube17 4
+    3300064: pCube17 5
+    3300066: pCube17 6
+    3300068: pCube17 7
+    3300070: pCube18
+    3300072: pCube18 1
+    3300074: pCube18 2
+    3300076: pCube18 3
+    3300078: pCube18 4
+    3300080: pCube18 5
+    3300082: pCube18 6
+    3300084: pCube18 7
+    3300086: pCylinder3
+    3300088: pCylinder3 1
+    3300090: pCylinder3 2
+    3300092: pCylinder3 3
+    3300094: pCylinder3 4
+    3300096: pCylinder3 5
+    3300098: pCylinder3 6
+    3300100: pCylinder3 7
+    3300102: Rotator_Back
+    3300104: Rotator_Front
+    3300106: Slide
+    3300108: Trigger
+    4300000: Rotator_Front
+    4300002: Slide
+    4300004: pCylinder3
+    4300006: pCube1
+    4300008: pCube15
+    4300010: pCube16
+    4300012: pCube17
+    4300014: pCube18
+    4300016: pCylinder3
+    4300018: pCube1
+    4300020: pCube15
+    4300022: pCube16
+    4300024: pCube17
+    4300026: pCube18
+    4300028: pCylinder3
+    4300030: pCube1
+    4300032: pCube15
+    4300034: pCube16
+    4300036: pCube17
+    4300038: pCube18
+    4300040: pCylinder3
+    4300042: pCube1
+    4300044: pCube15
+    4300046: pCube16
+    4300048: pCube17
+    4300050: pCube18
+    4300052: pCylinder3
+    4300054: pCube1
+    4300056: pCube15
+    4300058: pCube16
+    4300060: pCube17
+    4300062: pCube18
+    4300064: pCylinder3
+    4300066: pCube1
+    4300068: pCube15
+    4300070: pCube16
+    4300072: pCube17
+    4300074: pCube18
+    4300076: pCylinder3
+    4300078: pCube1
+    4300080: pCube15
+    4300082: pCube16
+    4300084: pCube17
+    4300086: pCube18
+    4300088: pCylinder3
+    4300090: pCube1
+    4300092: pCube15
+    4300094: pCube16
+    4300096: pCube17
+    4300098: pCube18
+    4300100: Trigger
+    4300102: Armor_1
+    4300104: Armor_2
+    4300106: Base
+    4300108: Rotator_Back
+    7400000: Take 001
+    9500000: //RootNode
+  externalObjects: {}
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    preserveHierarchy: 0
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
