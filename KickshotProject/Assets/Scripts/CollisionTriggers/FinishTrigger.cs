@@ -11,6 +11,5 @@ public class FinishTrigger : MonoBehaviour {
             {
                 levelComplete.GetComponent<LevelCompleteScreenManager>().DisplayLevelCompleteMenu();
             }
-
     }
 }

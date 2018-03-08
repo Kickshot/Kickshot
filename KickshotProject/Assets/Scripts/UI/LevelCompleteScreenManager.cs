@@ -11,13 +11,19 @@ public class LevelCompleteScreenManager : MonoBehaviour
     // used to disable camera/movement
     [HideInInspector]
     public GameObject player, gun;
+    [HideInInspector]
+    public HUD hud;
 
     public GameObject levelCompleteScreen, crosshair;
-    public Text HUDTime, completeTime;
+    public Text HUDTime, completeTime, BestText;
     public InGameGUIManager guiManager;
+
 
     public void DisplayLevelCompleteMenu()
     {
+        hud = GameObject.Find("[HUD]").GetComponent<HUD>();
+        SaveHighScore();
+        DisplayHighScore();
         guiManager.activeMenu = true;
         Time.timeScale = 0;
         player = GameObject.Find("SourcePlayer");
@@ -33,6 +39,59 @@ public class LevelCompleteScreenManager : MonoBehaviour
         HUDTime.enabled = false;
     }
 
+    public void DisplayHighScore()
+    {
+        if(!PlayerPrefs.HasKey(SceneManager.GetActiveScene().name))
+        {
+            BestText.text = "Best : " + HUDTime.text;
+        }
+        else
+        {
+            BestText.text = "Best : " + ToTimerFormat(PlayerPrefs.GetFloat(SceneManager.GetActiveScene().name));
+        }
+        StartCoroutine(OscillateHighScoreOpacity());
+    }
+
+    private IEnumerator OscillateHighScoreOpacity()
+    {
+        Color c = BestText.color;
+        while (true)
+        {
+            BestText.color = new Color(c.r, c.g, c.b, ((Mathf.Sin(Time.unscaledTime * 2) + 1) / 2) + 0.4f );
+            c = BestText.color;
+            yield return new WaitForEndOfFrame();
+        }
+    }
+
+    public void SaveHighScore()
+    {
+        if (hud == null)
+        {
+            print("Highscore not saved.");
+            return;
+        }
+
+        if(PlayerPrefs.HasKey(SceneManager.GetActiveScene().name))
+        {
+            float highScore = PlayerPrefs.GetFloat(SceneManager.GetActiveScene().name);
+            if(hud.timer.Time < highScore)
+            {
+                PlayerPrefs.SetFloat(SceneManager.GetActiveScene().name, hud.timer.Time);
+            }
+        }
+        else
+        {
+            PlayerPrefs.SetFloat(SceneManager.GetActiveScene().name, hud.timer.Time);
+        }
+    }
+
+    public string ToTimerFormat(float t)
+    {
+        TimeSpan ts = TimeSpan.FromSeconds(t);
+        //print("Minutes = " + ts.Minutes + " Seconds = " + ts.Seconds + " Milliseconds = " + ts.Milliseconds);
+        return ts.Minutes.ToString().PadLeft(2, '0') + ":" + (ts.Seconds % 60).ToString().PadLeft(2, '0') + ":" + ts.Milliseconds.ToString().PadLeft(3, '0');
+    }
+    
     public void ClickMainMenu()
     {
         Time.timeScale = 1;
