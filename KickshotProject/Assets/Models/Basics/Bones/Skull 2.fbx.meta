@@ -15,12 +15,12 @@ ModelImporter:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: lambert2
-    second: {fileID: 2100000, guid: f3207e24c5d1ffc4ea6df8503c33e0c1, type: 2}
+    second: {fileID: 2100000, guid: 0e56e9340059e91489b5c89ce974430c, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: lambert3
-    second: {fileID: 2100000, guid: 3629e0f774261e64da1d3de7a7f0430d, type: 2}
+    second: {fileID: 2100000, guid: be53503794354a84db7d7afac2e46bac, type: 2}
   materials:
     importMaterials: 1
     materialName: 0
@@ -63,6 +63,8 @@ ModelImporter:
     optimizeMeshForGPU: 1
     keepQuads: 0
     weldVertices: 1
+    preserveHierarchy: 0
+    indexFormat: 0
     secondaryUVAngleDistortion: 8
     secondaryUVAreaDistortion: 15.000001
     secondaryUVHardAngle: 88
