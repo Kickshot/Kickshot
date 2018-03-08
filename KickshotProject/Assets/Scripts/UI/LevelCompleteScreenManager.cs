@@ -10,12 +10,17 @@ public class LevelCompleteScreenManager : MonoBehaviour
 
     // used to disable camera/movement
     [HideInInspector]
-    public GameObject player, gun;
+    public GameObject player;
+    [HideInInspector]
+    public GameObject gun;
     [HideInInspector]
     public HUD hud;
 
-    public GameObject levelCompleteScreen, crosshair;
-    public Text HUDTime, completeTime, BestText;
+    public GameObject levelCompleteScreen;
+    public GameObject crosshair;
+    public Text HUDTime;
+    public Text completeTime;
+    public Text BestText;
     public InGameGUIManager guiManager;
 
 
