@@ -49,9 +49,14 @@ public static class ResourceManager {
         resources.Add("I07", new string[] { "Sounds/Music/IslandCandidates/07" });
         resources.Add("I08", new string[] { "Sounds/Music/IslandCandidates/08" });
         resources.Add("I09", new string[] { "Sounds/Music/IslandCandidates/09" });
+        resources.Add("I10", new string[] { "Sounds/Music/IslandCandidates/05" });
+        resources.Add("G01", new string[] { "Sounds/Music/IslandCandidates/04" });
+        resources.Add("G02", new string[] { "Sounds/Music/IslandCandidates/07" });
+        resources.Add("G03", new string[] { "Sounds/Music/IslandCandidates/06" });
         resources.Add("D01", new string[] { "Sounds/Music/DesertCandidates/01" });
         resources.Add("D02", new string[] { "Sounds/Music/DesertCandidates/02" });
         resources.Add("D03", new string[] { "Sounds/Music/DesertCandidates/03" });
+        resources.Add("D04", new string[] { "Sounds/Music/DesertCandidates/01" });
         generated = true;
     }
     // Randomly returns a resource with the given name.
