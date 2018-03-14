@@ -32,10 +32,10 @@ public class VariableSlider : MonoBehaviour {
                 slider.value = manager.getSensitivity();
                 break;
             case GlobalConstant.SFXVolume:
-                slider.value = GlobalConstants.SFXVolume;
+                slider.value = manager.getSFXVolume();
                 break;
             case GlobalConstant.MusicVolume:
-                slider.value = GlobalConstants.MusicVolume;
+                slider.value = manager.getMusicVolume();
                 break;
         }
     }
@@ -53,9 +53,11 @@ public class VariableSlider : MonoBehaviour {
                 manager.setSensitivity(value);
                 break;
             case GlobalConstant.SFXVolume:
+                manager.setSFXVolume(value);
                 GlobalConstants.SFXVolume = value;
                 break;
             case GlobalConstant.MusicVolume:
+                manager.setMusicVolume(value);
                 GlobalConstants.MusicVolume = value;
                 break;
         }
