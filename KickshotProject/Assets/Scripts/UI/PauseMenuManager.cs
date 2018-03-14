@@ -26,6 +26,7 @@ public class PauseMenuManager : MonoBehaviour
     private void Pause()
     {
         m_paused = true;
+        guiManager.showCursor = true;
         Time.timeScale = 0;
         pauseMenu.SetActive(true);
         // Hide crosshair
@@ -56,7 +57,7 @@ public class PauseMenuManager : MonoBehaviour
             GameObject optionsMenu = GameObject.Find("OptionsMenu");
             optionsMenu.GetComponent<OptionsManager>().FadeOut(optionsMenu);
         }
-
+        guiManager.showCursor = false;
         gun.GetComponent<DoubleGun>().OnSecondaryFireRelease(); // simulate a rope release in case player paused while attached to rope
 
     }
@@ -70,6 +71,7 @@ public class PauseMenuManager : MonoBehaviour
     public void ClickRestart()
     {
         Cursor.lockState = CursorLockMode.Locked;
+        guiManager.showCursor = false;
         Time.timeScale = 1;
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
@@ -88,4 +90,5 @@ public class PauseMenuManager : MonoBehaviour
         group.interactable = true;
         group.blocksRaycasts = true;
     }
+
 }

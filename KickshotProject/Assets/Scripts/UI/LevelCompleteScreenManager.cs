@@ -42,6 +42,7 @@ public class LevelCompleteScreenManager : MonoBehaviour
         Cursor.lockState = CursorLockMode.None;
         completeTime.text = HUDTime.text;
         HUDTime.enabled = false;
+        guiManager.showCursor = true;
     }
 
     public void DisplayHighScore()

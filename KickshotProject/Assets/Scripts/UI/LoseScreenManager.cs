@@ -17,6 +17,7 @@ public class LoseScreenManager : MonoBehaviour {
         crosshair.SetActive(false);
         loseScreen.SetActive(true);
         Cursor.lockState = CursorLockMode.None;
+        guiManager.showCursor = true;
     }
 
     public void ClickMainMenu()
@@ -27,6 +28,8 @@ public class LoseScreenManager : MonoBehaviour {
     public void RestartLevel()
     {
         Cursor.lockState = CursorLockMode.Locked;
+        guiManager.showCursor = false;
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+
     }
 }
