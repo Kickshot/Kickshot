@@ -17,8 +17,6 @@ public class OptionsManager : MonoBehaviour
 
     void Awake()
     {
-        mainMixer.SetFloat("SFXVolume", -10000);
-        mainMixer.SetFloat("MusicVolume", -100000);
 
         m_sensitivity = PlayerPrefs.GetFloat("Sensitivity");
         m_fov = PlayerPrefs.GetFloat("Fov");
