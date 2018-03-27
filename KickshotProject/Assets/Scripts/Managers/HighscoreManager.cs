@@ -84,25 +84,25 @@ public class HighscoreManager : MonoBehaviour
     {
         Text[] ct = GameObject.Find("Level Times").GetComponentsInChildren<Text>();
         //1 + DesertLevelsCount for Menu Scene.
-        for (int i = 1, j = 0; i < 11; i++, j++)
+        for (int i = 2, j = 0; i < 12; i++, j++)
         {
-            if(PlayerPrefs.HasKey(SceneManager.GetSceneByBuildIndex(i).name))
+            print("Level " + i + " aka " + GetSceneNameByBuildIndex(i) + (PlayerPrefs.HasKey(GetSceneNameByBuildIndex(i)) ? " has key with value " + PlayerPrefs.GetFloat(GetSceneNameByBuildIndex(i)) : " has NO key."));
+            if(PlayerPrefs.HasKey(GetSceneNameByBuildIndex(i)) && PlayerPrefs.GetFloat(GetSceneNameByBuildIndex(i)) != 0)
             {
-                ct[j].text = ToTimerFormat(PlayerPrefs.GetFloat(SceneManager.GetSceneByBuildIndex(i).name));
+                ct[j].text = ToTimerFormat(PlayerPrefs.GetFloat(GetSceneNameByBuildIndex(i)));
             }
             else
             {
                 ct[j].text = "Unplayed";
+
             }
         }
 
-        print("count " + SceneManager.sceneCountInBuildSettings);
-
         for (int i = 15, j = 10; i < 19; i++, j++)
         {
-            if (PlayerPrefs.HasKey(SceneManager.GetSceneByBuildIndex(i).name))
+            if (PlayerPrefs.HasKey(GetSceneNameByBuildIndex(i)) && PlayerPrefs.GetFloat(GetSceneNameByBuildIndex(i)) != 0)
             {
-                ct[j].text = ToTimerFormat(PlayerPrefs.GetFloat(SceneManager.GetSceneByBuildIndex(i).name));
+                ct[j].text = ToTimerFormat(PlayerPrefs.GetFloat(GetSceneNameByBuildIndex(i)));
             }
             else
             {
@@ -116,5 +116,19 @@ public class HighscoreManager : MonoBehaviour
         TimeSpan ts = TimeSpan.FromSeconds(t);
         //print("Minutes = " + ts.Minutes + " Seconds = " + ts.Seconds + " Milliseconds = " + ts.Milliseconds);
         return ts.Minutes.ToString().PadLeft(2, '0') + ":" + (ts.Seconds % 60).ToString().PadLeft(2, '0') + ":" + ts.Milliseconds.ToString().PadLeft(3, '0');
+    }
+
+    public static string GetSceneNameByBuildIndex(int buildIndex)
+    {
+        return GetSceneNameFromScenePath(SceneUtility.GetScenePathByBuildIndex(buildIndex));
+    }
+
+    private static string GetSceneNameFromScenePath(string scenePath)
+    {
+        // Unity's asset paths always use '/' as a path separator
+        var sceneNameStart = scenePath.LastIndexOf("/", StringComparison.Ordinal) + 1;
+        var sceneNameEnd = scenePath.LastIndexOf(".", StringComparison.Ordinal);
+        var sceneNameLength = sceneNameEnd - sceneNameStart;
+        return scenePath.Substring(sceneNameStart, sceneNameLength);
     }
 }

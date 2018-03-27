@@ -76,8 +76,8 @@ public class LevelCompleteScreenManager : MonoBehaviour
             print("Highscore not saved.");
             return;
         }
-
-        if(PlayerPrefs.HasKey(SceneManager.GetActiveScene().name))
+        print("Key = " + SceneManager.GetActiveScene().name);
+        if (PlayerPrefs.HasKey(SceneManager.GetActiveScene().name))
         {
             float highScore = PlayerPrefs.GetFloat(SceneManager.GetActiveScene().name);
             if(hud.timer.Time < highScore)
@@ -89,6 +89,7 @@ public class LevelCompleteScreenManager : MonoBehaviour
         {
             PlayerPrefs.SetFloat(SceneManager.GetActiveScene().name, hud.timer.Time);
         }
+        PlayerPrefs.Save();
     }
 
     public string ToTimerFormat(float t)
