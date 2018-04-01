@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;
 using UnityEngine;
 
 public class DoubleGun : GunBase
@@ -26,6 +27,8 @@ public class DoubleGun : GunBase
 	public Rocket rocket;
 	public Animator rocketLauncher;
 
+    private Image crosshairImage;
+
     [Header("Grapple Hook")]
     public float GrappleUsePercentage = 50f;
     public float UngroundedRecoveryPercentage = 10f;
@@ -47,6 +50,13 @@ public class DoubleGun : GunBase
 
     void Start()
 	{
+        crosshairImage = GameObject.Find("Crosshair").GetComponent<Image>();
+        if (crosshairImage == null)
+            Debug.LogError("Could Not Find Crosshair in Gun.");
+
+       // CrosshairMat = GameObject.Find("Crosshair").GetComponent<Material>();
+        //CrosshairMat.color = Color.red;
+        
         energy = 100f;
         heat = 0f;
 		ropes = new List<RopeSim> ();
@@ -123,6 +133,7 @@ public class DoubleGun : GunBase
 		transform.rotation = view.rotation;
 		if (hitSomething)
 		{
+            
 			// Keep us busy so we don't reload during grappling.
 			busySecondary = 0.8f;
 			//player.transform.position = hitPosition.position - player.view.forward * hitDist;
@@ -150,6 +161,11 @@ public class DoubleGun : GunBase
 			}
 			player.maxSpeed = saveMaxAirSpeed;
 		}
+
+        if (hitSomething)
+            crosshairImage.color = Color.red;
+        else
+            crosshairImage.color = Color.white;
 
 		// Rocket Update
 		transform.rotation = view.rotation;
