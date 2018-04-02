@@ -27,7 +27,7 @@ public class DoubleGun : GunBase
 	public Rocket rocket;
 	public Animator rocketLauncher;
 
-    private Image crosshairImage;
+    private Crosshair crosshairImage;
 
     [Header("Grapple Hook")]
     public float GrappleUsePercentage = 50f;
@@ -50,7 +50,7 @@ public class DoubleGun : GunBase
 
     void Start()
 	{
-        crosshairImage = GameObject.Find("Crosshair").GetComponent<Image>();
+        crosshairImage = GameObject.Find("Crosshair").GetComponent<Crosshair>();
         if (crosshairImage == null)
             Debug.LogError("Could Not Find Crosshair in Gun.");
 
@@ -162,13 +162,32 @@ public class DoubleGun : GunBase
 			player.maxSpeed = saveMaxAirSpeed;
 		}
 
-        if (hitSomething)
-            crosshairImage.color = Color.red;
-        else
-            crosshairImage.color = Color.white;
 
-		// Rocket Update
-		transform.rotation = view.rotation;
+
+        if (hitSomething)
+        {
+            crosshairImage.switchImage(2);
+
+            if (Physics.Raycast(view.position, view.forward, range, ~(1 << LayerMask.NameToLayer("Player"))))
+            {
+                crosshairImage.switchImage(3);
+            }
+        }
+        else
+        {
+
+            if (Physics.Raycast(view.position, view.forward, range, ~(1 << LayerMask.NameToLayer("Player"))))
+            {
+                crosshairImage.switchImage(1);
+            }
+            else
+            {
+                crosshairImage.switchImage(0);
+            }
+        }
+
+        // Rocket Update
+        transform.rotation = view.rotation;
 		if (reloading)
 		{
 			float progress = 1f - busy / reloadDelay;
