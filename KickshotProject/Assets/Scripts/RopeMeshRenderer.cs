@@ -239,6 +239,9 @@ public class RopeMeshRenderer : MonoBehaviour {
 #if UNITY_EDITOR
         } else { 
 #endif
+			if (ropesim.bones.Count <= 0) {
+				return;
+			}
             Vector3 max = ropesim.bones[0].localPosition;
             Vector3 min = ropesim.bones[0].localPosition;
             foreach( Transform bone in ropesim.bones ) {
