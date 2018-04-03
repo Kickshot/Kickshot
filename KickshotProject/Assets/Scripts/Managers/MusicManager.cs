@@ -22,7 +22,7 @@ public class MusicManager : MonoBehaviour {
         music = new Dictionary<int, string> ();
         oldBuildIndex = 0;
 
-        music [1] = "Menu";
+        music [1] = "I04";
         music[2] = "I01";
         music[3] = "I02"; // Music to be played during level index x (whomp fortress). Music IDs are handled by the Resource Manager.
         music[4] = "I01";
