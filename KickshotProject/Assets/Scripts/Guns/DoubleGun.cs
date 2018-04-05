@@ -253,7 +253,7 @@ public class DoubleGun : GunBase
         // We ignore player collisions.
         if (Physics.Raycast(view.position, view.forward, out hit, range, ~(1 << LayerMask.NameToLayer("Player"))))
         {
-            if (!checkTag || hit.collider.CompareTag("Grappleable"))
+            if (hit.collider && (!checkTag || hit.collider.CompareTag("Grappleable")))
             {
                 hitPosition.SetParent(hit.collider.transform);
                 hitPosition.position = hit.point;
