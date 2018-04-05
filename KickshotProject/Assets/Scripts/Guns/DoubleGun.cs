@@ -99,10 +99,14 @@ public class DoubleGun : GunBase
         if (player == null)
             return;
 
-        if(player.controller.isGrounded)
+	rocketLauncher.SetFloat("Vel", Mathf.Clamp(player.velocity.magnitude/5,1,10));
+	rocketLauncher.SetFloat("Speed", Mathf.Clamp(player.velocity.magnitude/10,0,1));
+	rocketLauncher.SetBool("OnGround", player.controller.isGrounded);
+        if(player.controller.isGrounded) {
             energy += GroundedRecoveryPercentage * Time.deltaTime;
-        else
+        } else {
             energy += UngroundedRecoveryPercentage * Time.deltaTime;
+	}
 
         energy = Mathf.Clamp(energy, 0f, 100f);
 
