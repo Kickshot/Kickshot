@@ -62,7 +62,7 @@
                 fixed4 col = cnoise(dispUV * _NoiseOctave);//tex2D(_NoiseTex, dispUV);
                 clip(col.r - _NoiseCutoff);
                 col = _Color;
-                col.a = 1.0;
+                col.a = _Color.a;
                 return col;
             }
     		ENDCG
