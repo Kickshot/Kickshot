@@ -54,6 +54,15 @@ public class SmartCamera : MonoBehaviour {
         shake += amount;
     }
 
+    /// <summary>
+    /// Set only from 0 to 1
+    /// </summary>
+    /// <param name="amount"></param>
+    public void SetShake(float amount)
+    {
+        shake = amount;
+    }
+
     public void AddRecoil(float amount)
     {
         recoil += amount;
