@@ -18,6 +18,7 @@ public class MenuManager : MonoBehaviour
 {
     [Header("General Settings")]
     public float lerpDuration;
+    public EasingFunction.Ease easeFunction; 
 
     public List<MenuStruct> menus = new List<MenuStruct>();
 
@@ -155,13 +156,13 @@ public class MenuManager : MonoBehaviour
         Quaternion camRot = mainCamera.transform.rotation;
         float curDur = 0f;
 
+        EasingFunction.Function Ease = EasingFunction.GetEasingFunction(easeFunction);
+
         while (curDur < lerpDuration) {
             curDur += Time.deltaTime;
             float percent = Mathf.Clamp01(curDur / lerpDuration);
-            camPos = Vector3.Lerp(camPos, target.position, percent);
-            camRot = Quaternion.Lerp(camRot, target.rotation, percent);
-            mainCamera.transform.position = camPos;
-            mainCamera.transform.rotation = camRot;
+            mainCamera.transform.position = Vector3.Lerp(camPos, target.position, Ease(0f,1f,percent));
+            mainCamera.transform.rotation = Quaternion.Lerp(camRot, target.rotation, Ease(0f, 1f, percent));
             yield return null;
         }
     }
