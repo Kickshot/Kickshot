@@ -87,6 +87,7 @@ public class DoubleGun : GunBase
 		player.velocity += view.forward * ( (heat == 0f ? NoHeatVentPercentage : heat)/100f) * MaxVentVelocity;
         heat = 0f;
 		exhaust = 1f;
+        rocketLauncher.SetTrigger("Boost");
 		airBurst.Play ();
 		exhaustBusy = VentPenalty;
 		Camera.main.GetComponent<SmartCamera>().AddShake(.4f);
