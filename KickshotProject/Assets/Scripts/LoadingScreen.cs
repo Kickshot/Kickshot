@@ -43,7 +43,7 @@ public class LoadingScreen : MonoBehaviour {
         }
 
         //Start loading
-        AsyncOperation load = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
+        AsyncOperation load = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Single);
 
         //Update progress bar
         while (!load.isDone)
@@ -53,9 +53,9 @@ public class LoadingScreen : MonoBehaviour {
         }
 
         //Set active to level
-        SceneManager.SetActiveScene(SceneManager.GetSceneByName(sceneName));
+        //SceneManager.SetActiveScene(SceneManager.GetSceneByName(sceneName));
         //Unload loading scene
-        SceneManager.UnloadSceneAsync("Loading");
+        //SceneManager.UnloadSceneAsync("Loading");
 
     }
 }
