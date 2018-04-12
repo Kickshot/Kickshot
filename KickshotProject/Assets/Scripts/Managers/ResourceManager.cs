@@ -11,13 +11,13 @@ public static class ResourceManager {
             return;
         }
         resources = new Dictionary<string, string[]> ();
-        resources.Add ("dirtImpact",            new string[]{"Sounds/dirt_impact1", "Sounds/dirt_impact2", "Sounds/dirt_impact3"});
-        resources.Add ("woodImpact",            new string[]{"Sounds/wood_impact1", "Sounds/wood_impact2", "Sounds/wood_impact3"});
-        resources.Add ("wetImpact",             new string[]{"Sounds/wet_impact1", "Sounds/wet_impact2", "Sounds/wet_impact3"});
-        resources.Add ("stoneImpact",           new string[]{"Sounds/stone_impact1", "Sounds/stone_impact2"});
-        resources.Add ("metalImpact",           new string[]{"Sounds/metal_impact1", "Sounds/metal_impact2"});
-        resources.Add ("wireImpact",            new string[]{"Sounds/chickenwire_impact1"});
-        resources.Add ("glassImpact",           new string[]{"Sounds/glass_impact1"});
+        resources.Add ("dirtImpact",            new string[]{"Sounds/landing"});
+        resources.Add ("woodImpact",            new string[]{"Sounds/landing"});
+        resources.Add ("wetImpact",             new string[]{"Sounds/landing"});
+        resources.Add ("stoneImpact",           new string[]{"Sounds/landing"});
+        resources.Add ("metalImpact",           new string[]{"Sounds/landing"});
+        resources.Add ("wireImpact",            new string[]{"Sounds/landing"});
+        resources.Add ("glassImpact",           new string[]{"Sounds/landing"});
         resources.Add ("Player",                new string[]{"Prefabs/Characters/SourcePlayer"});
         resources.Add ("RocketLauncher",        new string[]{"Prefabs/Weapons/RocketLauncher"});
         resources.Add ("TractorGrapple",        new string[]{"Prefabs/Weapons/TractorGrapple"});
@@ -27,11 +27,11 @@ public static class ResourceManager {
         resources.Add ("GrappleHook",           new string[]{"Prefabs/Weapons/Grapple Hook"});
         resources.Add ("Minigun",               new string[]{"Prefabs/Weapons/Minigun"});
         resources.Add ("SequentialNadeLauncher",new string[]{"Prefabs/Weapons/SequentialNadeLauncher"});
-        resources.Add ("AceGrunt",              new string[]{"Sounds/AceGrunt1", "Sounds/AceGrunt2"});
+        resources.Add ("AceGrunt",              new string[]{"Sounds/jump"});
         resources.Add ("AcePainGrunt",          new string[]{"Sounds/AceGrunt2"});
         resources.Add ("MedeaGrunt",            new string[]{"Sounds/jumpgrunt"});
         resources.Add ("MedeaPainGrunt",        new string[]{"Sounds/hurtgrunt"});
-        resources.Add ("BoneSnap",              new string[]{"Sounds/bonecrack"});
+        resources.Add ("BoneSnap",              new string[]{"Sounds/landing"});
         resources.Add("ShatterWall",            new string[] { "Prefabs/WorldObjects/ShatterWall" });
 
         // Whomp Fortress music.
