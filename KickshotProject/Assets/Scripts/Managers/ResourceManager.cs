@@ -39,7 +39,7 @@ public static class ResourceManager {
         // DK Mountain music
         resources.Add ("DKMusic",           new string[]{"Sounds/Mario Kart Double Dash - DK Mountain Music"});
         // Luis' level music
-        resources.Add ("Menu",              new string[]{"Sounds/Paul SG & Carter - A Lot To Talk About"});
+        resources.Add ("Menu",              new string[]{ "Sounds/Music/Nomyn - Above The Clouds" });
         resources.Add("I01", new string[] { "Sounds/Music/IslandCandidates/01" });
         resources.Add("I02", new string[] { "Sounds/Music/IslandCandidates/02" });
         resources.Add("I03", new string[] { "Sounds/Music/IslandCandidates/03" });
