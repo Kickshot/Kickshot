@@ -651,7 +651,10 @@ public class SourcePlayer : MonoBehaviour {
                 // If they hit the ground going this fast they may take damage (and die).
                 //
                 justTookFallDamage = true;
-                AudioSource.PlayClipAtPoint (ResourceManager.GetResource<AudioClip> ("BoneSnap"), transform.position);
+                AudioSource sound = gameObject.GetComponent<AudioSource>();
+                sound.clip = ResourceManager.GetResource<AudioClip>("BoneSnap");
+                sound.Play();
+                //AudioSource.PlayClipAtPoint (ResourceManager.GetResource<AudioClip> ("BoneSnap"), transform.position);
                 //gameObject.SendMessage("Damage", (fallVelocity - maxSafeFallSpeed)*5f );
             }
             // Linearly scale the impact volume with how fast we hit.
@@ -673,7 +676,10 @@ public class SourcePlayer : MonoBehaviour {
         if (dustSpawnCooldown <= 0f) {
             RaycastHit hit;
             if (Physics.Raycast (hitpos + hitnormal * 0.1f, -hitnormal, out hit, 1f)) {
-                AudioSource.PlayClipAtPoint (ImpactSounds.GetSound (Helper.getMaterial (hit)), hitpos, volume);
+                AudioSource sound = gameObject.GetComponent<AudioSource>();
+                sound.clip = ImpactSounds.GetSound(Helper.getMaterial(hit));
+                sound.Play();
+                //AudioSource.PlayClipAtPoint (ImpactSounds.GetSound (Helper.getMaterial (hit)), hitpos, volume);
             }
             Instantiate (landSpawn, hitpos, Quaternion.LookRotation (hitnormal));
             dustSpawnCooldown = 0.3f;

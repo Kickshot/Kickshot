@@ -20,7 +20,7 @@ public class DoubleGun : GunBase
 	
 	private List<RopeSim> ropes;
 	public AudioSource airBurst;
-
+    public AudioSource sound;
 	public GameObject ropePrefab;
 	private RopeSim rope;
 
@@ -248,7 +248,9 @@ public class DoubleGun : GunBase
             return;
         }
         energy -= GrappleUsePercentage;
-        AudioSource.PlayClipAtPoint(grappleHookClip, transform.position);
+        sound.clip = grappleHookClip;
+        sound.Play();
+        //AudioSource.PlayClipAtPoint(grappleHookClip, transform.position);
 		RaycastHit hit;
 		GameObject ropeRoot = Instantiate (ropePrefab,Vector3.zero,Quaternion.identity);
 		rope = ropeRoot.GetComponentInChildren<RopeSim> ();
@@ -270,7 +272,9 @@ public class DoubleGun : GunBase
                 rope.end.position = hit.point;
                 rope.Regenerate();
                 player.maxSpeed = 1000f;
-                AudioSource.PlayClipAtPoint(grappleHit[Random.Range(0, grappleHit.Count)], hit.point);
+                sound.clip = grappleHit[Random.Range(0, grappleHit.Count)];
+                sound.Play();
+                //AudioSource.PlayClipAtPoint(grappleHit[Random.Range(0, grappleHit.Count)], hit.point);
                 Destroy(Instantiate(grappleHitCloud, hit.point, Quaternion.LookRotation(hit.normal)), 1f);
                 return;
             } else {
@@ -295,7 +299,9 @@ public class DoubleGun : GunBase
 			rope.end.position = hit.point;
 			rope.Regenerate ();
 			player.maxSpeed = 1000f;
-            AudioSource.PlayClipAtPoint(grappleHit[Random.Range(0,grappleHit.Count)], hit.point);
+            sound.clip = grappleHit[Random.Range(0, grappleHit.Count)];
+            sound.Play();
+            //AudioSource.PlayClipAtPoint(grappleHit[Random.Range(0,grappleHit.Count)], hit.point);
             Destroy(Instantiate(grappleHitCloud, hit.point, Quaternion.LookRotation(hit.normal) ), 1f);
 		}
 		else
