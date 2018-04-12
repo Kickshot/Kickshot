@@ -39,6 +39,7 @@ public class LoadingScreen : MonoBehaviour {
         //Min wait
         while (timer < minDuration) {
             timer += Time.deltaTime;
+            progressBar.value = (timer) / (minDuration * 2) * progressBar.maxValue;
             yield return new WaitForEndOfFrame();
         }
 
@@ -48,7 +49,7 @@ public class LoadingScreen : MonoBehaviour {
         //Update progress bar
         while (!load.isDone)
         {
-            progressBar.value = load.progress * progressBar.maxValue;
+            progressBar.value = (load.progress + timer/minDuration) / 2f * progressBar.maxValue;
             yield return new WaitForEndOfFrame();
         }
 
