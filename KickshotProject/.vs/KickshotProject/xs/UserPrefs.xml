@@ -1,5 +1,5 @@
 ﻿<Properties StartupConfiguration="{DBC2873F-F72C-5ACD-0F14-04DEAB5B4780}|">
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/Guns/DoubleGun.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/LoadInfo.cs">
     <Files>
       <File FileName="Assets/Scripts/UI/LevelCompleteScreenManager.cs" Line="40" Column="26" />
       <File FileName="Assets/Scripts/UI/MenuManager.cs" Line="160" Column="9" />
@@ -15,6 +15,8 @@
       <File FileName="Assets/Scripts/Mutators/GolfEnd.cs" Line="10" Column="4" />
       <File FileName="Assets/Scripts/CollisionTriggers/FinishTrigger.cs" Line="1" Column="1" />
       <File FileName="Assets/Scripts/Managers/ResourceManager.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/LoadingScreen.cs" Line="25" Column="46" />
+      <File FileName="Assets/Scripts/LoadInfo.cs" Line="7" Column="21" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
