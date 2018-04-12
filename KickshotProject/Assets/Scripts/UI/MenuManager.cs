@@ -24,6 +24,7 @@ public class MenuManager : MonoBehaviour
 
     [Header("Element References")]
     public Text buildLabel;
+    public GameObject loadInfo;
 
     private GameObject mainCamera;
 
@@ -46,7 +47,10 @@ public class MenuManager : MonoBehaviour
     public void LoadLevel(string sceneName) {
         //TODO Add scene validity check
         Debug.Log(sceneName);
-        SceneManager.LoadScene(sceneName);
+        GameObject loadInstance = Instantiate(loadInfo) as GameObject;
+        loadInstance.GetComponent<LoadInfo>().sceneName = sceneName;
+        DontDestroyOnLoad(loadInstance);
+        SceneManager.LoadScene("Loading");
     }
 
     /// <summary>

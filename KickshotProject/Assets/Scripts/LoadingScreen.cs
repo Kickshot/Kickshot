@@ -20,7 +20,7 @@ public class LoadingScreen : MonoBehaviour {
         Debug.Assert(sceneName != null);
 
         //Check for load message
-        GameObject loadReq = GameObject.Find("LOAD");
+        GameObject loadReq = GameObject.FindWithTag("LOAD");
         if (loadReq != null) {
             LoadInfo info = loadReq.GetComponent<LoadInfo>();
             Debug.Log(info);
@@ -28,6 +28,7 @@ public class LoadingScreen : MonoBehaviour {
         } else {
             Debug.Log("Failed to find LOAD");
         }
+        DestroyImmediate(loadReq);
 
         StartCoroutine(LoadScene());
     }
