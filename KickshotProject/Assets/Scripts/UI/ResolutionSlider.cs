@@ -8,8 +8,12 @@ public class ResolutionSlider : MonoBehaviour {
     private Resolution[] res;
     private Slider resSlider;
     private Text resText;
-
+    Resolution selected;
+    public GameObject OptionsManager;
+    private OptionsManager Options;
     private void Start() {
+
+        Options = OptionsManager.GetComponent<OptionsManager>();
         resSlider = GetComponent<Slider>();
         if (resSlider == null)
             Debug.LogError("Failed to find required slider component");
@@ -28,9 +32,7 @@ public class ResolutionSlider : MonoBehaviour {
             Debug.LogError("Something is fucky");
             return;
         }
-        Resolution selected = res[index];
-        Screen.SetResolution(selected.width, selected.height, Screen.fullScreen, selected.refreshRate);
-
+        selected = res[index];
         UpdateResText(selected);
     }
 
@@ -72,6 +74,14 @@ public class ResolutionSlider : MonoBehaviour {
         if (resChanged) {
             UpdateSlider();
         }
+    }
+
+    public void ApplyRes()
+    {
+
+        Options.setScreenSize(selected);
+
+        
     }
 }
 
