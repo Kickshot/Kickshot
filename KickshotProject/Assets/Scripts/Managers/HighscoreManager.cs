@@ -84,7 +84,7 @@ public class HighscoreManager : MonoBehaviour
     {
         Text[] ct = GameObject.Find("Level Times").GetComponentsInChildren<Text>();
         //1 + DesertLevelsCount for Menu Scene.
-        for (int i = 2, j = 0; i < 12; i++, j++)
+        for (int i = 2, j = 0; i < 19; i++, j++)
         {
             print("Level " + i + " aka " + GetSceneNameByBuildIndex(i) + (PlayerPrefs.HasKey(GetSceneNameByBuildIndex(i)) ? " has key with value " + PlayerPrefs.GetFloat(GetSceneNameByBuildIndex(i)) : " has NO key."));
             if(PlayerPrefs.HasKey(GetSceneNameByBuildIndex(i)) && PlayerPrefs.GetFloat(GetSceneNameByBuildIndex(i)) != 0)
@@ -97,7 +97,7 @@ public class HighscoreManager : MonoBehaviour
 
             }
         }
-
+        /*
         for (int i = 15, j = 10; i < 19; i++, j++)
         {
             if (PlayerPrefs.HasKey(GetSceneNameByBuildIndex(i)) && PlayerPrefs.GetFloat(GetSceneNameByBuildIndex(i)) != 0)
@@ -108,7 +108,7 @@ public class HighscoreManager : MonoBehaviour
             {
                 ct[j].text = "Unplayed";
             }
-        }
+        }*/
     }
 
     public string ToTimerFormat(float t)
