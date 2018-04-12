@@ -30,6 +30,8 @@ public class MenuManager : MonoBehaviour
 
     private void Start()
     {
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
         buildLabel.text = Application.version;
         Camera c = Camera.main;
         Debug.Assert(c != null, "Failed to find scene camera");
