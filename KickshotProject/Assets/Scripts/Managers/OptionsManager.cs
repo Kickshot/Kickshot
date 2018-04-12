@@ -13,6 +13,9 @@ public class OptionsManager : MonoBehaviour
     private float m_musicVolume;
     private float m_sfxVolume;
     private float m_fov;
+    private int m_screenWidth;
+    private int m_screenHeight;
+
     bool Active = false;
 
     void Awake()
@@ -22,10 +25,13 @@ public class OptionsManager : MonoBehaviour
         m_fov = PlayerPrefs.GetFloat("Fov");
         m_musicVolume = PlayerPrefs.GetFloat("MusicVol");
         m_sfxVolume = PlayerPrefs.GetFloat("SFXVol");
+        m_screenWidth = PlayerPrefs.GetInt("ScreenWidth");
+        m_screenHeight = PlayerPrefs.GetInt("ScreenHeight");
 
         setSFXVolume(m_sfxVolume);
         setMusicVolume(m_musicVolume);
 
+        //Fresh game set player prefs
         if (m_sensitivity == 0)
             m_sensitivity = 50;
 
@@ -36,6 +42,15 @@ public class OptionsManager : MonoBehaviour
             m_musicVolume = 80;
         if (m_sfxVolume == 0)
             m_sfxVolume = 80;
+
+        if (m_screenWidth == 0 || m_screenWidth == 0)
+        {
+            m_screenWidth = Screen.currentResolution.width;
+            m_screenHeight = Screen.currentResolution.width;
+            PlayerPrefs.SetInt("ScreenWidth", m_screenWidth);
+            PlayerPrefs.SetInt("ScreenHeight", m_screenHeight);
+        }
+            
         
     }
 
@@ -43,6 +58,8 @@ public class OptionsManager : MonoBehaviour
     {
         setPlayerSensitivity();
         setPlayerFov();
+
+        setScreen();
     }
 
     public void setMusicVolume(float value)
@@ -94,6 +111,20 @@ public class OptionsManager : MonoBehaviour
         return m_fov;
     }
 
+    public void setScreenSize(Resolution selected)
+    {
+        m_screenWidth = selected.width;
+        m_screenHeight = selected.height;
+        PlayerPrefs.SetInt("ScreenWidth", selected.width);
+        PlayerPrefs.SetInt("ScreenHeight", selected.height);
+        Screen.SetResolution(selected.width, selected.height, Screen.fullScreen, selected.refreshRate);
+
+    }
+
+    private void setScreen()
+    {
+        Screen.SetResolution(m_screenWidth, m_screenHeight, Screen.fullScreen, Screen.currentResolution.refreshRate);
+    }
     private void setPlayerSensitivity()
     {
         GameObject Player = GameObject.Find("SourcePlayer");
@@ -175,4 +206,5 @@ public class OptionsManager : MonoBehaviour
         group.blocksRaycasts = false;
         Active = false;
     }
+
 }

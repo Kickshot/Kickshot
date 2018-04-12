@@ -104,6 +104,8 @@ public class LevelCompleteScreenManager : MonoBehaviour
     {
         Time.timeScale = 1;
         SceneManager.LoadScene("MainMenu");
+        Cursor.lockState = CursorLockMode.None;
+        guiManager.showCursor = true;
     }
 
     public void ClickNextLevel()
