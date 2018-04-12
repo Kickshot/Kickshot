@@ -35,7 +35,7 @@ public class DoubleGun : GunBase
     public float GroundedRecoveryPercentage = 50f;
     internal float energy;
     public bool checkTag;
-    public AudioSource grappleHookClip;
+    public AudioClip grappleHookClip;
     Transform grappleShoulderBone;
 
     [Header("Rocket Launcher")]
@@ -248,7 +248,7 @@ public class DoubleGun : GunBase
             return;
         }
         energy -= GrappleUsePercentage;
-        grappleHookClip.Play();
+        AudioSource.PlayClipAtPoint(grappleHookClip, transform.position);
 		RaycastHit hit;
 		GameObject ropeRoot = Instantiate (ropePrefab,Vector3.zero,Quaternion.identity);
 		rope = ropeRoot.GetComponentInChildren<RopeSim> ();
