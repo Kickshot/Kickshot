@@ -108,6 +108,14 @@ public class LevelCompleteScreenManager : MonoBehaviour
         guiManager.showCursor = true;
     }
 
+    public void ClickPlayAgain()
+    {
+        Cursor.lockState = CursorLockMode.Locked;
+        guiManager.showCursor = false;
+        Time.timeScale = 1;
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
     public void ClickNextLevel()
     {
         Cursor.lockState = CursorLockMode.Locked;
