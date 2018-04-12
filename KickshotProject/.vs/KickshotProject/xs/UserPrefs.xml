@@ -1,13 +1,19 @@
 ﻿<Properties StartupConfiguration="{DBC2873F-F72C-5ACD-0F14-04DEAB5B4780}|">
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/Guns/DoubleGun.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/UI/LevelCompleteScreenManager.cs">
     <Files>
-      <File FileName="Assets/Scripts/UI/LevelCompleteScreenManager.cs" Line="24" Column="40" />
+      <File FileName="Assets/Scripts/UI/LevelCompleteScreenManager.cs" Line="40" Column="26" />
       <File FileName="Assets/Scripts/UI/MenuManager.cs" Line="160" Column="9" />
       <File FileName="Assets/Scripts/Misc/Spline/SplineInterpolator.cs" Line="14" Column="3" />
       <File FileName="Assets/Scripts/Misc/Spline/SplineController.cs" Line="1" Column="1" />
       <File FileName="Assets/Scripts/Shaders/TornadoShell.shader" Line="37" Column="39" />
       <File FileName="Assets/Scripts/Utility/EasingFunctions.cs" Line="1" Column="1" />
       <File FileName="Assets/Scripts/Guns/DoubleGun.cs" Line="90" Column="44" />
+      <File FileName="Assets/Scripts/WhooshParticles.cs" Line="23" Column="6" />
+      <File FileName="Assets/Scripts/SourcePlayer/SourcePlayer.cs" Line="431" Column="1" />
+      <File FileName="Assets/Scripts/UI/HUD/AmmoColorChange.cs" Line="30" Column="33" />
+      <File FileName="Assets/Scripts/UI/PauseMenuManager.cs" Line="37" Column="24" />
+      <File FileName="Assets/Scripts/Mutators/GolfEnd.cs" Line="10" Column="4" />
+      <File FileName="Assets/Scripts/CollisionTriggers/FinishTrigger.cs" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />

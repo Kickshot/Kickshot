@@ -26,7 +26,8 @@ public class AmmoColorChange : MonoBehaviour
             gun = FindObjectOfType<DoubleGun>();
             if (gun == null)
             {
-                Debug.LogError("Failed to assign player!");
+                Debug.Log("Failed to assign player!");
+                enabled = false;
             }
         }
     }

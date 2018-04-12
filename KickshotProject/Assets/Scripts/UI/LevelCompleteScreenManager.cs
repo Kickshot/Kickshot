@@ -37,7 +37,7 @@ public class LevelCompleteScreenManager : MonoBehaviour
         player.GetComponent<CharacterController>().enabled = false;
         player.GetComponent<SourcePlayer>().enabled = false;
         player.GetComponentInChildren<SmartCamera>().SetShake(0);
-        gun.SetActive(false);
+        if (gun != null) gun.SetActive(false);
         crosshair.SetActive(false);
         levelCompleteScreen.SetActive(true);
         Cursor.lockState = CursorLockMode.None;

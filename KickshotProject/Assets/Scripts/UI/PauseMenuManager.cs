@@ -34,7 +34,7 @@ public class PauseMenuManager : MonoBehaviour
 		Cursor.lockState = CursorLockMode.None;
         player = GameObject.Find("SourcePlayer");
         gun = GameObject.Find("DoubleGun");
-		gun.SetActive(false);
+		if (gun != null) gun.SetActive(false);
         player.GetComponent<MouseLook>().enabled = false;
         player.GetComponent<CharacterController>().enabled = false;
         player.GetComponent<SourcePlayer>().enabled = false;

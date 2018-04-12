@@ -17,6 +17,9 @@ public class WhooshParticles : MonoBehaviour {
     {
         _particles = GetComponent<ParticleSystem>();
         _wind = GetComponent<AudioSource>();
+        if (_wind == null) {
+            enabled = false;
+        }
     }
 
 
