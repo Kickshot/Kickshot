@@ -40,6 +40,7 @@ public class MusicManager : MonoBehaviour {
         music[16] = "D02";
         music[17] = "D03";
         music[18] = "D04";
+        music[20] = "Menu";
         SceneManager.sceneLoaded += SceneLoaded;
     }
     void SceneLoaded(Scene scene, LoadSceneMode mode)

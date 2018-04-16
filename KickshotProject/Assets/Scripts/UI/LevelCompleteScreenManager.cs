@@ -122,7 +122,7 @@ public class LevelCompleteScreenManager : MonoBehaviour
         Time.timeScale = 1;
         //TODO: This will break if the build settings are changed at all. Probably better to adopt a "level1, level2" naming standard.
         int nextSceneBuildIndex = SceneManager.GetActiveScene().buildIndex + 1;
-        if (nextSceneBuildIndex == 12 || nextSceneBuildIndex == 15 || nextSceneBuildIndex == 19)
+        if (nextSceneBuildIndex == 12 || nextSceneBuildIndex == 15 || nextSceneBuildIndex == 19 || nextSceneBuildIndex == 21)
         {
             SceneManager.LoadScene("MainMenu");
         } else {
