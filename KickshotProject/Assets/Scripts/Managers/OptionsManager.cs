@@ -15,7 +15,7 @@ public class OptionsManager : MonoBehaviour
     private float m_fov;
     private int m_screenWidth;
     private int m_screenHeight;
-
+    private float m_ScreenSlider;
     bool Active = false;
 
     void Awake()
@@ -27,6 +27,7 @@ public class OptionsManager : MonoBehaviour
         m_sfxVolume = PlayerPrefs.GetFloat("SFXVol");
         m_screenWidth = PlayerPrefs.GetInt("ScreenWidth");
         m_screenHeight = PlayerPrefs.GetInt("ScreenHeight");
+        m_ScreenSlider = PlayerPrefs.GetFloat("ScreenSlider");
 
         setSFXVolume(m_sfxVolume);
         setMusicVolume(m_musicVolume);
@@ -40,8 +41,13 @@ public class OptionsManager : MonoBehaviour
 
         if (m_musicVolume == 0)
             m_musicVolume = 80;
+
         if (m_sfxVolume == 0)
             m_sfxVolume = 80;
+
+        if (m_ScreenSlider == 0)
+            m_ScreenSlider = 5;
+
 
         if (m_screenWidth == 0 || m_screenWidth == 0)
         {
@@ -124,6 +130,19 @@ public class OptionsManager : MonoBehaviour
     private void setScreen()
     {
         Screen.SetResolution(m_screenWidth, m_screenHeight, Screen.fullScreen, Screen.currentResolution.refreshRate);
+    }
+
+    public void setScreenSlider(float value)
+    {
+        m_ScreenSlider = value;
+        PlayerPrefs.SetFloat("ScreenSlider", m_ScreenSlider);
+        print(m_ScreenSlider);
+    }
+
+    public float getScreenSlider()
+    {
+        print(m_ScreenSlider);
+        return m_ScreenSlider; 
     }
     private void setPlayerSensitivity()
     {

@@ -22,16 +22,22 @@ public class ResolutionSlider : MonoBehaviour {
         if (resText == null)
             Debug.LogError("Failed to find required text component");
 
+        
+
+
         UpdateSlider();
+        resSlider.value = Options.getScreenSlider();
         InvokeRepeating("CheckResolution", 2f, 2f);
     }
 
     public void ValueChanged() {
         int index = Mathf.RoundToInt(resSlider.value);
+        print(resSlider.value);
         if (index >= res.Length) {
             Debug.LogError("Something is fucky");
             return;
         }
+        
         selected = res[index];
         UpdateResText(selected);
     }
@@ -78,7 +84,7 @@ public class ResolutionSlider : MonoBehaviour {
 
     public void ApplyRes()
     {
-
+        Options.setScreenSlider(resSlider.value);
         Options.setScreenSize(selected);
 
         
